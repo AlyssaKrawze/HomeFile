@@ -1,0 +1,2 @@
+-- Add disaster_plan column to appliances table
+ALTER TABLE appliances ADD COLUMN IF NOT EXISTS disaster_plan text;

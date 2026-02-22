@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(find /Users/alyssakrawze/homefile -type f -name \"*.sql\" 2>/dev/null | head -20)",
+      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(auth\\)/\" 2>/dev/null)",
+      "Bash(chmod +x /Users/alyssakrawze/homefile/logs/log.sh)",
+      "WebSearch",
+      "Bash(grep -r \"appliance\" /Users/alyssakrawze/homefile/app --include=\"*.tsx\" -l 2>/dev/null | grep -v \".next\")",
+      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]/\" 2>/dev/null || echo \"Directory not found\")",
+      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]/\" 2>/dev/null || echo \"Directory not found\")",
+      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]\" -type f | head -20)",
+      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]\" -type f | head -20)",
+      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]\" -type d | sort)",
+      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]\" -type d | sort)",
+      "Bash(ls /Users/alyssakrawze/homefile/*.lock /Users/alyssakrawze/homefile/bun.lockb /Users/alyssakrawze/homefile/yarn.lock /Users/alyssakrawze/homefile/pnpm-lock.yaml 2>/dev/null; ls /Users/alyssakrawze/homefile/supabase/migrations/ | sort)",
+      "Bash(npm install @react-pdf/renderer --save 2>&1 | tail -5)",
+      "Bash(npx tsc --noEmit 2>&1 | head -40)",
+      "Bash(npx tsc --noEmit 2>&1 | head -30)"
+    ]
+  }
+}

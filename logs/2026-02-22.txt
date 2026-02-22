@@ -1,0 +1,6 @@
+2026-02-22 Session Notes
+
+- Fixed new user signup bug (search_path issue in handle_new_user trigger)
+- Created Supabase storage buckets (documents private, home-images public)
+- Signup now working for all new users
+- Anthropic API key added, AI features now enabled
