@@ -19,8 +19,8 @@ const TAB_DEFS = [
 ]
 
 export default function MobileNav({ isMobile }: MobileNavProps) {
-  if (!isMobile) return null
   const pathname = usePathname()
+  if (!isMobile) return null
 
   const homeIdMatch = pathname.match(/\/dashboard\/homes\/([^/]+)/)
   const currentHomeId = homeIdMatch?.[1]
