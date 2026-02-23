@@ -16,7 +16,20 @@
       "Bash(find /Users/alyssakrawze/homefile -type d -path \"*/node_modules\" -prune -o -type f -name \"*auth*\" -print 2>/dev/null | grep -v node_modules | head -20)",
       "Bash(grep -r \"signUp\\\\|signInWithOtp\\\\|auth\\\\.\" /Users/alyssakrawze/homefile/app --include=\"*.tsx\" --include=\"*.ts\" 2>/dev/null | grep -v node_modules | head -20)",
       "Bash(git commit -m \"$\\(cat <<'EOF'\nAdd PWA support, mobile-responsive UI, and auth improvements\n\nMobile UI:\n- Hide sidebar on mobile \\(hidden lg:flex\\), replace with bottom tab bar\n- Bottom navigation: Overview, Inventory, Calendar, Alerts, Settings \\(5 direct tabs\\)\n- Mobile top bar: slim 48px bar with logo, lg:hidden\n- Main content clears both bars: pt-12 pb-20 on mobile, reset on lg\n- DashboardShell client component manages mobile/desktop layout split\n- MobileNav: safe-area-inset padding for iPhone home indicator\n- All page paddings: px-8 py-8 → px-4 py-6 sm:px-8 sm:py-8\n- Modal form grids: grid-cols-2 → grid-cols-1 sm:grid-cols-2\n- Calendar: 2-char day headers, smaller cells on mobile, flex-wrap legend\n- Calendar summary cards: smaller padding/text on mobile\n- Appliance header: warranty badge pulled below name row \\(no overflow\\)\n- Detail grid: gap-3 sm:gap-4 on mobile\n- Members/inventory/settings: responsive padding and danger zone layout\n- Settings: Members link + Sign Out button \\(mobile-only, lg:hidden\\)\n\nPWA:\n- manifest.json, service worker \\(sw.js\\), RegisterSW client component\n- Icon routes: /icon.tsx, /apple-icon.tsx, /icon-192, /icon-512\n- next.config.ts: Service-Worker-Allowed header + no-cache for sw.js\n- app/layout.tsx: manifest, viewport-fit cover, appleWebApp metadata\n\nAuth:\n- Add app/auth/callback/route.ts \\(PKCE code exchange handler\\)\n- Fix emailRedirectTo: /dashboard → /auth/callback?next=/dashboard\n- Add middleware.ts \\(was proxy.ts with wrong export — never ran\\)\n- /auth/ path whitelisted in middleware so callback works unauthenticated\n\nFeatures:\n- Onboarding modal \\(3-step\\) with localStorage + DB persistence\n- Getting started PDF guide \\(3-page react-pdf document\\)\n- Scheduled tasks: \"Mark Complete\" button + \"Add to Calendar\" button\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git push origin main 2>&1)"
+      "Bash(git push origin main 2>&1)",
+      "Bash(git add components/layout/dashboard-shell.tsx components/layout/mobile-nav.tsx && git status)",
+      "Bash(git -C /Users/alyssakrawze/homefile status)",
+      "Bash(git -C /Users/alyssakrawze/homefile diff -- components/layout/dashboard-shell.tsx components/layout/mobile-nav.tsx)",
+      "Bash(git -C /Users/alyssakrawze/homefile log --oneline -3)",
+      "Bash(git -C /Users/alyssakrawze/homefile show HEAD:components/layout/dashboard-shell.tsx | head -10)",
+      "Bash(git -C /Users/alyssakrawze/homefile show HEAD:components/layout/dashboard-shell.tsx)",
+      "Bash(git -C /Users/alyssakrawze/homefile log --oneline -5 && git -C /Users/alyssakrawze/homefile show HEAD --name-only | head -20)",
+      "Bash(git -C /Users/alyssakrawze/homefile log --oneline origin/main | head -5)",
+      "Bash(git -C /Users/alyssakrawze/homefile show HEAD:components/layout/mobile-nav.tsx)",
+      "Bash(git -C /Users/alyssakrawze/homefile diff components/layout/mobile-nav.tsx)",
+      "Bash(git -C /Users/alyssakrawze/homefile add components/layout/mobile-nav.tsx && git -C /Users/alyssakrawze/homefile commit -m \"$\\(cat <<'EOF'\nFix React hooks violation in MobileNav — move usePathname before early return\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git -C /Users/alyssakrawze/homefile push origin main)",
+      "Bash(git config --global user.email \"alyssakrawze@gmail.com\" && git config --global user.name \"AlyssaKrawze\")",
+      "Bash(git -C /Users/alyssakrawze/homefile add . && git -C /Users/alyssakrawze/homefile commit -m \"Fix mobile UI\" && git -C /Users/alyssakrawze/homefile push origin main)"
     ]
   }
 }
