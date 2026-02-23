@@ -5,7 +5,7 @@ import {
   ChevronRight, ShieldCheck, ShieldAlert, ShieldX,
   Calendar, DollarSign, Hash, Tag, FileText, Wrench,
 } from 'lucide-react'
-import { ROOM_CATEGORIES, SERVICE_TYPE_LABELS, type PermissionCategory } from '@/lib/types'
+import { ROOM_CATEGORIES, SERVICE_TYPE_LABELS, type PermissionCategory, type TaskAssigneeMember } from '@/lib/types'
 import ServiceHistorySection from '@/components/appliances/service-history-section'
 import DocumentsSection from '@/components/appliances/documents-section'
 import ScheduledTasksSection from '@/components/appliances/scheduled-tasks-section'
@@ -40,7 +40,7 @@ export default async function AppliancePage({
 
   if (!home || !room || !appliance) notFound()
 
-  const [{ data: serviceRecords }, { data: documents }, { data: scheduledTasks }] = await Promise.all([
+  const [{ data: serviceRecords }, { data: documents }, { data: scheduledTasks }, { data: homeMembers }] = await Promise.all([
     supabase
       .from('service_records')
       .select('*')
@@ -53,10 +53,24 @@ export default async function AppliancePage({
       .order('created_at', { ascending: false }),
     supabase
       .from('scheduled_tasks')
-      .select('*')
+      .select('*, assignee:profiles!assigned_to(id, full_name, email, avatar_url)')
       .eq('appliance_id', applianceId)
       .order('due_date'),
+    supabase
+      .from('home_members')
+      .select('user_id, profiles(id, full_name, email, avatar_url)')
+      .eq('home_id', homeId),
   ])
+
+  const taskMembers: TaskAssigneeMember[] = (homeMembers || []).map(m => {
+    const p = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles
+    return {
+      user_id: m.user_id,
+      full_name: p?.full_name ?? null,
+      email: p?.email ?? null,
+      avatar_url: p?.avatar_url ?? null,
+    }
+  })
 
   const cat = ROOM_CATEGORIES[room.category as PermissionCategory] || ROOM_CATEGORIES.other
   const canManage = ['owner', 'manager'].includes(membership.role)
@@ -95,7 +109,7 @@ export default async function AppliancePage({
       </div>
 
       {/* Appliance Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 mb-6">
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] p-4 sm:p-6 mb-6">
         {/* Top row: icon + name + edit button */}
         <div className="flex items-start gap-4">
           <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl ${cat.bgColor} flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0`}>
@@ -103,7 +117,7 @@ export default async function AppliancePage({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">{appliance.name}</h1>
+              <h1 className="font-playfair text-xl sm:text-2xl font-bold text-[#2F3437] leading-tight">{appliance.name}</h1>
               {canManage && <div className="flex-shrink-0"><EditApplianceModal appliance={appliance} /></div>}
             </div>
             <div className="flex items-center gap-2 flex-wrap mt-1">
@@ -151,7 +165,7 @@ export default async function AppliancePage({
               </div>
             )}
             {warrantyStatus === 'expired' && (
-              <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+              <div className="inline-flex items-center gap-2 bg-[#F4F1EA] border border-[#C8BFB2] rounded-xl px-3 py-2">
                 <ShieldX size={15} className="text-slate-400 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-slate-600">Warranty Expired</p>
@@ -165,7 +179,7 @@ export default async function AppliancePage({
         )}
 
         {/* Detail grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-5 border-t border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-5 border-t border-[#E0D9D0]">
           {ageYears !== null && (
             <DetailItem icon={<Calendar size={14} />} label="Age" value={`${ageYears} yr${ageYears !== 1 ? 's' : ''} old`} />
           )}
@@ -199,7 +213,7 @@ export default async function AppliancePage({
         </div>
 
         {appliance.notes && (
-          <div className="mt-4 pt-4 border-t border-slate-100">
+          <div className="mt-4 pt-4 border-t border-[#E0D9D0]">
             <p className="text-xs font-medium text-slate-500 mb-1">Notes</p>
             <p className="text-sm text-slate-700 leading-relaxed">{appliance.notes}</p>
           </div>
@@ -224,6 +238,8 @@ export default async function AppliancePage({
             tasks={scheduledTasks || []}
             canManage={canManage}
             userId={user.id}
+            userRole={membership.role as import('@/lib/types').UserRole}
+            members={taskMembers}
           />
 
           <DisasterPlanSection
@@ -269,7 +285,7 @@ function DetailItem({ icon, label, value, mono }: {
         {icon}
         <span className="text-xs font-medium uppercase tracking-wide">{label}</span>
       </div>
-      <p className={`text-sm font-medium text-slate-800 ${mono ? 'font-mono text-xs' : ''}`}>{value}</p>
+      <p className={`text-sm font-medium text-[#2F3437] ${mono ? 'font-mono text-xs' : ''}`}>{value}</p>
     </div>
   )
 }

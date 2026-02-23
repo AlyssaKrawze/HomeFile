@@ -83,7 +83,7 @@ export default async function HomeOverviewPage({
       {/* Home header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{home.name}</h1>
+          <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">{home.name}</h1>
           {(home.address || home.city) && (
             <p className="text-slate-500 text-sm mt-1">
               {[home.address, home.city, home.state, home.zip].filter(Boolean).join(', ')}
@@ -100,7 +100,7 @@ export default async function HomeOverviewPage({
           value={(rooms || []).length}
           icon="🏠"
           color="text-slate-700"
-          bg="bg-slate-50"
+          bg="bg-[#F4F1EA]"
         />
         <StatCard
           label="Items tracked"
@@ -144,7 +144,7 @@ export default async function HomeOverviewPage({
             <h2 className="text-base font-semibold text-slate-700">Rooms & Areas</h2>
             <Link
               href={`/dashboard/homes/${homeId}/inventory`}
-              className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
+              className="text-sm text-[#5B6C8F] hover:text-[#4a5c77] font-medium flex items-center gap-1"
             >
               View all items
               <ChevronRight size={14} />
@@ -159,7 +159,7 @@ export default async function HomeOverviewPage({
                 <Link
                   key={room.id}
                   href={`/dashboard/homes/${homeId}/rooms/${room.id}`}
-                  className="group bg-white rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all duration-200 p-5"
+                  className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md transition-all duration-200 p-5"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`w-11 h-11 rounded-xl ${cat.bgColor} flex items-center justify-center text-2xl`}>
@@ -171,7 +171,7 @@ export default async function HomeOverviewPage({
                       </span>
                     )}
                   </div>
-                  <h3 className="font-semibold text-slate-800 group-hover:text-teal-600 transition-colors text-sm">
+                  <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors text-sm">
                     {room.name}
                   </h3>
                   <p className={`text-xs font-medium mt-0.5 ${cat.color}`}>{cat.label}</p>
@@ -199,28 +199,28 @@ export default async function HomeOverviewPage({
           <a
             href={`/api/homes/${homeId}/binder`}
             download
-            className="md:col-span-2 flex items-center gap-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl border border-teal-200 hover:border-teal-400 hover:shadow-sm transition-all p-5"
+            className="md:col-span-2 flex items-center gap-4 bg-gradient-to-r from-[#eef1f6] to-[#F4F1EA] rounded-2xl border border-[#bfcfdd] hover:border-[#7a8fa8] hover:shadow-sm transition-all p-5"
           >
-            <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
-              <BookOpen size={20} className="text-teal-700" />
+            <div className="w-10 h-10 rounded-xl bg-[#dce4ef] flex items-center justify-center">
+              <BookOpen size={20} className="text-[#4a5c77]" />
             </div>
             <div>
-              <p className="font-semibold text-teal-900 text-sm">Download Home Binder</p>
-              <p className="text-xs text-teal-700 mt-0.5">
+              <p className="font-semibold text-[#2F3437] text-sm">Download Home Binder</p>
+              <p className="text-xs text-[#4a5c77] mt-0.5">
                 PDF with all appliances, specs, maintenance notes, and disaster plans
               </p>
             </div>
-            <ChevronRight size={16} className="text-teal-400 ml-auto" />
+            <ChevronRight size={16} className="text-[#7a8fa8] ml-auto" />
           </a>
           <Link
             href={`/dashboard/homes/${homeId}/calendar`}
-            className="flex items-center gap-4 bg-white rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-sm transition-all p-5"
+            className="flex items-center gap-4 bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-sm transition-all p-5"
           >
-            <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center">
-              <Clock size={20} className="text-teal-600" />
+            <div className="w-10 h-10 rounded-xl bg-[#eef1f6] flex items-center justify-center">
+              <Clock size={20} className="text-[#5B6C8F]" />
             </div>
             <div>
-              <p className="font-semibold text-slate-800 text-sm">Maintenance Calendar</p>
+              <p className="font-semibold text-[#2F3437] text-sm">Maintenance Calendar</p>
               <p className="text-xs text-slate-500 mt-0.5">
                 {upcomingTasks.length} task{upcomingTasks.length !== 1 ? 's' : ''} coming up
               </p>
@@ -230,13 +230,13 @@ export default async function HomeOverviewPage({
 
           <Link
             href={`/dashboard/homes/${homeId}/inventory`}
-            className="flex items-center gap-4 bg-white rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-sm transition-all p-5"
+            className="flex items-center gap-4 bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-sm transition-all p-5"
           >
             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
               <Wrench size={20} className="text-blue-600" />
             </div>
             <div>
-              <p className="font-semibold text-slate-800 text-sm">Full Inventory</p>
+              <p className="font-semibold text-[#2F3437] text-sm">Full Inventory</p>
               <p className="text-xs text-slate-500 mt-0.5">
                 {totalItems} item{totalItems !== 1 ? 's' : ''} tracked
               </p>
@@ -260,7 +260,7 @@ function StatCard({
   href?: string
 }) {
   const content = (
-    <div className={`${bg} rounded-2xl p-4 border border-transparent hover:border-slate-200 transition-colors`}>
+    <div className={`${bg} rounded-2xl p-4 border border-transparent hover:border-[#C8BFB2] transition-colors`}>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl">{icon}</span>
         <span className={`text-2xl font-bold ${color}`}>{value}</span>
@@ -274,7 +274,7 @@ function StatCard({
 
 function AddRoomCard({ homeId }: { homeId: string }) {
   return (
-    <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 hover:border-teal-300 flex items-center justify-center min-h-32 transition-colors">
+    <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-32 transition-colors">
       <AddRoomModal homeId={homeId} trigger="card" />
     </div>
   )
@@ -286,7 +286,7 @@ function NoRoomsState({ homeId, canManage }: { homeId: string; canManage: boolea
       <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-6 text-4xl">
         🏠
       </div>
-      <h2 className="text-xl font-semibold text-slate-800 mb-2">Start adding rooms</h2>
+      <h2 className="text-xl font-semibold text-[#2F3437] mb-2">Start adding rooms</h2>
       <p className="text-slate-500 max-w-md mb-8 text-sm leading-relaxed">
         Add the rooms in your home, then track appliances, schedule maintenance,
         and store documents for each one.

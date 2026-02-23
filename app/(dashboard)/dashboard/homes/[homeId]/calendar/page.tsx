@@ -4,13 +4,19 @@ import Link from 'next/link'
 import { ChevronRight, CheckCircle2, Clock, AlertTriangle, Calendar } from 'lucide-react'
 import CalendarView from '@/components/calendar/calendar-view'
 import CalendarTaskList from '@/components/calendar/calendar-task-list'
+import MyTasksFilter from '@/components/calendar/my-tasks-filter'
 
 export default async function CalendarPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ homeId: string }>
+  searchParams: Promise<{ filter?: string }>
 }) {
   const { homeId } = await params
+  const { filter } = await searchParams
+  const myTasksOnly = filter === 'mine'
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -30,7 +36,8 @@ export default async function CalendarPage({
       .from('scheduled_tasks')
       .select(`
         *,
-        appliance:appliances(id, name, room_id, rooms(id, name))
+        appliance:appliances(id, name, room_id, rooms(id, name)),
+        assignee:profiles!assigned_to(id, full_name, email)
       `)
       .eq('home_id', homeId)
       .order('due_date'),
@@ -42,11 +49,16 @@ export default async function CalendarPage({
   const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   const allTasks = tasks || []
-  const pending = allTasks.filter(t => ['pending', 'in_progress'].includes(t.status))
+
+  const displayTasks = myTasksOnly
+    ? allTasks.filter(t => t.assigned_to === user.id || t.assigned_to === null)
+    : allTasks
+
+  const pending = displayTasks.filter(t => ['pending', 'in_progress'].includes(t.status))
   const overdue = pending.filter(t => t.due_date < today)
   const upcoming = pending.filter(t => t.due_date >= today && t.due_date <= thirtyDays)
   const future = pending.filter(t => t.due_date > thirtyDays)
-  const completed = allTasks.filter(t => t.status === 'completed')
+  const completed = displayTasks.filter(t => t.status === 'completed')
 
   const canManage = ['owner', 'manager'].includes(membership.role)
 
@@ -62,7 +74,8 @@ export default async function CalendarPage({
       </div>
 
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Maintenance Calendar</h1>
+        <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Maintenance Calendar</h1>
+        <MyTasksFilter active={myTasksOnly} />
       </div>
 
       {/* Summary cards */}
@@ -95,10 +108,10 @@ export default async function CalendarPage({
 
       {/* Task lists */}
       <div className="mt-8">
-        {allTasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-slate-200">
+        {displayTasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-[#C8BFB2]">
             <Calendar size={40} className="text-slate-300 mb-4" />
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">No tasks scheduled</h3>
+            <h3 className="font-playfair text-lg font-semibold text-slate-700 mb-2">No tasks scheduled</h3>
             <p className="text-sm text-slate-500 max-w-sm">
               Visit an appliance and use AI suggestions or add tasks manually to start building your maintenance schedule.
             </p>
@@ -111,6 +124,7 @@ export default async function CalendarPage({
             completed={completed.slice(0, 10)}
             homeId={homeId}
             canManage={canManage}
+            userId={user.id}
           />
         )}
       </div>

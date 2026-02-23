@@ -83,10 +83,10 @@ export default function ServiceHistorySection({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+    <div className="bg-white rounded-2xl border border-[#C8BFB2]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0D9D0]">
         <div>
-          <h2 className="font-semibold text-slate-900">Service History</h2>
+          <h2 className="font-semibold text-[#2F3437]">Service History</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             {serviceRecords.length === 0 ? 'No records yet' : `${serviceRecords.length} record${serviceRecords.length !== 1 ? 's' : ''}`}
           </p>
@@ -94,7 +94,7 @@ export default function ServiceHistorySection({
         {canManage && (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-1.5 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-[#5B6C8F] hover:text-[#4a5c77] transition-colors"
           >
             <Plus size={15} />
             Add Record
@@ -104,7 +104,7 @@ export default function ServiceHistorySection({
 
       {/* Add form */}
       {showForm && (
-        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50">
+        <div className="px-6 py-5 border-b border-[#E0D9D0] bg-[#F4F1EA]">
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -114,7 +114,7 @@ export default function ServiceHistorySection({
                   value={form.service_date}
                   onChange={e => update('service_date', e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
                 />
               </div>
               <div>
@@ -122,7 +122,7 @@ export default function ServiceHistorySection({
                 <select
                   value={form.service_type}
                   onChange={e => update('service_type', e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
                 >
                   {Object.entries(SERVICE_TYPE_LABELS).map(([val, label]) => (
                     <option key={val} value={val}>{label}</option>
@@ -139,7 +139,7 @@ export default function ServiceHistorySection({
                 placeholder="What was done?"
                 required
                 rows={2}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] resize-none"
               />
             </div>
 
@@ -151,7 +151,7 @@ export default function ServiceHistorySection({
                   value={form.provider}
                   onChange={e => update('provider', e.target.value)}
                   placeholder="Company name"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                 />
               </div>
               <div>
@@ -163,7 +163,7 @@ export default function ServiceHistorySection({
                   placeholder="0.00"
                   min={0}
                   step={0.01}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                 />
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function ServiceHistorySection({
                   value={form.technician}
                   onChange={e => update('technician', e.target.value)}
                   placeholder="Name"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                 />
               </div>
               <div>
@@ -185,7 +185,7 @@ export default function ServiceHistorySection({
                   type="date"
                   value={form.next_service_date}
                   onChange={e => update('next_service_date', e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                 />
               </div>
             </div>
@@ -194,14 +194,14 @@ export default function ServiceHistorySection({
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="flex-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors"
+                className="flex-1 px-4 py-2 rounded-lg border border-[#C8BFB2] text-slate-700 text-sm font-medium hover:bg-[#F4F1EA] transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading || !form.description.trim()}
-                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 {loading ? 'Saving...' : 'Save Record'}
               </button>
@@ -231,13 +231,13 @@ export default function ServiceHistorySection({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 w-2 h-2 rounded-full bg-teal-400 flex-shrink-0 mt-2" />
+                      <div className="mt-0.5 w-2 h-2 rounded-full bg-[#7a8fa8] flex-shrink-0 mt-2" />
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${serviceTypeColors[record.service_type]}`}>
                             {SERVICE_TYPE_LABELS[record.service_type]}
                           </span>
-                          <span className="text-sm font-medium text-slate-800">
+                          <span className="text-sm font-medium text-[#2F3437]">
                             {record.description.length > 60
                               ? record.description.slice(0, 60) + '...'
                               : record.description}
@@ -267,7 +267,7 @@ export default function ServiceHistorySection({
                 </button>
 
                 {isExpanded && (
-                  <div className="mt-3 ml-5 pl-3 border-l-2 border-slate-100 flex flex-col gap-2">
+                  <div className="mt-3 ml-5 pl-3 border-l-2 border-[#E0D9D0] flex flex-col gap-2">
                     {record.technician && (
                       <p className="text-xs text-slate-600">
                         <span className="font-medium">Technician:</span> {record.technician}

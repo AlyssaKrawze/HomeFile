@@ -16,6 +16,7 @@ import {
   Bell,
   BookOpen,
   Download,
+  Lock,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -44,18 +45,19 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
     { href: `/dashboard/homes/${currentHomeId}/calendar`, label: 'Calendar', icon: Calendar },
     { href: `/dashboard/homes/${currentHomeId}/alerts`, label: 'Alerts', icon: Bell },
     { href: `/dashboard/homes/${currentHomeId}/members`, label: 'Members', icon: Users },
+    { href: `/dashboard/homes/${currentHomeId}/vault`, label: 'Vault', icon: Lock },
     { href: `/dashboard/homes/${currentHomeId}/settings`, label: 'Settings', icon: Settings },
   ] : []
 
   return (
-    <aside className="w-64 bg-slate-900 flex flex-col h-full flex-shrink-0">
+    <aside className="w-64 bg-[#1e2635] flex flex-col h-full flex-shrink-0">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-slate-800">
+      <div className="px-5 py-5 border-b border-[#2d3a52]">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[#5B6C8F] flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-base">H</span>
           </div>
-          <span className="text-white font-semibold text-lg">HomeFile</span>
+          <span className="text-white font-semibold text-lg" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>HomeFile</span>
         </Link>
       </div>
 
@@ -68,7 +70,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
             </span>
             <Link
               href="/dashboard"
-              className="text-slate-400 hover:text-teal-400 transition-colors"
+              className="text-slate-400 hover:text-[#7a8fa8] transition-colors"
               title="Manage homes"
             >
               <Plus size={14} />
@@ -84,8 +86,8 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
                   href={`/dashboard/homes/${home.id}`}
                   className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors group ${
                     isActive
-                      ? 'bg-slate-700 text-white'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-[#2d3a52] text-white'
+                      : 'text-slate-300 hover:bg-[#2d3a52] hover:text-white'
                   }`}
                 >
                   <span className="text-base">🏠</span>
@@ -104,7 +106,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
 
         {/* Home navigation - only shown when inside a home */}
         {currentHomeId && (
-          <div className="px-3 mt-4 border-t border-slate-800 pt-4">
+          <div className="px-3 mt-4 border-t border-[#2d3a52] pt-4">
             <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider px-2 mb-2 block">
               {homes.find(h => h.id === currentHomeId)?.name || 'Home'}
             </span>
@@ -118,8 +120,8 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
                     href={item.href}
                     className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
-                        ? 'bg-teal-600 text-white'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                        ? 'bg-[#5B6C8F] text-white'
+                        : 'text-slate-400 hover:bg-[#2d3a52] hover:text-white'
                     }`}
                   >
                     <Icon size={15} />
@@ -130,7 +132,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
               <a
                 href={`/api/homes/${currentHomeId}/binder`}
                 download
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-400 hover:bg-[#2d3a52] hover:text-white"
               >
                 <BookOpen size={15} />
                 <span>Home Binder</span>
@@ -145,7 +147,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
         <a
           href="/api/guide"
           download
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-500 hover:bg-slate-800 hover:text-white"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-500 hover:bg-[#2d3a52] hover:text-white"
         >
           <Download size={14} />
           <span>Getting Started Guide</span>
@@ -153,9 +155,9 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
       </div>
 
       {/* User + sign out */}
-      <div className="px-3 py-4 border-t border-slate-800">
+      <div className="px-3 py-4 border-t border-[#2d3a52]">
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg">
-          <div className="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#5B6C8F] flex items-center justify-center flex-shrink-0">
             <span className="text-white text-xs font-bold">
               {(userName || 'U').charAt(0).toUpperCase()}
             </span>

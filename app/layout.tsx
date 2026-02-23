@@ -1,15 +1,22 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import RegisterSW from '@/components/pwa/register-sw'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const playfairDisplay = Playfair_Display({
+  variable: '--font-playfair-display',
+  subsets: ['latin'],
+  display: 'swap',
 })
 
 export const viewport: Viewport = {
-  themeColor: '#0d9488',
+  themeColor: '#5B6C8F',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -29,7 +36,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfairDisplay.variable} antialiased`}>
         {children}
         <RegisterSW />
       </body>

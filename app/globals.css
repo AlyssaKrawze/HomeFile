@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
+  --color-background: #F4F1EA;
+  --color-foreground: #2F3437;
   --color-card: #ffffff;
-  --color-sidebar: #0f172a;
-  --color-primary: #0d9488;
-  --color-primary-hover: #0f766e;
-  --color-border: #e2e8f0;
-  --font-sans: var(--font-geist-sans);
+  --color-sidebar: #1e2635;
+  --color-primary: #5B6C8F;
+  --color-primary-hover: #4a5c77;
+  --color-border: #C8BFB2;
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+  --font-playfair: var(--font-playfair-display);
 }
 
 * {
@@ -19,8 +20,23 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Playfair Display for headings */
+h1, h2 {
+  font-family: var(--font-playfair-display), 'Playfair Display', Georgia, serif;
+}
+
+/* Utility class for Playfair Display */
+.font-playfair {
+  font-family: var(--font-playfair-display), 'Playfair Display', Georgia, serif;
+}
+
+/* Deep charcoal text utility */
+.text-charcoal {
+  color: #2F3437;
 }
 
 /* Scrollbar styling */
@@ -32,9 +48,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #C8BFB2;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a89e92;
 }

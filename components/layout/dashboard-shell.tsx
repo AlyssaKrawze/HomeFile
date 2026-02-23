@@ -21,7 +21,7 @@ export default function DashboardShell({
   children,
 }: DashboardShellProps) {
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-[#F4F1EA]">
       {/* ── Sidebar (hidden on mobile) ───────────────────── */}
       <div className="hidden lg:flex flex-shrink-0">
         <Sidebar homes={homes} userName={userName} />
@@ -29,14 +29,14 @@ export default function DashboardShell({
 
       {/* ── Mobile top bar ──────────────────────────────── */}
       <div
-        className="lg:hidden fixed top-0 left-0 right-0 z-30 h-12 flex items-center px-4 bg-white border-b border-slate-100"
+        className="lg:hidden fixed top-0 left-0 right-0 z-30 h-12 flex items-center px-4 bg-[#F4F1EA] border-b border-[#C8BFB2]"
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-teal-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-[#5B6C8F] flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">H</span>
           </div>
-          <span className="font-semibold text-slate-900 text-base">HomeFile</span>
+          <span className="font-semibold text-[#2F3437] text-base" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>HomeFile</span>
         </Link>
       </div>
 

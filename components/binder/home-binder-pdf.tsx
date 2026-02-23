@@ -30,7 +30,7 @@ export interface HomeForBinder {
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 
-const TEAL = '#0d9488'
+const TEAL = '#5B6C8F'
 const SLATE_900 = '#0f172a'
 const SLATE_700 = '#334155'
 const SLATE_500 = '#64748b'

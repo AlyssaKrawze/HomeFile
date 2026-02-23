@@ -38,8 +38,8 @@ export default async function MembersPage({
   const ROLE_DESCRIPTIONS: Record<string, { label: string; color: string; bg: string; description: string }> = {
     owner: {
       label: 'Owner',
-      color: 'text-teal-700',
-      bg: 'bg-teal-100',
+      color: 'text-[#4a5c77]',
+      bg: 'bg-[#dce4ef]',
       description: 'Full access — manage everything including members and settings',
     },
     manager: {
@@ -73,9 +73,9 @@ export default async function MembersPage({
       </div>
 
       <div className="flex items-center justify-between mb-8 gap-3">
-        <h1 className="text-2xl font-bold text-slate-900">Members &amp; Access</h1>
+        <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Members &amp; Access</h1>
         {isOwner && (
-          <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors flex-shrink-0">
+          <button className="flex items-center gap-2 bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors flex-shrink-0">
             <Users size={15} />
             <span className="hidden sm:inline">Invite Member</span>
             <span className="sm:hidden">Invite</span>
@@ -84,9 +84,9 @@ export default async function MembersPage({
       </div>
 
       {/* Current members */}
-      <div className="bg-white rounded-2xl border border-slate-200 mb-6">
-        <div className="px-4 py-4 sm:px-6 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+        <div className="px-4 py-4 sm:px-6 border-b border-[#E0D9D0]">
+          <h2 className="font-semibold text-[#2F3437]">
             Current Members ({(members || []).length})
           </h2>
         </div>
@@ -96,13 +96,13 @@ export default async function MembersPage({
             const role = ROLE_DESCRIPTIONS[member.role] || ROLE_DESCRIPTIONS.limited
             return (
               <div key={member.id} className="px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4">
-                <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-teal-700">
+                <div className="w-9 h-9 rounded-full bg-[#dce4ef] flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-[#4a5c77]">
                     {(profile?.full_name || profile?.email || 'U').charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-[#2F3437]">
                     {profile?.full_name || profile?.email || 'Unknown user'}
                     {member.user_id === user.id && (
                       <span className="text-xs text-slate-400 ml-1">(you)</span>
@@ -129,16 +129,16 @@ export default async function MembersPage({
       </div>
 
       {/* Role descriptions */}
-      <div className="bg-white rounded-2xl border border-slate-200 mb-6">
-        <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">Roles</h2>
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+        <div className="px-6 py-4 border-b border-[#E0D9D0]">
+          <h2 className="font-semibold text-[#2F3437]">Roles</h2>
         </div>
         <div className="divide-y divide-slate-100">
           {Object.entries(ROLE_DESCRIPTIONS).map(([key, role]) => (
             <div key={key} className="px-4 py-3 sm:px-6 sm:py-4 flex items-start gap-3">
               <Shield size={16} className={`mt-0.5 ${role.color} flex-shrink-0`} />
               <div>
-                <p className="text-sm font-medium text-slate-800">{role.label}</p>
+                <p className="text-sm font-medium text-[#2F3437]">{role.label}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{role.description}</p>
               </div>
             </div>
@@ -147,9 +147,9 @@ export default async function MembersPage({
       </div>
 
       {/* Role templates */}
-      <div className="bg-white rounded-2xl border border-slate-200">
-        <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">Role Templates</h2>
+      <div className="bg-white rounded-2xl border border-[#C8BFB2]">
+        <div className="px-6 py-4 border-b border-[#E0D9D0]">
+          <h2 className="font-semibold text-[#2F3437]">Role Templates</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Pre-configured permission sets for common roles — fully editable after assignment.
           </p>
@@ -159,7 +159,7 @@ export default async function MembersPage({
             <div key={template.name} className="px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3">
               <span className="text-xl">{template.icon}</span>
               <div className="flex-1">
-                <p className="text-sm font-medium text-slate-800">{template.name}</p>
+                <p className="text-sm font-medium text-[#2F3437]">{template.name}</p>
                 <p className="text-xs text-slate-500">{template.description}</p>
               </div>
             </div>

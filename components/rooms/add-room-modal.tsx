@@ -52,9 +52,9 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
   const triggerEl = trigger === 'card' ? (
     <button
       onClick={() => setOpen(true)}
-      className="flex flex-col items-center gap-3 text-slate-400 hover:text-teal-600 transition-colors"
+      className="flex flex-col items-center gap-3 text-slate-400 hover:text-[#5B6C8F] transition-colors"
     >
-      <div className="w-11 h-11 rounded-xl border-2 border-dashed border-slate-300 hover:border-teal-400 flex items-center justify-center transition-colors">
+      <div className="w-11 h-11 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#7a8fa8] flex items-center justify-center transition-colors">
         <Plus size={18} />
       </div>
       <span className="text-xs font-medium">Add room</span>
@@ -62,7 +62,7 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
   ) : (
     <button
       onClick={() => setOpen(true)}
-      className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+      className="flex items-center gap-2 bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
     >
       <Plus size={15} />
       Add Room
@@ -77,8 +77,8 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h2 className="text-lg font-semibold text-slate-900">Add a Room</h2>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#E0D9D0]">
+              <h2 className="font-playfair text-lg font-semibold text-[#2F3437]">Add a Room</h2>
               <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
@@ -95,7 +95,7 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
                   onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))}
                   placeholder="e.g. Main Kitchen, Master Bathroom"
                   required
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                 />
               </div>
 
@@ -109,8 +109,8 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
                       onClick={() => setForm(p => ({ ...p, category: key }))}
                       className={`flex flex-col items-center gap-1.5 p-2.5 rounded-xl border text-xs font-medium transition-all ${
                         form.category === key
-                          ? 'border-teal-400 bg-teal-50 text-teal-700'
-                          : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                          ? 'border-[#7a8fa8] bg-[#eef1f6] text-[#4a5c77]'
+                          : 'border-[#C8BFB2] text-slate-600 hover:border-slate-300 hover:bg-[#F4F1EA]'
                       }`}
                     >
                       <span className="text-base">{cat.icon}</span>
@@ -125,7 +125,7 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
                 <select
                   value={form.floor}
                   onChange={(e) => setForm(p => ({ ...p, floor: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
                 >
                   <option value="0">Basement</option>
                   <option value="1">Ground floor (1st)</option>
@@ -143,14 +143,14 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors"
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-slate-700 text-sm font-medium hover:bg-[#F4F1EA] transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !form.name.trim()}
-                  className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+                  className="flex-1 bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
                   {loading ? 'Adding...' : 'Add Room'}
                 </button>

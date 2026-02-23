@@ -159,7 +159,16 @@ export interface ScheduledTask {
   recurring_interval: number | null
   created_at: string
   created_by: string | null
+  assigned_to: string | null
+  assignee?: { id: string; full_name: string | null; email: string | null; avatar_url: string | null }
   appliance?: Appliance
+}
+
+export interface TaskAssigneeMember {
+  user_id: string
+  full_name: string | null
+  email: string | null
+  avatar_url: string | null
 }
 
 export interface AISuggestion {
@@ -197,6 +206,37 @@ export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
   inspection: 'Inspection',
   replacement: 'Replacement',
   installation: 'Installation',
+}
+
+export type VaultCategory = 'wifi' | 'alarm' | 'garage' | 'gate' | 'custom'
+
+export const VAULT_CATEGORY_META: Record<VaultCategory, { label: string }> = {
+  wifi: { label: 'WiFi' },
+  alarm: { label: 'Alarm Code' },
+  garage: { label: 'Garage Code' },
+  gate: { label: 'Gate Code' },
+  custom: { label: 'Custom' },
+}
+
+export interface VaultEncryptedField {
+  ciphertext: string
+  iv: string
+  authTag: string
+}
+
+export interface VaultEntryDecrypted {
+  id: string
+  home_id: string
+  category: VaultCategory
+  label: string
+  notes: string | null
+  created_at: string
+  updated_at: string
+  ssid?: string
+  password?: string
+  code?: string
+  fieldLabel?: string
+  fieldValue?: string
 }
 
 export const PRIORITY_LABELS: Record<TaskPriority, { label: string; color: string; bg: string }> = {

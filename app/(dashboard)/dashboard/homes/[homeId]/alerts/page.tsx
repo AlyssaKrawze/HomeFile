@@ -48,7 +48,7 @@ export default async function AlertsPage({
           <Bell size={20} className="text-amber-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Home Alerts</h1>
+          <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Home Alerts</h1>
           <p className="text-sm text-slate-500">Seasonal maintenance warnings for {month}</p>
         </div>
       </div>

@@ -85,7 +85,7 @@ export default async function RoomPage({
             {cat.icon}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{room.name}</h1>
+            <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">{room.name}</h1>
             <p className={`text-sm font-medium mt-0.5 ${cat.color}`}>{cat.label}</p>
             {room.description && <p className="text-sm text-slate-500 mt-0.5">{room.description}</p>}
           </div>
@@ -118,7 +118,7 @@ export default async function RoomPage({
               <Link
                 key={appliance.id}
                 href={`/dashboard/homes/${homeId}/rooms/${roomId}/appliances/${appliance.id}`}
-                className="group bg-white rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all duration-200 p-5"
+                className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md transition-all duration-200 p-5"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2 mb-4">
@@ -144,7 +144,7 @@ export default async function RoomPage({
                   </div>
                 </div>
 
-                <h3 className="font-semibold text-slate-800 group-hover:text-teal-600 transition-colors">
+                <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors">
                   {appliance.name}
                 </h3>
                 {(appliance.brand || appliance.model) && (
@@ -200,7 +200,7 @@ export default async function RoomPage({
 
           {/* Add appliance card */}
           {canManage && (
-            <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 hover:border-teal-300 flex items-center justify-center min-h-40 transition-colors">
+            <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-40 transition-colors">
               <AddApplianceModal homeId={homeId} roomId={roomId} trigger="card" />
             </div>
           )}
@@ -210,7 +210,7 @@ export default async function RoomPage({
           <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-6 text-4xl">
             {cat.icon}
           </div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">
+          <h2 className="text-xl font-semibold text-[#2F3437] mb-2">
             No items in {room.name} yet
           </h2>
           <p className="text-slate-500 max-w-sm mb-8 text-sm leading-relaxed">

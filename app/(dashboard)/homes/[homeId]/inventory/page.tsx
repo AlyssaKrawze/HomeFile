@@ -77,7 +77,7 @@ export default async function InventoryPage({
 
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Full Inventory</h1>
+          <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Full Inventory</h1>
           <p className="text-slate-500 text-sm mt-1">
             {(appliances || []).length} item{(appliances || []).length !== 1 ? 's' : ''} tracked across {Object.keys(byRoom).length} room{Object.keys(byRoom).length !== 1 ? 's' : ''}
           </p>
@@ -85,15 +85,15 @@ export default async function InventoryPage({
       </div>
 
       {(appliances || []).length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-200">
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-[#C8BFB2]">
           <span className="text-5xl mb-4">📦</span>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">No items tracked yet</h2>
+          <h2 className="text-xl font-semibold text-[#2F3437] mb-2">No items tracked yet</h2>
           <p className="text-slate-500 text-sm max-w-sm mb-6">
             Go to a room and start adding your appliances, systems, and fixtures.
           </p>
           <Link
             href={`/dashboard/homes/${homeId}`}
-            className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+            className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
           >
             Go to rooms
           </Link>
@@ -115,7 +115,7 @@ export default async function InventoryPage({
                   </div>
                   <Link
                     href={`/dashboard/homes/${homeId}/rooms/${roomId}`}
-                    className="font-semibold text-slate-700 hover:text-teal-600 transition-colors"
+                    className="font-semibold text-slate-700 hover:text-[#5B6C8F] transition-colors"
                   >
                     {room.name}
                   </Link>
@@ -124,7 +124,7 @@ export default async function InventoryPage({
                   </span>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100">
+                <div className="bg-white rounded-2xl border border-[#C8BFB2] divide-y divide-slate-100">
                   {items.map((appliance) => {
                     const lastService = lastServiceByAppliance[appliance.id]
                     const warrantyDate = appliance.warranty_expiry ? new Date(appliance.warranty_expiry) : null
@@ -137,7 +137,7 @@ export default async function InventoryPage({
                       <Link
                         key={appliance.id}
                         href={`/dashboard/homes/${homeId}/rooms/${roomId}/appliances/${appliance.id}`}
-                        className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 hover:bg-slate-50 transition-colors group"
+                        className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 hover:bg-[#F4F1EA] transition-colors group"
                       >
                         <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
                           🔧
@@ -145,7 +145,7 @@ export default async function InventoryPage({
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-medium text-slate-800 group-hover:text-teal-600 transition-colors">
+                            <span className="text-sm font-medium text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors">
                               {appliance.name}
                             </span>
                             {appliance.brand && (
@@ -192,7 +192,7 @@ export default async function InventoryPage({
                           </span>
                         </div>
 
-                        <ChevronRight size={14} className="text-slate-300 group-hover:text-teal-500 flex-shrink-0 transition-colors" />
+                        <ChevronRight size={14} className="text-slate-300 group-hover:text-[#5B6C8F] flex-shrink-0 transition-colors" />
                       </Link>
                     )
                   })}

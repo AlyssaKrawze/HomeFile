@@ -41,7 +41,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Homes</h1>
+          <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">My Homes</h1>
           <p className="text-slate-500 text-sm mt-1">
             {homes.length === 0
               ? 'Add your first home to get started.'
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
             <Link
               key={home.id as string}
               href={`/dashboard/homes/${home.id as string}`}
-              className="group bg-white rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all duration-200 overflow-hidden"
+              className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-lg transition-all duration-200 overflow-hidden"
             >
               {/* Home image area */}
               <div className="h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative">
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
                 <div className="absolute top-3 right-3">
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                     home.member_role === 'owner'
-                      ? 'bg-teal-100 text-teal-700'
+                      ? 'bg-[#dce4ef] text-[#4a5c77]'
                       : home.member_role === 'manager'
                       ? 'bg-blue-100 text-blue-700'
                       : 'bg-slate-100 text-slate-600'
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
               <div className="p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-semibold text-slate-900 group-hover:text-teal-600 transition-colors">
+                    <h2 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors">
                       {home.name as string}
                     </h2>
                     {(home.address || home.city) && (
@@ -97,19 +97,19 @@ export default async function DashboardPage() {
                       </p>
                     )}
                   </div>
-                  <ChevronRight size={16} className="text-slate-400 group-hover:text-teal-500 flex-shrink-0 mt-0.5 transition-colors" />
+                  <ChevronRight size={16} className="text-slate-400 group-hover:text-[#5B6C8F] flex-shrink-0 mt-0.5 transition-colors" />
                 </div>
 
-                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[#E0D9D0]">
                   {home.year_built && (
                     <div className="text-center">
-                      <p className="text-lg font-bold text-slate-800">{String(home.year_built)}</p>
+                      <p className="text-lg font-bold text-[#2F3437]">{String(home.year_built)}</p>
                       <p className="text-xs text-slate-400">Built</p>
                     </div>
                   )}
                   {home.square_footage && (
                     <div className="text-center">
-                      <p className="text-lg font-bold text-slate-800">
+                      <p className="text-lg font-bold text-[#2F3437]">
                         {Number(home.square_footage).toLocaleString()}
                       </p>
                       <p className="text-xs text-slate-400">Sq ft</p>
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
 
 function AddHomeCard({ userId }: { userId: string }) {
   return (
-    <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 hover:border-teal-300 flex items-center justify-center min-h-48 transition-colors group cursor-pointer">
+    <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-48 transition-colors group cursor-pointer">
       <AddHomeModal userId={userId} trigger="card" />
     </div>
   )
@@ -144,7 +144,7 @@ function EmptyState({ userId }: { userId: string }) {
       <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-6">
         <Home size={36} className="text-slate-400" />
       </div>
-      <h2 className="text-xl font-semibold text-slate-800 mb-2">Add your first home</h2>
+      <h2 className="text-xl font-semibold text-[#2F3437] mb-2">Add your first home</h2>
       <p className="text-slate-500 max-w-md mb-8 text-sm leading-relaxed">
         HomeFile helps you track every appliance, schedule maintenance, store documents,
         and keep your home running smoothly.

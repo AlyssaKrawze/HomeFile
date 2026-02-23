@@ -31,7 +31,7 @@ export default function MobileNav({ }: MobileNavProps) {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F4F1EA] border-t border-[#C8BFB2]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-stretch">
@@ -56,7 +56,7 @@ export default function MobileNav({ }: MobileNavProps) {
               key={label}
               href={href}
               className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                active ? 'text-teal-600' : 'text-slate-400'
+                active ? 'text-[#5B6C8F]' : 'text-slate-400'
               }`}
             >
               <Icon size={22} strokeWidth={active ? 2.5 : 1.75} />

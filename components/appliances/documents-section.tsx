@@ -99,10 +99,10 @@ export default function DocumentsSection({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+    <div className="bg-white rounded-2xl border border-[#C8BFB2]">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#E0D9D0]">
         <div>
-          <h2 className="font-semibold text-slate-900">Documents</h2>
+          <h2 className="font-semibold text-[#2F3437]">Documents</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             {documents.length === 0 ? 'No files uploaded' : `${documents.length} file${documents.length !== 1 ? 's' : ''}`}
           </p>
@@ -110,7 +110,7 @@ export default function DocumentsSection({
         {canManage && (
           <button
             onClick={() => setShowUpload(!showUpload)}
-            className="flex items-center gap-1.5 text-xs font-medium text-teal-600 hover:text-teal-700 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium text-[#5B6C8F] hover:text-[#4a5c77] transition-colors"
           >
             <Upload size={13} />
             Upload
@@ -120,7 +120,7 @@ export default function DocumentsSection({
 
       {/* Upload form */}
       {showUpload && (
-        <div className="px-5 py-4 border-b border-slate-100 bg-slate-50">
+        <div className="px-5 py-4 border-b border-[#E0D9D0] bg-[#F4F1EA]">
           <form onSubmit={handleUpload} className="flex flex-col gap-3">
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">File *</label>
@@ -129,7 +129,7 @@ export default function DocumentsSection({
                 accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx"
                 onChange={e => setSelectedFile(e.target.files?.[0] || null)}
                 required
-                className="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-teal-600 file:text-white hover:file:bg-teal-700 file:cursor-pointer"
+                className="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#5B6C8F] file:text-white hover:file:bg-[#4a5c77] file:cursor-pointer"
               />
             </div>
             <div>
@@ -137,7 +137,7 @@ export default function DocumentsSection({
               <select
                 value={uploadForm.document_type}
                 onChange={e => setUploadForm(p => ({ ...p, document_type: e.target.value as DocumentType }))}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-xs focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
               >
                 {Object.entries(DOC_TYPE_LABELS).map(([val, label]) => (
                   <option key={val} value={val}>{label}</option>
@@ -151,21 +151,21 @@ export default function DocumentsSection({
                 value={uploadForm.description}
                 onChange={e => setUploadForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Optional note"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-xs focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
               />
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setShowUpload(false)}
-                className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-50"
+                className="flex-1 px-3 py-2 rounded-lg border border-[#C8BFB2] text-slate-700 text-xs font-medium hover:bg-[#F4F1EA]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={uploading || !selectedFile}
-                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-xs font-medium px-3 py-2 rounded-lg"
+                className="flex-1 bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white text-xs font-medium px-3 py-2 rounded-lg"
               >
                 {uploading ? 'Uploading...' : 'Upload'}
               </button>
@@ -189,7 +189,7 @@ export default function DocumentsSection({
                 {getFileIcon(doc.file_type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-800 truncate">{doc.name}</p>
+                <p className="text-sm font-medium text-[#2F3437] truncate">{doc.name}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${DOC_TYPE_COLORS[doc.document_type]}`}>
                     {DOC_TYPE_LABELS[doc.document_type]}
@@ -203,7 +203,7 @@ export default function DocumentsSection({
                 href={doc.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-400 hover:text-teal-600 transition-colors flex-shrink-0"
+                className="text-slate-400 hover:text-[#5B6C8F] transition-colors flex-shrink-0"
               >
                 <ExternalLink size={14} />
               </a>

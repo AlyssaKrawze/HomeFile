@@ -34,7 +34,7 @@ export default function LoginPage() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-slate-900 flex-col justify-between p-12">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
           <span className="text-white font-semibold text-xl">HomeFile</span>
@@ -64,13 +64,13 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-3 mb-10 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-slate-900 font-semibold text-xl">HomeFile</span>
+            <span className="text-[#2F3437] font-semibold text-xl">HomeFile</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h1>
+          <h1 className="text-3xl font-bold text-[#2F3437] mb-2">Welcome back</h1>
           <p className="text-slate-500 mb-8">Sign in to your HomeFile account</p>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -85,7 +85,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] focus:border-transparent transition"
               />
             </div>
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-slate-700" htmlFor="password">
                   Password
                 </label>
-                <Link href="/forgot-password" className="text-xs text-teal-600 hover:text-teal-700">
+                <Link href="/forgot-password" className="text-xs text-[#5B6C8F] hover:text-[#4a5c77]">
                   Forgot password?
                 </Link>
               </div>
@@ -105,7 +105,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] focus:border-transparent transition"
               />
             </div>
 
@@ -118,7 +118,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-colors"
+              className="w-full bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -126,7 +126,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-slate-500">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-teal-600 hover:text-teal-700 font-medium">
+            <Link href="/signup" className="text-[#5B6C8F] hover:text-[#4a5c77] font-medium">
               Create one free
             </Link>
           </p>

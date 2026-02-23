@@ -43,30 +43,30 @@ export default async function SettingsPage({
         <span className="text-slate-700 font-medium">Settings</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-slate-900 mb-8">Home Settings</h1>
+      <h1 className="font-playfair text-2xl font-bold text-[#2F3437] mb-8">Home Settings</h1>
 
       {/* Home details */}
-      <div className="bg-white rounded-2xl border border-slate-200 mb-6">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+        <div className="px-6 py-4 border-b border-[#E0D9D0] flex items-center gap-2">
           <Home size={16} className="text-slate-500" />
-          <h2 className="font-semibold text-slate-900">Home Details</h2>
+          <h2 className="font-semibold text-[#2F3437]">Home Details</h2>
         </div>
         <div className="p-4 sm:p-6 flex flex-col gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Home name</label>
-              <p className="text-sm text-slate-800">{home.name}</p>
+              <p className="text-sm text-[#2F3437]">{home.name}</p>
             </div>
             {home.year_built && (
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Year built</label>
-                <p className="text-sm text-slate-800">{home.year_built}</p>
+                <p className="text-sm text-[#2F3437]">{home.year_built}</p>
               </div>
             )}
             {home.address && (
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-slate-500 mb-1">Address</label>
-                <p className="text-sm text-slate-800">
+                <p className="text-sm text-[#2F3437]">
                   {[home.address, home.city, home.state, home.zip].filter(Boolean).join(', ')}
                 </p>
               </div>
@@ -74,7 +74,7 @@ export default async function SettingsPage({
             {home.square_footage && (
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Square footage</label>
-                <p className="text-sm text-slate-800">{home.square_footage.toLocaleString()} sq ft</p>
+                <p className="text-sm text-[#2F3437]">{home.square_footage.toLocaleString()} sq ft</p>
               </div>
             )}
           </div>
@@ -87,9 +87,9 @@ export default async function SettingsPage({
       </div>
 
       {/* Notification settings */}
-      <div className="bg-white rounded-2xl border border-slate-200 mb-6">
-        <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">Notifications</h2>
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+        <div className="px-6 py-4 border-b border-[#E0D9D0]">
+          <h2 className="font-semibold text-[#2F3437]">Notifications</h2>
           <p className="text-xs text-slate-500 mt-0.5">Default alert schedule for upcoming tasks</p>
         </div>
         <div className="p-4 sm:p-6 flex flex-col gap-4">
@@ -100,7 +100,7 @@ export default async function SettingsPage({
           ].map((notif) => (
             <div key={notif.label} className="flex items-center justify-between">
               <span className="text-sm text-slate-700">{notif.label}</span>
-              <div className={`w-10 h-5 rounded-full transition-colors ${notif.enabled ? 'bg-teal-500' : 'bg-slate-200'} flex items-center px-0.5`}>
+              <div className={`w-10 h-5 rounded-full transition-colors ${notif.enabled ? 'bg-[#5B6C8F]' : 'bg-slate-200'} flex items-center px-0.5`}>
                 <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${notif.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
               </div>
             </div>
@@ -109,14 +109,14 @@ export default async function SettingsPage({
       </div>
 
       {/* Members — visible on mobile since Members isn't a bottom tab */}
-      <div className="lg:hidden bg-white rounded-2xl border border-slate-200 mb-6">
+      <div className="lg:hidden bg-white rounded-2xl border border-[#C8BFB2] mb-6">
         <Link
           href={`/dashboard/homes/${homeId}/members`}
-          className="flex items-center gap-3 px-5 py-4 hover:bg-slate-50 transition-colors rounded-2xl"
+          className="flex items-center gap-3 px-5 py-4 hover:bg-[#F4F1EA] transition-colors rounded-2xl"
         >
           <Users size={16} className="text-slate-500 flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-slate-800">Members &amp; Access</p>
+            <p className="text-sm font-medium text-[#2F3437]">Members &amp; Access</p>
             <p className="text-xs text-slate-500 mt-0.5">Manage who can view or edit this home</p>
           </div>
           <ChevronRight size={15} className="text-slate-400 flex-shrink-0" />
@@ -132,7 +132,7 @@ export default async function SettingsPage({
           <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-slate-800">Delete this home</p>
+                <p className="text-sm font-medium text-[#2F3437]">Delete this home</p>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Permanently delete all rooms, items, records, and documents.
                 </p>
@@ -147,10 +147,10 @@ export default async function SettingsPage({
       )}
 
       {/* Account — sign out (mobile only) */}
-      <div className="lg:hidden bg-white rounded-2xl border border-slate-200">
+      <div className="lg:hidden bg-white rounded-2xl border border-[#C8BFB2]">
         <div className="px-5 py-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-800">Account</p>
+            <p className="text-sm font-medium text-[#2F3437]">Account</p>
             <p className="text-xs text-slate-500 mt-0.5">Sign out of HomeFile</p>
           </div>
           <SignOutButton />

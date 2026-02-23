@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, CheckCircle2, Clock, AlertTriangle, Check, Trash2, Loader2 } from 'lucide-react'
-import { PRIORITY_LABELS, type ScheduledTask, type TaskPriority } from '@/lib/types'
+import { PRIORITY_LABELS, type ScheduledTask, type TaskPriority, type UserRole, type TaskAssigneeMember } from '@/lib/types'
 
 interface ScheduledTasksSectionProps {
   applianceId: string
@@ -12,10 +12,12 @@ interface ScheduledTasksSectionProps {
   tasks: ScheduledTask[]
   canManage: boolean
   userId: string
+  userRole: UserRole
+  members: TaskAssigneeMember[]
 }
 
 export default function ScheduledTasksSection({
-  applianceId, homeId, tasks, canManage, userId
+  applianceId, homeId, tasks, canManage, userId, userRole, members
 }: ScheduledTasksSectionProps) {
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -26,6 +28,7 @@ export default function ScheduledTasksSection({
     description: '',
     due_date: '',
     priority: 'medium' as TaskPriority,
+    assigned_to: '',
   })
   const router = useRouter()
   const supabase = createClient()
@@ -44,10 +47,11 @@ export default function ScheduledTasksSection({
       priority: form.priority,
       source: 'manual',
       created_by: userId,
+      assigned_to: form.assigned_to || null,
     })
 
     setShowForm(false)
-    setForm({ title: '', description: '', due_date: '', priority: 'medium' })
+    setForm({ title: '', description: '', due_date: '', priority: 'medium', assigned_to: '' })
     setLoading(false)
     router.refresh()
   }
@@ -77,21 +81,26 @@ export default function ScheduledTasksSection({
   const completed = tasks.filter(t => t.status === 'completed')
   const today = new Date().toISOString().split('T')[0]
 
+  // Members available in the assign-to dropdown
+  const assignableMembers = userRole === 'limited'
+    ? members.filter(m => m.user_id === userId)
+    : members
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200">
+    <div className="bg-white rounded-2xl border border-[#C8BFB2]">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0D9D0]">
         <div>
-          <h2 className="font-semibold text-slate-900">Maintenance Schedule</h2>
+          <h2 className="font-semibold text-[#2F3437]">Maintenance Schedule</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             {pending.length === 0 ? 'No pending tasks' : `${pending.length} pending`}
             {completed.length > 0 && ` · ${completed.length} completed`}
           </p>
         </div>
-        {canManage && (
+        {(canManage || userRole === 'limited') && (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-1.5 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-[#5B6C8F] hover:text-[#4a5c77] transition-colors"
           >
             <CalendarPlus size={15} />
             Add to Calendar
@@ -101,7 +110,7 @@ export default function ScheduledTasksSection({
 
       {/* Add-to-calendar form */}
       {showForm && (
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
+        <div className="px-6 py-4 border-b border-[#E0D9D0] bg-[#F4F1EA]">
           <p className="text-xs text-slate-500 mb-3">
             This task will appear on your Maintenance Calendar.
           </p>
@@ -114,7 +123,7 @@ export default function ScheduledTasksSection({
                 onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
                 placeholder="e.g. Replace HVAC filter"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -125,7 +134,7 @@ export default function ScheduledTasksSection({
                   value={form.due_date}
                   onChange={e => setForm(p => ({ ...p, due_date: e.target.value }))}
                   required
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
                 />
               </div>
               <div>
@@ -133,7 +142,7 @@ export default function ScheduledTasksSection({
                 <select
                   value={form.priority}
                   onChange={e => setForm(p => ({ ...p, priority: e.target.value as TaskPriority }))}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
                 >
                   {Object.entries(PRIORITY_LABELS).map(([val, meta]) => (
                     <option key={val} value={val}>{meta.label}</option>
@@ -141,18 +150,36 @@ export default function ScheduledTasksSection({
                 </select>
               </div>
             </div>
+            {assignableMembers.length > 0 && (
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Assign to</label>
+                <select
+                  value={form.assigned_to}
+                  onChange={e => setForm(p => ({ ...p, assigned_to: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
+                >
+                  <option value="">Unassigned</option>
+                  {assignableMembers.map(m => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.full_name || m.email || m.user_id}
+                      {m.user_id === userId ? ' (you)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="flex-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50"
+                className="flex-1 px-4 py-2 rounded-lg border border-[#C8BFB2] text-slate-700 text-sm font-medium hover:bg-[#F4F1EA]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium px-4 py-2 rounded-lg"
+                className="flex-1 flex items-center justify-center gap-1.5 bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white text-sm font-medium px-4 py-2 rounded-lg"
               >
                 {loading ? (
                   <Loader2 size={14} className="animate-spin" />
@@ -183,6 +210,7 @@ export default function ScheduledTasksSection({
               const priority = PRIORITY_LABELS[task.priority]
               const isCompleting = completing === task.id
               const isDeleting = deleting === task.id
+              const canComplete = canManage || task.assigned_to === userId
 
               return (
                 <div
@@ -192,7 +220,7 @@ export default function ScheduledTasksSection({
                   {/* Task header row */}
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2 flex-wrap min-w-0">
-                      <span className={`text-sm font-semibold leading-snug ${isOverdue ? 'text-red-800' : 'text-slate-800'}`}>
+                      <span className={`text-sm font-semibold leading-snug ${isOverdue ? 'text-red-800' : 'text-[#2F3437]'}`}>
                         {task.title}
                       </span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${priority.bg} ${priority.color}`}>
@@ -222,7 +250,7 @@ export default function ScheduledTasksSection({
                   )}
 
                   {/* Due date */}
-                  <div className="flex items-center gap-1.5 mb-3">
+                  <div className="flex items-center gap-1.5 mb-2">
                     {isOverdue ? (
                       <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />
                     ) : (
@@ -236,8 +264,24 @@ export default function ScheduledTasksSection({
                     </span>
                   </div>
 
+                  {/* Assignee display */}
+                  {task.assigned_to && task.assignee && (
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-4 h-4 rounded-full bg-[#dce4ef] flex items-center justify-center">
+                        <span className="text-[9px] font-bold text-[#4a5c77]">
+                          {(task.assignee.full_name || task.assignee.email || 'U').charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <span className="text-xs text-slate-500">
+                        {task.assigned_to === userId
+                          ? 'Assigned to you'
+                          : `Assigned to ${task.assignee.full_name || task.assignee.email}`}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Mark Complete button */}
-                  {canManage && (
+                  {canComplete && (
                     <button
                       onClick={() => markComplete(task.id)}
                       disabled={isCompleting}
@@ -265,7 +309,7 @@ export default function ScheduledTasksSection({
 
             {/* ── Completed tasks ───────────────────────── */}
             {completed.length > 0 && (
-              <div className="px-5 py-3 bg-slate-50/60">
+              <div className="px-5 py-3 bg-[#F4F1EA]/60">
                 <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
                   Completed
                 </p>

@@ -64,7 +64,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
     if (task.due_date < todayStr) return 'bg-red-400'
     if (task.priority === 'urgent') return 'bg-red-400'
     if (task.priority === 'high') return 'bg-amber-400'
-    return 'bg-teal-400'
+    return 'bg-[#7a8fa8]'
   }
 
   const cells: (number | null)[] = [
@@ -74,7 +74,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
   while (cells.length % 7 !== 0) cells.push(null)
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-6">
+    <div className="bg-white rounded-2xl border border-[#C8BFB2] p-3 sm:p-6">
       {/* Calendar header */}
       <div className="flex items-center justify-between mb-4">
         <button
@@ -83,7 +83,7 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
         >
           <ChevronLeft size={18} />
         </button>
-        <h2 className="text-base font-semibold text-slate-800">
+        <h2 className="text-base font-semibold text-[#2F3437]">
           {MONTHS[viewDate.month]} {viewDate.year}
         </h2>
         <button
@@ -119,14 +119,14 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
               key={dateStr}
               className={`h-12 sm:h-16 rounded-lg sm:rounded-xl p-1 sm:p-1.5 border transition-colors ${
                 isToday
-                  ? 'bg-teal-50 border-teal-300'
+                  ? 'bg-[#eef1f6] border-[#9ab0c4]'
                   : dayTasks.length > 0
-                  ? 'bg-slate-50 border-slate-200'
+                  ? 'bg-[#F4F1EA] border-[#C8BFB2]'
                   : 'border-transparent'
               }`}
             >
               <span className={`text-[11px] sm:text-xs font-medium block leading-none ${
-                isToday ? 'text-teal-700' : 'text-slate-600'
+                isToday ? 'text-[#4a5c77]' : 'text-slate-600'
               }`}>
                 {day}
               </span>
@@ -150,9 +150,9 @@ export default function CalendarView({ tasks }: CalendarViewProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-slate-100">
+      <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-[#E0D9D0]">
         <div className="flex items-center gap-1.5 text-xs text-slate-500">
-          <div className="w-2.5 h-2.5 rounded-full bg-teal-400 flex-shrink-0" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#7a8fa8] flex-shrink-0" />
           Pending
         </div>
         <div className="flex items-center gap-1.5 text-xs text-slate-500">

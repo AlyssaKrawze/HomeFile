@@ -2,10 +2,10 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 
 // ── Palette ───────────────────────────────────────────────────────────────────
 
-const TEAL        = '#0d9488'
-const TEAL_DARK   = '#0f766e'
-const TEAL_LIGHT  = '#ccfbf1'
-const SLATE_900   = '#0f172a'
+const TEAL        = '#5B6C8F'
+const TEAL_DARK   = '#4a5c77'
+const TEAL_LIGHT  = '#dce4ef'
+const SLATE_900   = '#2F3437'
 const SLATE_700   = '#334155'
 const SLATE_500   = '#64748b'
 const SLATE_200   = '#e2e8f0'

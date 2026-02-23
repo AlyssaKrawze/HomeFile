@@ -114,11 +114,11 @@ export default function AISuggestionsSection({
   const visibleSuggestions = suggestions.filter((_, i) => !dismissed.has(i))
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200">
-      <div className="px-5 py-4 border-b border-slate-100">
+    <div className="bg-white rounded-2xl border border-[#C8BFB2]">
+      <div className="px-5 py-4 border-b border-[#E0D9D0]">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles size={16} className="text-purple-500" />
-          <h2 className="font-semibold text-slate-900">AI Suggestions</h2>
+          <h2 className="font-semibold text-[#2F3437]">AI Suggestions</h2>
         </div>
         <p className="text-xs text-slate-500">
           Claude analyzes your appliance and service history to suggest maintenance tasks.
@@ -182,7 +182,7 @@ export default function AISuggestionsSection({
                       <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <span className="text-sm font-semibold text-slate-800">
+                            <span className="text-sm font-semibold text-[#2F3437]">
                               {suggestion.title}
                             </span>
                             <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${priority.bg} ${priority.color}`}>

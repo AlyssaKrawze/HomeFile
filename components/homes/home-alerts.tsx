@@ -91,9 +91,9 @@ export default function HomeAlerts({ city, state }: HomeAlertsProps) {
 
   if (!hasLocation) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-slate-200">
+      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-[#C8BFB2]">
         <Bell size={40} className="text-slate-300 mb-4" />
-        <h3 className="text-lg font-semibold text-slate-700 mb-2">No location set</h3>
+        <h3 className="font-playfair text-lg font-semibold text-slate-700 mb-2">No location set</h3>
         <p className="text-sm text-slate-500 max-w-sm">
           Add your home&apos;s city and state in Settings to get seasonal maintenance alerts tailored to your area.
         </p>
@@ -103,8 +103,8 @@ export default function HomeAlerts({ city, state }: HomeAlertsProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-slate-200">
-        <Loader2 size={32} className="text-teal-500 animate-spin mb-4" />
+      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-[#C8BFB2]">
+        <Loader2 size={32} className="text-[#5B6C8F] animate-spin mb-4" />
         <p className="text-sm text-slate-500">Generating alerts for {location}...</p>
       </div>
     )
@@ -112,9 +112,9 @@ export default function HomeAlerts({ city, state }: HomeAlertsProps) {
 
   if (generated && alerts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-slate-200">
+      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-[#C8BFB2]">
         <Bell size={40} className="text-slate-300 mb-4" />
-        <h3 className="text-lg font-semibold text-slate-700 mb-2">No alerts right now</h3>
+        <h3 className="font-playfair text-lg font-semibold text-slate-700 mb-2">No alerts right now</h3>
         <p className="text-sm text-slate-500 max-w-sm mb-4">
           Your home in {location} looks good for this time of year.
         </p>

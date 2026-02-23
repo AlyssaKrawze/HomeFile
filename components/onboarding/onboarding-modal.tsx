@@ -12,9 +12,9 @@ interface OnboardingModalProps {
 const STEPS = [
   {
     icon: Home,
-    iconBg: 'bg-teal-100',
-    iconColor: 'text-teal-600',
-    accent: 'bg-teal-600',
+    iconBg: 'bg-[#dce4ef]',
+    iconColor: 'text-[#5B6C8F]',
+    accent: 'bg-[#5B6C8F]',
     eyebrow: 'Step 1 of 3',
     title: 'Add your home',
     description:
@@ -133,13 +133,13 @@ export default function OnboardingModal({ userId, show: initialShow }: Onboardin
           </div>
 
           {/* Text */}
-          <h2 className="text-xl font-bold text-slate-900 mb-2">{current.title}</h2>
+          <h2 className="font-playfair text-xl font-bold text-[#2F3437] mb-2">{current.title}</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-5">{current.description}</p>
 
           {/* Detail list */}
           <ul className="flex flex-col gap-2 mb-7">
             {current.detail.map((item, i) => (
-              <li key={i} className="text-sm text-slate-600 bg-slate-50 rounded-lg px-3 py-2">
+              <li key={i} className="text-sm text-slate-600 bg-[#F4F1EA] rounded-lg px-3 py-2">
                 {item}
               </li>
             ))}
@@ -150,7 +150,7 @@ export default function OnboardingModal({ userId, show: initialShow }: Onboardin
             <a
               href="/api/guide"
               download
-              className="flex items-center justify-center gap-2 w-full text-xs text-slate-400 hover:text-slate-600 transition-colors mb-5 py-2 rounded-lg border border-slate-200 hover:border-slate-300"
+              className="flex items-center justify-center gap-2 w-full text-xs text-slate-400 hover:text-slate-600 transition-colors mb-5 py-2 rounded-lg border border-[#C8BFB2] hover:border-slate-300"
             >
               <Download size={12} />
               Download Getting Started Guide (PDF)
@@ -198,7 +198,7 @@ export default function OnboardingModal({ userId, show: initialShow }: Onboardin
                 onClick={next}
                 className={`flex items-center gap-1.5 text-sm font-semibold text-white px-4 py-2 rounded-lg transition-colors ${
                   isLast
-                    ? 'bg-teal-600 hover:bg-teal-700'
+                    ? 'bg-[#5B6C8F] hover:bg-[#4a5c77]'
                     : current.accent + ' hover:opacity-90'
                 }`}
               >
