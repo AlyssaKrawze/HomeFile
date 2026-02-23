@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ChevronRight, Users, Shield, Edit3 } from 'lucide-react'
+import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function MembersPage({
   params,
@@ -71,6 +72,12 @@ export default async function MembersPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Members</span>
       </div>
+
+      <PageTooltip
+        pageKey="members"
+        title="Members & Access"
+        message="Manage who has access to this home. Owners can invite members, set roles, and control what each person can edit or view."
+      />
 
       <div className="flex items-center justify-between mb-8 gap-3">
         <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Members &amp; Access</h1>

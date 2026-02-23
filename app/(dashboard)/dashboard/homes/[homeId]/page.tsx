@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Plus, ChevronRight, AlertTriangle, CheckCircle2, Clock, Wrench, BookOpen } from 'lucide-react'
 import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
 import AddRoomModal from '@/components/rooms/add-room-modal'
+import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function HomeOverviewPage({
   params,
@@ -79,6 +80,12 @@ export default async function HomeOverviewPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">{home.name}</span>
       </div>
+
+      <PageTooltip
+        pageKey="overview"
+        title="Your Home Overview"
+        message="A snapshot of your home's health — overdue tasks, upcoming maintenance, recent appliances, and quick links to every section."
+      />
 
       {/* Home header */}
       <div className="flex items-start justify-between mb-8">

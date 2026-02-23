@@ -46,6 +46,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
     { href: `/dashboard/homes/${currentHomeId}/alerts`, label: 'Alerts', icon: Bell },
     { href: `/dashboard/homes/${currentHomeId}/members`, label: 'Members', icon: Users },
     { href: `/dashboard/homes/${currentHomeId}/vault`, label: 'Vault', icon: Lock },
+    { href: `/dashboard/homes/${currentHomeId}/binder`, label: 'Home Binder', icon: BookOpen },
     { href: `/dashboard/homes/${currentHomeId}/settings`, label: 'Settings', icon: Settings },
   ] : []
 
@@ -129,14 +130,6 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
                   </Link>
                 )
               })}
-              <a
-                href={`/api/homes/${currentHomeId}/binder`}
-                download
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-400 hover:bg-[#2d3a52] hover:text-white"
-              >
-                <BookOpen size={15} />
-                <span>Home Binder</span>
-              </a>
             </div>
           </div>
         )}

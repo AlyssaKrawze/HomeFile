@@ -12,6 +12,7 @@ import ScheduledTasksSection from '@/components/appliances/scheduled-tasks-secti
 import AISuggestionsSection from '@/components/appliances/ai-suggestions-section'
 import EditApplianceModal from '@/components/appliances/edit-appliance-modal'
 import DisasterPlanSection from '@/components/appliances/disaster-plan-section'
+import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function AppliancePage({
   params,
@@ -107,6 +108,12 @@ export default async function AppliancePage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">{appliance.name}</span>
       </div>
+
+      <PageTooltip
+        pageKey="appliance"
+        title="Appliance Details"
+        message="Track everything about this appliance — specs, warranty, documents, and scheduled maintenance. Use the disaster plan section for emergency procedures."
+      />
 
       {/* Appliance Header */}
       <div className="bg-white rounded-2xl border border-[#C8BFB2] p-4 sm:p-6 mb-6">

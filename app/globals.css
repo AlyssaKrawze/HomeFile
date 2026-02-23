@@ -39,6 +39,15 @@ h1, h2 {
   color: #2F3437;
 }
 
+/* Tooltip fade-slide animation */
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-slide-down {
+  animation: fadeSlideDown 0.22s ease forwards;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

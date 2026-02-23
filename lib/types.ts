@@ -186,18 +186,18 @@ export const ROOM_CATEGORIES: Record<PermissionCategory, {
   bgColor: string
   icon: string
 }> = {
-  kitchen: { label: 'Kitchen', color: 'text-orange-700', bgColor: 'bg-orange-100', icon: '🍳' },
-  living_room: { label: 'Living Room', color: 'text-blue-700', bgColor: 'bg-blue-100', icon: '🛋️' },
-  bedroom: { label: 'Bedroom', color: 'text-purple-700', bgColor: 'bg-purple-100', icon: '🛏️' },
-  bathroom: { label: 'Bathroom', color: 'text-cyan-700', bgColor: 'bg-cyan-100', icon: '🚿' },
-  garage: { label: 'Garage', color: 'text-slate-700', bgColor: 'bg-slate-100', icon: '🚗' },
-  basement: { label: 'Basement', color: 'text-stone-700', bgColor: 'bg-stone-100', icon: '📦' },
-  attic: { label: 'Attic', color: 'text-amber-700', bgColor: 'bg-amber-100', icon: '🏠' },
-  hvac: { label: 'HVAC', color: 'text-sky-700', bgColor: 'bg-sky-100', icon: '❄️' },
-  electrical: { label: 'Electrical', color: 'text-yellow-700', bgColor: 'bg-yellow-100', icon: '⚡' },
-  plumbing: { label: 'Plumbing', color: 'text-indigo-700', bgColor: 'bg-indigo-100', icon: '💧' },
-  outdoor: { label: 'Outdoor', color: 'text-green-700', bgColor: 'bg-green-100', icon: '🌿' },
-  other: { label: 'Other', color: 'text-gray-700', bgColor: 'bg-gray-100', icon: '📋' },
+  kitchen:     { label: 'Kitchen',     color: 'text-[#5a8a7d]', bgColor: 'bg-[#d6ede8]', icon: '🍳' },
+  living_room: { label: 'Living Room', color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '🛋️' },
+  bedroom:     { label: 'Bedroom',     color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '🛏️' },
+  bathroom:    { label: 'Bathroom',    color: 'text-[#5a8a7d]', bgColor: 'bg-[#d6ede8]', icon: '🚿' },
+  garage:      { label: 'Garage',      color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '🚗' },
+  basement:    { label: 'Basement',    color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '📦' },
+  attic:       { label: 'Attic',       color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '🏠' },
+  hvac:        { label: 'HVAC',        color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '❄️' },
+  electrical:  { label: 'Electrical',  color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '⚡' },
+  plumbing:    { label: 'Plumbing',    color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '💧' },
+  outdoor:     { label: 'Outdoor',     color: 'text-[#5a8a7d]', bgColor: 'bg-[#d6ede8]', icon: '🌿' },
+  other:       { label: 'Other',       color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '📋' },
 }
 
 export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
