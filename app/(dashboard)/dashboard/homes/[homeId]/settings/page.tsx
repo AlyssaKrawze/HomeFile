@@ -151,7 +151,7 @@ export default async function SettingsPage({
         <div className="px-5 py-4 flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-[#2F3437]">Account</p>
-            <p className="text-xs text-slate-500 mt-0.5">Sign out of HomeFile</p>
+            <p className="text-xs text-slate-500 mt-0.5">Sign out of TheHomePage</p>
           </div>
           <SignOutButton />
         </div>

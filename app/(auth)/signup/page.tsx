@@ -65,7 +65,7 @@ export default function SignupPage() {
           <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="text-white font-semibold text-xl">HomeFile</span>
+          <span className="text-white font-semibold text-xl">TheHomePage</span>
         </div>
         <div>
           <h2 className="text-white text-3xl font-bold mb-4">
@@ -73,10 +73,10 @@ export default function SignupPage() {
           </h2>
           <p className="text-slate-400 text-lg leading-relaxed">
             Never lose a warranty, forget a filter change, or wonder when the HVAC was last serviced.
-            HomeFile keeps it all organized for you.
+            TheHomePage keeps it all organized for you.
           </p>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 HomeFile. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2025 TheHomePage. All rights reserved.</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-8">
@@ -85,7 +85,7 @@ export default function SignupPage() {
             <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-[#2F3437] font-semibold text-xl">HomeFile</span>
+            <span className="text-[#2F3437] font-semibold text-xl">TheHomePage</span>
           </div>
 
           <h1 className="text-3xl font-bold text-[#2F3437] mb-2">Create your account</h1>

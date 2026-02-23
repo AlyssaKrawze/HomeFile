@@ -146,7 +146,7 @@ function EmptyState({ userId }: { userId: string }) {
       </div>
       <h2 className="text-xl font-semibold text-[#2F3437] mb-2">Add your first home</h2>
       <p className="text-slate-500 max-w-md mb-8 text-sm leading-relaxed">
-        HomeFile helps you track every appliance, schedule maintenance, store documents,
+        TheHomePage helps you track every appliance, schedule maintenance, store documents,
         and keep your home running smoothly.
       </p>
       <AddHomeModal userId={userId} />

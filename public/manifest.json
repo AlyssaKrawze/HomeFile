@@ -1,6 +1,6 @@
 {
-  "name": "HomeFile",
-  "short_name": "HomeFile",
+  "name": "TheHomePage",
+  "short_name": "TheHomePage",
   "description": "Track appliances, schedule maintenance, and manage your home.",
   "start_url": "/dashboard",
   "display": "standalone",
