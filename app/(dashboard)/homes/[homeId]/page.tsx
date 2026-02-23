@@ -72,7 +72,7 @@ export default async function HomeOverviewPage({
   const canManage = ['owner', 'manager'].includes(membership.role)
 
   return (
-    <div className="max-w-6xl mx-auto px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
         <Link href="/dashboard" className="hover:text-slate-600 transition-colors">My Homes</Link>
@@ -94,7 +94,7 @@ export default async function HomeOverviewPage({
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
         <StatCard
           label="Rooms"
           value={(rooms || []).length}

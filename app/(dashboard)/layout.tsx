@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import Sidebar from '@/components/layout/sidebar'
+import DashboardShell from '@/components/layout/dashboard-shell'
 
 export default async function DashboardLayout({
   children,
@@ -25,21 +25,24 @@ export default async function DashboardLayout({
     })
     .filter(Boolean) as { id: string; name: string }[]
 
-  // Fetch profile
+  // Fetch profile (include onboarding flag)
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, email')
+    .select('full_name, email, onboarding_completed')
     .eq('id', user.id)
     .single()
 
   const displayName = profile?.full_name || profile?.email || user.email
+  const showOnboarding = !profile?.onboarding_completed
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
-      <Sidebar homes={homeList} userName={displayName} />
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
-    </div>
+    <DashboardShell
+      homes={homeList}
+      userName={displayName}
+      userId={user.id}
+      showOnboarding={showOnboarding}
+    >
+      {children}
+    </DashboardShell>
   )
 }

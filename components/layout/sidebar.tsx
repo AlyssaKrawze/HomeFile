@@ -15,6 +15,7 @@ import {
   LayoutGrid,
   Bell,
   BookOpen,
+  Download,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -137,6 +138,18 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Getting started guide */}
+      <div className="px-3 pb-2">
+        <a
+          href="/api/guide"
+          download
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-500 hover:bg-slate-800 hover:text-white"
+        >
+          <Download size={14} />
+          <span>Getting Started Guide</span>
+        </a>
       </div>
 
       {/* User + sign out */}

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Plus, CheckCircle2, Clock, AlertTriangle, Circle, Trash2 } from 'lucide-react'
+import { CalendarPlus, CheckCircle2, Clock, AlertTriangle, Check, Trash2, Loader2 } from 'lucide-react'
 import { PRIORITY_LABELS, type ScheduledTask, type TaskPriority } from '@/lib/types'
 
 interface ScheduledTasksSectionProps {
@@ -79,6 +79,7 @@ export default function ScheduledTasksSection({
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200">
+      {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
         <div>
           <h2 className="font-semibold text-slate-900">Maintenance Schedule</h2>
@@ -92,18 +93,21 @@ export default function ScheduledTasksSection({
             onClick={() => setShowForm(!showForm)}
             className="flex items-center gap-1.5 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
           >
-            <Plus size={15} />
-            Add Task
+            <CalendarPlus size={15} />
+            Add to Calendar
           </button>
         )}
       </div>
 
-      {/* Add form */}
+      {/* Add-to-calendar form */}
       {showForm && (
         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
+          <p className="text-xs text-slate-500 mb-3">
+            This task will appear on your Maintenance Calendar.
+          </p>
           <form onSubmit={handleAddTask} className="flex flex-col gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Task *</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Task name *</label>
               <input
                 type="text"
                 value={form.title}
@@ -113,7 +117,7 @@ export default function ScheduledTasksSection({
                 className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">Due date *</label>
                 <input
@@ -148,9 +152,14 @@ export default function ScheduledTasksSection({
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium px-4 py-2 rounded-lg"
+                className="flex-1 flex items-center justify-center gap-1.5 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium px-4 py-2 rounded-lg"
               >
-                {loading ? 'Adding...' : 'Add Task'}
+                {loading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <CalendarPlus size={14} />
+                )}
+                {loading ? 'Adding...' : 'Add to Calendar'}
               </button>
             </div>
           </form>
@@ -159,93 +168,137 @@ export default function ScheduledTasksSection({
 
       <div className="divide-y divide-slate-100">
         {tasks.length === 0 ? (
-          <div className="px-6 py-6 text-center">
-            <Clock size={24} className="text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500">No tasks scheduled.</p>
-            <p className="text-xs text-slate-400 mt-1">Add a task manually or use AI suggestions below.</p>
+          <div className="px-6 py-8 text-center">
+            <Clock size={28} className="text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500 font-medium">No tasks scheduled</p>
+            <p className="text-xs text-slate-400 mt-1">
+              Add a task manually or use AI suggestions below.
+            </p>
           </div>
         ) : (
           <>
+            {/* ── Pending tasks ─────────────────────────── */}
             {pending.map((task) => {
               const isOverdue = task.due_date < today
               const priority = PRIORITY_LABELS[task.priority]
+              const isCompleting = completing === task.id
+              const isDeleting = deleting === task.id
+
               return (
-                <div key={task.id} className="px-6 py-3.5 flex items-start gap-3">
-                  <button
-                    onClick={() => markComplete(task.id)}
-                    disabled={completing === task.id}
-                    className="mt-0.5 flex-shrink-0 text-slate-300 hover:text-teal-500 transition-colors disabled:opacity-50"
-                  >
-                    <Circle size={18} />
-                  </button>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-sm font-medium ${isOverdue ? 'text-red-700' : 'text-slate-800'}`}>
+                <div
+                  key={task.id}
+                  className={`px-5 py-4 ${isOverdue ? 'bg-red-50/40' : ''}`}
+                >
+                  {/* Task header row */}
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="flex items-center gap-2 flex-wrap min-w-0">
+                      <span className={`text-sm font-semibold leading-snug ${isOverdue ? 'text-red-800' : 'text-slate-800'}`}>
                         {task.title}
                       </span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${priority.bg} ${priority.color}`}>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${priority.bg} ${priority.color}`}>
                         {priority.label}
                       </span>
                       {task.source === 'ai' && (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
+                        <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">
                           AI
                         </span>
                       )}
                     </div>
-                    {task.description && (
-                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{task.description}</p>
+                    {canManage && (
+                      <button
+                        onClick={() => deleteTask(task.id)}
+                        disabled={isDeleting}
+                        className="flex-shrink-0 text-slate-300 hover:text-red-500 transition-colors disabled:opacity-40 p-0.5"
+                        title="Delete task"
+                      >
+                        {isDeleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                      </button>
                     )}
-                    <div className="flex items-center gap-1.5 mt-1">
-                      {isOverdue ? (
-                        <AlertTriangle size={12} className="text-red-500" />
-                      ) : (
-                        <Clock size={12} className="text-slate-400" />
-                      )}
-                      <span className={`text-xs ${isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'}`}>
-                        {isOverdue ? 'Overdue · ' : 'Due '}
-                        {new Date(task.due_date).toLocaleDateString('en-US', {
-                          month: 'short', day: 'numeric', year: 'numeric'
-                        })}
-                      </span>
-                    </div>
                   </div>
+
+                  {/* Description */}
+                  {task.description && (
+                    <p className="text-xs text-slate-500 mb-1.5 leading-relaxed">{task.description}</p>
+                  )}
+
+                  {/* Due date */}
+                  <div className="flex items-center gap-1.5 mb-3">
+                    {isOverdue ? (
+                      <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />
+                    ) : (
+                      <Clock size={12} className="text-slate-400 flex-shrink-0" />
+                    )}
+                    <span className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-slate-500'}`}>
+                      {isOverdue ? 'Overdue — ' : 'Due '}
+                      {new Date(task.due_date + 'T12:00:00').toLocaleDateString('en-US', {
+                        month: 'short', day: 'numeric', year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+
+                  {/* Mark Complete button */}
                   {canManage && (
                     <button
-                      onClick={() => deleteTask(task.id)}
-                      disabled={deleting === task.id}
-                      className="flex-shrink-0 text-slate-300 hover:text-red-500 transition-colors disabled:opacity-50"
-                      title="Delete task"
+                      onClick={() => markComplete(task.id)}
+                      disabled={isCompleting}
+                      className={`
+                        flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                        border transition-all
+                        ${isOverdue
+                          ? 'border-green-400 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-500'
+                          : 'border-slate-300 bg-white text-slate-600 hover:border-green-400 hover:bg-green-50 hover:text-green-700'
+                        }
+                        disabled:opacity-50 disabled:cursor-not-allowed
+                      `}
                     >
-                      <Trash2 size={14} />
+                      {isCompleting ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : (
+                        <Check size={13} strokeWidth={2.5} />
+                      )}
+                      {isCompleting ? 'Marking done…' : 'Mark Complete'}
                     </button>
                   )}
                 </div>
               )
             })}
 
-            {completed.slice(0, 3).map((task) => (
-              <div key={task.id} className="px-6 py-3 flex items-center gap-3 opacity-50 hover:opacity-100 transition-opacity">
-                <CheckCircle2 size={18} className="text-green-500 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm text-slate-600 line-through">{task.title}</span>
-                  {task.completed_at && (
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Completed {new Date(task.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </p>
+            {/* ── Completed tasks ───────────────────────── */}
+            {completed.length > 0 && (
+              <div className="px-5 py-3 bg-slate-50/60">
+                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  Completed
+                </p>
+                <div className="flex flex-col gap-2">
+                  {completed.slice(0, 3).map((task) => (
+                    <div key={task.id} className="flex items-center gap-2.5 group">
+                      <CheckCircle2 size={15} className="text-green-500 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-xs text-slate-500 line-through">{task.title}</span>
+                        {task.completed_at && (
+                          <span className="text-[11px] text-slate-400 ml-2">
+                            {new Date(task.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </span>
+                        )}
+                      </div>
+                      {canManage && (
+                        <button
+                          onClick={() => deleteTask(task.id)}
+                          disabled={deleting === task.id}
+                          className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-slate-300 hover:text-red-500 transition-all disabled:opacity-40"
+                          title="Delete"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {completed.length > 3 && (
+                    <p className="text-[11px] text-slate-400">+{completed.length - 3} more completed</p>
                   )}
                 </div>
-                {canManage && (
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    disabled={deleting === task.id}
-                    className="flex-shrink-0 text-slate-300 hover:text-red-500 transition-colors disabled:opacity-50"
-                    title="Delete task"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                )}
               </div>
-            ))}
+            )}
           </>
         )}
       </div>

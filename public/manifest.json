@@ -1,0 +1,37 @@
+{
+  "name": "HomeFile",
+  "short_name": "HomeFile",
+  "description": "Track appliances, schedule maintenance, and manage your home.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d9488",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

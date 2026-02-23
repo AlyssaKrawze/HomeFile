@@ -63,7 +63,7 @@ export default async function MembersPage({
   ]
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-8">
+    <div className="max-w-3xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
         <Link href="/dashboard" className="hover:text-slate-600">My Homes</Link>
         <ChevronRight size={14} />
@@ -72,19 +72,20 @@ export default async function MembersPage({
         <span className="text-slate-700 font-medium">Members</span>
       </div>
 
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Members & Access</h1>
+      <div className="flex items-center justify-between mb-8 gap-3">
+        <h1 className="text-2xl font-bold text-slate-900">Members &amp; Access</h1>
         {isOwner && (
-          <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+          <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors flex-shrink-0">
             <Users size={15} />
-            Invite Member
+            <span className="hidden sm:inline">Invite Member</span>
+            <span className="sm:hidden">Invite</span>
           </button>
         )}
       </div>
 
       {/* Current members */}
       <div className="bg-white rounded-2xl border border-slate-200 mb-6">
-        <div className="px-6 py-4 border-b border-slate-100">
+        <div className="px-4 py-4 sm:px-6 border-b border-slate-100">
           <h2 className="font-semibold text-slate-900">
             Current Members ({(members || []).length})
           </h2>
@@ -94,7 +95,7 @@ export default async function MembersPage({
             const profile = member.profiles as Record<string, string> | null
             const role = ROLE_DESCRIPTIONS[member.role] || ROLE_DESCRIPTIONS.limited
             return (
-              <div key={member.id} className="px-6 py-4 flex items-center gap-4">
+              <div key={member.id} className="px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4">
                 <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                   <span className="text-sm font-bold text-teal-700">
                     {(profile?.full_name || profile?.email || 'U').charAt(0).toUpperCase()}
@@ -134,7 +135,7 @@ export default async function MembersPage({
         </div>
         <div className="divide-y divide-slate-100">
           {Object.entries(ROLE_DESCRIPTIONS).map(([key, role]) => (
-            <div key={key} className="px-6 py-4 flex items-start gap-3">
+            <div key={key} className="px-4 py-3 sm:px-6 sm:py-4 flex items-start gap-3">
               <Shield size={16} className={`mt-0.5 ${role.color} flex-shrink-0`} />
               <div>
                 <p className="text-sm font-medium text-slate-800">{role.label}</p>
@@ -155,7 +156,7 @@ export default async function MembersPage({
         </div>
         <div className="divide-y divide-slate-100">
           {ROLE_TEMPLATES.map((template) => (
-            <div key={template.name} className="px-6 py-4 flex items-center gap-3">
+            <div key={template.name} className="px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3">
               <span className="text-xl">{template.icon}</span>
               <div className="flex-1">
                 <p className="text-sm font-medium text-slate-800">{template.name}</p>

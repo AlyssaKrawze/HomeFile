@@ -51,7 +51,7 @@ export default async function CalendarPage({
   const canManage = ['owner', 'manager'].includes(membership.role)
 
   return (
-    <div className="max-w-5xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
         <Link href="/dashboard" className="hover:text-slate-600">My Homes</Link>
@@ -66,27 +66,27 @@ export default async function CalendarPage({
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
+        <div className="bg-red-50 border border-red-100 rounded-2xl p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle size={16} className="text-red-500" />
-            <span className="text-2xl font-bold text-red-700">{overdue.length}</span>
+            <span className="text-xl sm:text-2xl font-bold text-red-700">{overdue.length}</span>
           </div>
-          <p className="text-sm font-medium text-red-700">Overdue</p>
+          <p className="text-xs sm:text-sm font-medium text-red-700">Overdue</p>
         </div>
-        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <Clock size={16} className="text-amber-500" />
-            <span className="text-2xl font-bold text-amber-700">{upcoming.length}</span>
+            <span className="text-xl sm:text-2xl font-bold text-amber-700">{upcoming.length}</span>
           </div>
-          <p className="text-sm font-medium text-amber-700">Due this month</p>
+          <p className="text-xs sm:text-sm font-medium text-amber-700">Due this month</p>
         </div>
-        <div className="bg-green-50 border border-green-100 rounded-2xl p-4">
+        <div className="bg-green-50 border border-green-100 rounded-2xl p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 size={16} className="text-green-500" />
-            <span className="text-2xl font-bold text-green-700">{completed.length}</span>
+            <span className="text-xl sm:text-2xl font-bold text-green-700">{completed.length}</span>
           </div>
-          <p className="text-sm font-medium text-green-700">Completed</p>
+          <p className="text-xs sm:text-sm font-medium text-green-700">Completed</p>
         </div>
       </div>
 

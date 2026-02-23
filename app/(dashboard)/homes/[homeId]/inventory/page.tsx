@@ -65,7 +65,7 @@ export default async function InventoryPage({
   }, {})
 
   return (
-    <div className="max-w-6xl mx-auto px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
         <Link href="/dashboard" className="hover:text-slate-600">My Homes</Link>
@@ -137,7 +137,7 @@ export default async function InventoryPage({
                       <Link
                         key={appliance.id}
                         href={`/dashboard/homes/${homeId}/rooms/${roomId}/appliances/${appliance.id}`}
-                        className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors group"
+                        className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 hover:bg-slate-50 transition-colors group"
                       >
                         <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
                           🔧

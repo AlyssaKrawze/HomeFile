@@ -160,7 +160,7 @@ export default function AddApplianceModal({ homeId, roomId, trigger = 'button' }
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 overflow-y-auto">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Name <span className="text-red-500">*</span>
@@ -243,7 +243,7 @@ export default function AddApplianceModal({ homeId, roomId, trigger = 'button' }
                   />
                 </div>
 
-                <div />
+                <div className="hidden sm:block" />
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1.5">Purchase date</label>

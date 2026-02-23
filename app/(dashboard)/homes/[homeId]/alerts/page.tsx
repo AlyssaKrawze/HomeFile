@@ -34,7 +34,7 @@ export default async function AlertsPage({
   const month = new Date().toLocaleString('en-US', { month: 'long' })
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-8">
+    <div className="max-w-3xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
         <Link href="/dashboard" className="hover:text-slate-600">My Homes</Link>
         <ChevronRight size={14} />

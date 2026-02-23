@@ -82,7 +82,7 @@ export default async function AppliancePage({
   const lastService = (serviceRecords || [])[0]
 
   return (
-    <div className="max-w-5xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6 flex-wrap">
         <Link href="/dashboard" className="hover:text-slate-600">My Homes</Link>
@@ -95,13 +95,17 @@ export default async function AppliancePage({
       </div>
 
       {/* Appliance Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-        <div className="flex items-start gap-5">
-          <div className={`w-16 h-16 rounded-2xl ${cat.bgColor} flex items-center justify-center text-3xl flex-shrink-0`}>
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 mb-6">
+        {/* Top row: icon + name + edit button */}
+        <div className="flex items-start gap-4">
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl ${cat.bgColor} flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0`}>
             {cat.icon}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold text-slate-900">{appliance.name}</h1>
+            <div className="flex items-start justify-between gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">{appliance.name}</h1>
+              {canManage && <div className="flex-shrink-0"><EditApplianceModal appliance={appliance} /></div>}
+            </div>
             <div className="flex items-center gap-2 flex-wrap mt-1">
               {appliance.brand && (
                 <span className="text-sm text-slate-600">{appliance.brand}</span>
@@ -113,22 +117,20 @@ export default async function AppliancePage({
                 <span className="text-sm text-slate-600">{appliance.model}</span>
               )}
               {appliance.category && (
-                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full ml-1">
+                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
                   {appliance.category}
                 </span>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex items-start gap-2 flex-shrink-0">
-            {canManage && <EditApplianceModal appliance={appliance} />}
-
-            {/* Warranty badge */}
-            <div>
+        {/* Warranty badge — sits below name row, full width on mobile */}
+        {warrantyStatus !== 'unknown' && (
+          <div className="mt-3">
             {warrantyStatus === 'active' && (
-              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-                <ShieldCheck size={16} className="text-green-600" />
+              <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+                <ShieldCheck size={15} className="text-green-600 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-green-800">Under Warranty</p>
                   <p className="text-xs text-green-600">
@@ -138,8 +140,8 @@ export default async function AppliancePage({
               </div>
             )}
             {warrantyStatus === 'expiring' && (
-              <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-                <ShieldAlert size={16} className="text-amber-600" />
+              <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                <ShieldAlert size={15} className="text-amber-600 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-amber-800">Expiring Soon</p>
                   <p className="text-xs text-amber-600">
@@ -149,8 +151,8 @@ export default async function AppliancePage({
               </div>
             )}
             {warrantyStatus === 'expired' && (
-              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                <ShieldX size={16} className="text-slate-400" />
+              <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <ShieldX size={15} className="text-slate-400 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-slate-600">Warranty Expired</p>
                   <p className="text-xs text-slate-400">
@@ -159,12 +161,11 @@ export default async function AppliancePage({
                 </div>
               </div>
             )}
-            </div>
           </div>
-        </div>
+        )}
 
         {/* Detail grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-5 border-t border-slate-100">
           {ageYears !== null && (
             <DetailItem icon={<Calendar size={14} />} label="Age" value={`${ageYears} yr${ageYears !== 1 ? 's' : ''} old`} />
           )}
