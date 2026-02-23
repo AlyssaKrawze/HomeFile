@@ -1,22 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev)",
-      "Bash(find /Users/alyssakrawze/homefile -type f -name \"*.sql\" 2>/dev/null | head -20)",
-      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(auth\\)/\" 2>/dev/null)",
-      "Bash(chmod +x /Users/alyssakrawze/homefile/logs/log.sh)",
+      "Bash",
       "WebSearch",
-      "Bash(grep -r \"appliance\" /Users/alyssakrawze/homefile/app --include=\"*.tsx\" -l 2>/dev/null | grep -v \".next\")",
-      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]/\" 2>/dev/null || echo \"Directory not found\")",
-      "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]/\" 2>/dev/null || echo \"Directory not found\")",
-      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]\" -type f | head -20)",
-      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]\" -type f | head -20)",
-      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/homes/[homeId]\" -type d | sort)",
-      "Bash(find \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]\" -type d | sort)",
-      "Bash(ls /Users/alyssakrawze/homefile/*.lock /Users/alyssakrawze/homefile/bun.lockb /Users/alyssakrawze/homefile/yarn.lock /Users/alyssakrawze/homefile/pnpm-lock.yaml 2>/dev/null; ls /Users/alyssakrawze/homefile/supabase/migrations/ | sort)",
-      "Bash(npm install @react-pdf/renderer --save 2>&1 | tail -5)",
+      "Bash(find app/\\\\\\(dashboard\\\\\\) -name \"*.tsx\" -exec sed -i '' 's/mx-auto px-8 py-8/mx-auto px-4 py-6 sm:px-8 sm:py-8/g' {} \\\\;)",
       "Bash(npx tsc --noEmit 2>&1 | head -40)",
-      "Bash(npx tsc --noEmit 2>&1 | head -30)"
+      "Bash(npx tsc --noEmit 2>&1 | grep -E \"^app/\" | grep -v \"node_modules\" | head -20)",
+      "Bash(npx tsc --noEmit 2>&1 | grep -v \"node_modules\" | head -20)",
+      "Bash(python3 - << 'EOF'\nimport re\n\n# Fix inventory row padding\nfor path in [\n    \"app/\\(dashboard\\)/homes/[homeId]/inventory/page.tsx\",\n    \"app/\\(dashboard\\)/dashboard/homes/[homeId]/inventory/page.tsx\",\n]:\n    full = f\"/Users/alyssakrawze/homefile/{path}\"\n    with open\\(full, 'r'\\) as f:\n        content = f.read\\(\\)\n    # Row link padding\n    content = content.replace\\(\n        'className=\"flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors group\"',\n        'className=\"flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 hover:bg-slate-50 transition-colors group\"'\n    \\)\n    with open\\(full, 'w'\\) as f:\n        f.write\\(content\\)\n\n# Fix home page stats grid gap\nfor path in [\n    \"app/\\(dashboard\\)/homes/[homeId]/page.tsx\",\n    \"app/\\(dashboard\\)/dashboard/homes/[homeId]/page.tsx\",\n]:\n    full = f\"/Users/alyssakrawze/homefile/{path}\"\n    with open\\(full, 'r'\\) as f:\n        content = f.read\\(\\)\n    content = content.replace\\(\n        'className=\"grid grid-cols-2 md:grid-cols-4 gap-4 mb-8\"',\n        'className=\"grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8\"'\n    \\)\n    with open\\(full, 'w'\\) as f:\n        f.write\\(content\\)\n\nprint\\(\"Done\"\\)\nEOF)",
+      "Bash(npx tsc --noEmit 2>&1 | grep -v node_modules)",
+      "Bash(find /Users/alyssakrawze/homefile/lib -type f -name \"*.ts\" -o -name \"*.tsx\" 2>/dev/null | grep -v node_modules)",
+      "Bash(ls -la /Users/alyssakrawze/homefile/app/\\\\\\(auth\\\\\\)/ 2>/dev/null)",
+      "Bash(find /Users/alyssakrawze/homefile -maxdepth 2 \\\\\\( -name \"*.config.*\" -o -name \"tsconfig*\" \\\\\\) 2>/dev/null | grep -v node_modules)",
+      "Bash(ls -la /Users/alyssakrawze/homefile/middleware* 2>/dev/null || echo \"No middleware files found\")",
+      "Bash(find /Users/alyssakrawze/homefile -type d -path \"*/node_modules\" -prune -o -type f -name \"*auth*\" -print 2>/dev/null | grep -v node_modules | head -20)",
+      "Bash(grep -r \"signUp\\\\|signInWithOtp\\\\|auth\\\\.\" /Users/alyssakrawze/homefile/app --include=\"*.tsx\" --include=\"*.ts\" 2>/dev/null | grep -v node_modules | head -20)",
+      "Bash(git commit -m \"$\\(cat <<'EOF'\nAdd PWA support, mobile-responsive UI, and auth improvements\n\nMobile UI:\n- Hide sidebar on mobile \\(hidden lg:flex\\), replace with bottom tab bar\n- Bottom navigation: Overview, Inventory, Calendar, Alerts, Settings \\(5 direct tabs\\)\n- Mobile top bar: slim 48px bar with logo, lg:hidden\n- Main content clears both bars: pt-12 pb-20 on mobile, reset on lg\n- DashboardShell client component manages mobile/desktop layout split\n- MobileNav: safe-area-inset padding for iPhone home indicator\n- All page paddings: px-8 py-8 → px-4 py-6 sm:px-8 sm:py-8\n- Modal form grids: grid-cols-2 → grid-cols-1 sm:grid-cols-2\n- Calendar: 2-char day headers, smaller cells on mobile, flex-wrap legend\n- Calendar summary cards: smaller padding/text on mobile\n- Appliance header: warranty badge pulled below name row \\(no overflow\\)\n- Detail grid: gap-3 sm:gap-4 on mobile\n- Members/inventory/settings: responsive padding and danger zone layout\n- Settings: Members link + Sign Out button \\(mobile-only, lg:hidden\\)\n\nPWA:\n- manifest.json, service worker \\(sw.js\\), RegisterSW client component\n- Icon routes: /icon.tsx, /apple-icon.tsx, /icon-192, /icon-512\n- next.config.ts: Service-Worker-Allowed header + no-cache for sw.js\n- app/layout.tsx: manifest, viewport-fit cover, appleWebApp metadata\n\nAuth:\n- Add app/auth/callback/route.ts \\(PKCE code exchange handler\\)\n- Fix emailRedirectTo: /dashboard → /auth/callback?next=/dashboard\n- Add middleware.ts \\(was proxy.ts with wrong export — never ran\\)\n- /auth/ path whitelisted in middleware so callback works unauthenticated\n\nFeatures:\n- Onboarding modal \\(3-step\\) with localStorage + DB persistence\n- Getting started PDF guide \\(3-page react-pdf document\\)\n- Scheduled tasks: \"Mark Complete\" button + \"Add to Calendar\" button\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push origin main 2>&1)"
     ]
   }
 }
