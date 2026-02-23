@@ -7,7 +7,6 @@ import { Home, LayoutGrid, Calendar, Bell, Settings } from 'lucide-react'
 interface MobileNavProps {
   homes: { id: string; name: string }[]
   userName?: string | null
-  isMobile?: boolean
 }
 
 const TAB_DEFS = [
@@ -18,9 +17,8 @@ const TAB_DEFS = [
   { label: 'Settings',  icon: Settings,     path: '/settings' },
 ]
 
-export default function MobileNav({ isMobile }: MobileNavProps) {
+export default function MobileNav({ }: MobileNavProps) {
   const pathname = usePathname()
-  if (!isMobile) return null
 
   const homeIdMatch = pathname.match(/\/dashboard\/homes\/([^/]+)/)
   const currentHomeId = homeIdMatch?.[1]
@@ -33,7 +31,7 @@ export default function MobileNav({ isMobile }: MobileNavProps) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-stretch">
