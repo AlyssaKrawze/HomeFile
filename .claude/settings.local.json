@@ -29,7 +29,13 @@
       "Bash(git -C /Users/alyssakrawze/homefile diff components/layout/mobile-nav.tsx)",
       "Bash(git -C /Users/alyssakrawze/homefile add components/layout/mobile-nav.tsx && git -C /Users/alyssakrawze/homefile commit -m \"$\\(cat <<'EOF'\nFix React hooks violation in MobileNav — move usePathname before early return\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git -C /Users/alyssakrawze/homefile push origin main)",
       "Bash(git config --global user.email \"alyssakrawze@gmail.com\" && git config --global user.name \"AlyssaKrawze\")",
-      "Bash(git -C /Users/alyssakrawze/homefile add . && git -C /Users/alyssakrawze/homefile commit -m \"Fix mobile UI\" && git -C /Users/alyssakrawze/homefile push origin main)"
+      "Bash(git -C /Users/alyssakrawze/homefile add . && git -C /Users/alyssakrawze/homefile commit -m \"Fix mobile UI\" && git -C /Users/alyssakrawze/homefile push origin main)",
+      "Bash(git -C /Users/alyssakrawze/homefile add components/layout/dashboard-shell.tsx components/layout/mobile-nav.tsx && git -C /Users/alyssakrawze/homefile commit -m \"Replace JS mobile detection with pure Tailwind CSS breakpoints\" && git -C /Users/alyssakrawze/homefile push origin main)",
+      "Bash(git -C /Users/alyssakrawze/homefile show 215af5b)",
+      "Bash(npx tsc --noEmit 2>&1 | head -50)",
+      "Bash(npm run build 2>&1 | tail -30)",
+      "Bash(rm /Users/alyssakrawze/homefile/proxy.ts && npm run build 2>&1 | tail -20)",
+      "Bash(git -C /Users/alyssakrawze/homefile add -A && git -C /Users/alyssakrawze/homefile commit -m \"Delete proxy.ts to fix build — was conflicting with middleware.ts\" && git -C /Users/alyssakrawze/homefile push origin main)"
     ]
   }
 }
