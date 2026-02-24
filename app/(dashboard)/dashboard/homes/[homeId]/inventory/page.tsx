@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ChevronRight, ShieldCheck, ShieldAlert, Clock } from 'lucide-react'
 import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
-import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function InventoryPage({
   params,
@@ -74,12 +73,6 @@ export default async function InventoryPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Inventory</span>
       </div>
-
-      <PageTooltip
-        pageKey="inventory"
-        title="Your Home Inventory"
-        message="Every appliance and item across all your rooms. Add new items, track warranties, and access service history at a glance."
-      />
 
       <div className="flex items-center justify-between mb-8">
         <div>

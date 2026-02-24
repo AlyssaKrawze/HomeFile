@@ -5,7 +5,6 @@ import { ChevronRight, CheckCircle2, Clock, AlertTriangle, Calendar } from 'luci
 import CalendarView from '@/components/calendar/calendar-view'
 import CalendarTaskList from '@/components/calendar/calendar-task-list'
 import MyTasksFilter from '@/components/calendar/my-tasks-filter'
-import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function CalendarPage({
   params,
@@ -73,12 +72,6 @@ export default async function CalendarPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Calendar</span>
       </div>
-
-      <PageTooltip
-        pageKey="calendar"
-        title="Maintenance Calendar"
-        message="All your scheduled and completed maintenance tasks in one place. Use &lsquo;My Tasks&rsquo; to filter tasks assigned to you."
-      />
 
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Maintenance Calendar</h1>

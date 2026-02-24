@@ -2,7 +2,6 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ChevronRight, BookOpen, Download, FileText, ShieldCheck, Wrench } from 'lucide-react'
-import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function BinderPage({
   params,
@@ -53,12 +52,6 @@ export default async function BinderPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Home Binder</span>
       </div>
-
-      <PageTooltip
-        pageKey="binder"
-        title="Your Home Binder"
-        message="Generate a complete PDF guide of your home — every appliance, how to use it, and your disaster plan. Great for insurance claims, house sitters, and home sales."
-      />
 
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-xl bg-[#dce4ef] flex items-center justify-center flex-shrink-0">

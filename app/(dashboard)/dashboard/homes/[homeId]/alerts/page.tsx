@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ChevronRight, Bell } from 'lucide-react'
 import HomeAlerts from '@/components/homes/home-alerts'
-import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function AlertsPage({
   params,
@@ -43,12 +42,6 @@ export default async function AlertsPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Alerts</span>
       </div>
-
-      <PageTooltip
-        pageKey="alerts"
-        title="Home Alerts"
-        message="Seasonal maintenance reminders based on your home's location. These help you stay ahead of weather-related upkeep and avoid costly repairs."
-      />
 
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">

@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ChevronRight, Lock } from 'lucide-react'
 import VaultContent from '@/components/vault/vault-content'
-import PageTooltip from '@/components/onboarding/page-tooltip'
 
 export default async function VaultPage({
   params,
@@ -56,12 +55,6 @@ export default async function VaultPage({
         <ChevronRight size={14} />
         <span className="text-slate-700 font-medium">Vault</span>
       </div>
-
-      <PageTooltip
-        pageKey="vault"
-        title="Password Vault"
-        message="Securely store sensitive codes and credentials — WiFi passwords, alarm codes, garage and gate PINs. Encrypted and locked behind your personal PIN."
-      />
 
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
