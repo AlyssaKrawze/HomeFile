@@ -1,9 +1,11 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, Plus, Wrench, ShieldCheck, ShieldAlert, Clock } from 'lucide-react'
+import { ChevronRight, Wrench, ShieldCheck, ShieldAlert, Clock } from 'lucide-react'
 import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
 import AddApplianceModal from '@/components/appliances/add-appliance-modal'
+import RoomNotesSection from '@/components/rooms/room-notes-section'
+import RoomAttachmentsSection from '@/components/rooms/room-attachments-section'
 
 export default async function RoomPage({
   params,
@@ -24,10 +26,11 @@ export default async function RoomPage({
 
   if (!membership) notFound()
 
-  const [{ data: home }, { data: room }, { data: appliances }] = await Promise.all([
+  const [{ data: home }, { data: room }, { data: appliances }, { data: roomAttachments }] = await Promise.all([
     supabase.from('homes').select('id, name').eq('id', homeId).single(),
     supabase.from('rooms').select('*').eq('id', roomId).eq('home_id', homeId).single(),
     supabase.from('appliances').select('*').eq('room_id', roomId).order('name'),
+    supabase.from('room_attachments').select('*').eq('room_id', roomId).order('created_at', { ascending: false }),
   ])
 
   if (!home || !room) notFound()
@@ -90,7 +93,28 @@ export default async function RoomPage({
             {room.description && <p className="text-sm text-slate-500 mt-0.5">{room.description}</p>}
           </div>
         </div>
-        {canManage && <AddApplianceModal homeId={homeId} roomId={roomId} />}
+        {canManage && <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} />}
+      </div>
+
+      {/* Room Notes + Attachments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <RoomNotesSection
+          roomId={roomId}
+          homeId={homeId}
+          room={{
+            paint_color: room.paint_color ?? null,
+            floor_type: room.floor_type ?? null,
+            dimensions: room.dimensions ?? null,
+            room_notes: room.room_notes ?? null,
+          }}
+          canManage={canManage}
+        />
+        <RoomAttachmentsSection
+          roomId={roomId}
+          homeId={homeId}
+          attachments={roomAttachments || []}
+          canManage={canManage}
+        />
       </div>
 
       {/* Appliance grid */}
@@ -201,7 +225,7 @@ export default async function RoomPage({
           {/* Add appliance card */}
           {canManage && (
             <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-40 transition-colors">
-              <AddApplianceModal homeId={homeId} roomId={roomId} trigger="card" />
+              <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} trigger="card" />
             </div>
           )}
         </div>
@@ -216,7 +240,7 @@ export default async function RoomPage({
           <p className="text-slate-500 max-w-sm mb-8 text-sm leading-relaxed">
             Add appliances, systems, or fixtures to start tracking service history and scheduling maintenance.
           </p>
-          {canManage && <AddApplianceModal homeId={homeId} roomId={roomId} />}
+          {canManage && <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} />}
         </div>
       )}
     </div>

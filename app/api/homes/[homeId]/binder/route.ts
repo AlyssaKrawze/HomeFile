@@ -36,7 +36,8 @@ export async function GET(
         notes, disaster_plan,
         rooms(name)
       `)
-      .eq('home_id', homeId),
+      .eq('home_id', homeId)
+      .eq('include_in_binder', true),
     supabase
       .from('service_records')
       .select('appliance_id, service_date')

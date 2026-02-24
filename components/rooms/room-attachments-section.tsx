@@ -3,32 +3,14 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Upload, FileText, FileImage, File, X, ExternalLink, BookOpen } from 'lucide-react'
-import { type Document, type DocumentType } from '@/lib/types'
+import { Upload, FileText, FileImage, File, ExternalLink, Trash2, Paperclip } from 'lucide-react'
+import { type RoomAttachment } from '@/lib/types'
 
-interface DocumentsSectionProps {
-  applianceId: string
+interface RoomAttachmentsSectionProps {
+  roomId: string
   homeId: string
-  documents: Document[]
+  attachments: RoomAttachment[]
   canManage: boolean
-}
-
-const DOC_TYPE_LABELS: Record<DocumentType, string> = {
-  manual: 'Manual',
-  warranty: 'Warranty',
-  receipt: 'Receipt',
-  inspection: 'Inspection Report',
-  photo: 'Photo',
-  other: 'Other',
-}
-
-const DOC_TYPE_COLORS: Record<DocumentType, string> = {
-  manual: 'bg-blue-100 text-blue-700',
-  warranty: 'bg-green-100 text-green-700',
-  receipt: 'bg-slate-100 text-slate-600',
-  inspection: 'bg-purple-100 text-purple-700',
-  photo: 'bg-pink-100 text-pink-700',
-  other: 'bg-gray-100 text-gray-600',
 }
 
 function formatBytes(bytes: number): string {
@@ -44,38 +26,26 @@ function getFileIcon(fileType: string | null) {
   return <File size={16} className="text-slate-400" />
 }
 
-export default function DocumentsSection({
-  applianceId, homeId, documents, canManage
-}: DocumentsSectionProps) {
+export default function RoomAttachmentsSection({
+  roomId, homeId, attachments, canManage
+}: RoomAttachmentsSectionProps) {
   const [showUpload, setShowUpload] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [uploadForm, setUploadForm] = useState({
-    document_type: 'manual' as DocumentType,
-    description: '',
-    include_in_binder: true,
-  })
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [form, setForm] = useState({ description: '', include_in_binder: true })
   const router = useRouter()
   const supabase = createClient()
-
-  async function toggleBinder(doc: Document) {
-    await supabase.from('documents')
-      .update({ include_in_binder: !doc.include_in_binder })
-      .eq('id', doc.id)
-    router.refresh()
-  }
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault()
     if (!selectedFile) return
     setUploading(true)
 
-    // Upload to Supabase Storage
     const fileExt = selectedFile.name.split('.').pop()
-    const fileName = `${applianceId}/${Date.now()}.${fileExt}`
+    const fileName = `${roomId}/${Date.now()}.${fileExt}`
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('documents')
+    const { error: uploadError } = await supabase.storage
+      .from('room-attachments')
       .upload(fileName, selectedFile)
 
     if (uploadError) {
@@ -85,25 +55,36 @@ export default function DocumentsSection({
     }
 
     const { data: { publicUrl } } = supabase.storage
-      .from('documents')
+      .from('room-attachments')
       .getPublicUrl(fileName)
 
-    await supabase.from('documents').insert({
+    await supabase.from('room_attachments').insert({
+      room_id: roomId,
       home_id: homeId,
-      appliance_id: applianceId,
       name: selectedFile.name,
       file_url: publicUrl,
       file_type: selectedFile.type,
       file_size: selectedFile.size,
-      document_type: uploadForm.document_type,
-      description: uploadForm.description || null,
-      include_in_binder: uploadForm.include_in_binder,
+      description: form.description || null,
+      include_in_binder: form.include_in_binder,
     })
 
     setShowUpload(false)
     setSelectedFile(null)
-    setUploadForm({ document_type: 'manual', description: '', include_in_binder: true })
+    setForm({ description: '', include_in_binder: true })
     setUploading(false)
+    router.refresh()
+  }
+
+  async function handleDelete(id: string) {
+    await supabase.from('room_attachments').delete().eq('id', id)
+    router.refresh()
+  }
+
+  async function toggleBinder(attachment: RoomAttachment) {
+    await supabase.from('room_attachments')
+      .update({ include_in_binder: !attachment.include_in_binder })
+      .eq('id', attachment.id)
     router.refresh()
   }
 
@@ -111,9 +92,9 @@ export default function DocumentsSection({
     <div className="bg-white rounded-2xl border border-[#C8BFB2]">
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#E0D9D0]">
         <div>
-          <h2 className="font-semibold text-[#2F3437]">Documents</h2>
+          <h2 className="font-semibold text-[#2F3437]">Attachments</h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            {documents.length === 0 ? 'No files uploaded' : `${documents.length} file${documents.length !== 1 ? 's' : ''}`}
+            {attachments.length === 0 ? 'No files uploaded' : `${attachments.length} file${attachments.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         {canManage && (
@@ -127,7 +108,6 @@ export default function DocumentsSection({
         )}
       </div>
 
-      {/* Upload form */}
       {showUpload && (
         <div className="px-5 py-4 border-b border-[#E0D9D0] bg-[#F4F1EA]">
           <form onSubmit={handleUpload} className="flex flex-col gap-3">
@@ -142,23 +122,11 @@ export default function DocumentsSection({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Document type</label>
-              <select
-                value={uploadForm.document_type}
-                onChange={e => setUploadForm(p => ({ ...p, document_type: e.target.value as DocumentType }))}
-                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-xs focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] bg-white"
-              >
-                {Object.entries(DOC_TYPE_LABELS).map(([val, label]) => (
-                  <option key={val} value={val}>{label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">Description</label>
               <input
                 type="text"
-                value={uploadForm.description}
-                onChange={e => setUploadForm(p => ({ ...p, description: e.target.value }))}
+                value={form.description}
+                onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                 placeholder="Optional note"
                 className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-xs focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
               />
@@ -166,12 +134,12 @@ export default function DocumentsSection({
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                id="include_in_binder_doc"
-                checked={uploadForm.include_in_binder}
-                onChange={e => setUploadForm(p => ({ ...p, include_in_binder: e.target.checked }))}
+                id="include_in_binder_upload"
+                checked={form.include_in_binder}
+                onChange={e => setForm(p => ({ ...p, include_in_binder: e.target.checked }))}
                 className="rounded border-[#C8BFB2]"
               />
-              <label htmlFor="include_in_binder_doc" className="text-xs text-slate-700">Include in Home Binder</label>
+              <label htmlFor="include_in_binder_upload" className="text-xs text-slate-700">Include in Home Binder</label>
             </div>
             <div className="flex gap-2">
               <button
@@ -193,49 +161,58 @@ export default function DocumentsSection({
         </div>
       )}
 
-      {/* Documents list */}
       <div className="divide-y divide-slate-100">
-        {documents.length === 0 ? (
+        {attachments.length === 0 ? (
           <div className="px-5 py-6 text-center">
-            <FileText size={22} className="text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500">No documents yet.</p>
-            <p className="text-xs text-slate-400 mt-1">Upload manuals, warranties, and receipts.</p>
+            <Paperclip size={22} className="text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500">No attachments yet.</p>
+            <p className="text-xs text-slate-400 mt-1">Upload photos, PDFs, or documents for this room.</p>
           </div>
         ) : (
-          documents.map((doc) => (
-            <div key={doc.id} className="px-5 py-3 flex items-center gap-3">
+          attachments.map((att) => (
+            <div key={att.id} className="px-5 py-3 flex items-center gap-3">
               <div className="text-slate-400 flex-shrink-0">
-                {getFileIcon(doc.file_type)}
+                {getFileIcon(att.file_type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#2F3437] truncate">{doc.name}</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${DOC_TYPE_COLORS[doc.document_type]}`}>
-                    {DOC_TYPE_LABELS[doc.document_type]}
-                  </span>
-                  {doc.file_size && (
-                    <span className="text-xs text-slate-400">{formatBytes(doc.file_size)}</span>
+                <p className="text-sm font-medium text-[#2F3437] truncate">{att.name}</p>
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  {att.description && (
+                    <span className="text-xs text-slate-500">{att.description}</span>
+                  )}
+                  {att.file_size && (
+                    <span className="text-xs text-slate-400">{formatBytes(att.file_size)}</span>
+                  )}
+                  {canManage && (
+                    <label className="flex items-center gap-1 text-xs text-slate-500 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={att.include_in_binder}
+                        onChange={() => toggleBinder(att)}
+                        className="rounded border-[#C8BFB2] w-3 h-3"
+                      />
+                      Binder
+                    </label>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                {canManage && (
-                  <button
-                    onClick={() => toggleBinder(doc)}
-                    title={doc.include_in_binder ? 'In binder — click to exclude' : 'Not in binder — click to include'}
-                    className={`transition-colors ${doc.include_in_binder ? 'text-[#5B6C8F]' : 'text-slate-300 hover:text-slate-400'}`}
-                  >
-                    <BookOpen size={13} />
-                  </button>
-                )}
                 <a
-                  href={doc.file_url}
+                  href={att.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-slate-400 hover:text-[#5B6C8F] transition-colors"
                 >
                   <ExternalLink size={14} />
                 </a>
+                {canManage && (
+                  <button
+                    onClick={() => handleDelete(att.id)}
+                    className="text-slate-300 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
             </div>
           ))

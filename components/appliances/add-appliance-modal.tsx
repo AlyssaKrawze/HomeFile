@@ -8,8 +8,14 @@ import { Loader2, Plus, Search, X } from 'lucide-react'
 interface AddApplianceModalProps {
   homeId: string
   roomId: string
+  roomCategory?: string
   trigger?: 'button' | 'card'
 }
+
+const OUTDOOR_SUGGESTIONS = [
+  'Pool', 'Hot Tub', 'Basketball Hoop', 'Sprinkler System', 'Fence',
+  'Shed', 'Deck', 'Pergola', 'Outdoor Kitchen', 'Generator', 'Septic System', 'Well Pump',
+]
 
 const APPLIANCE_CATEGORIES = [
   'Kitchen Appliance', 'HVAC', 'Plumbing', 'Electrical',
@@ -17,7 +23,7 @@ const APPLIANCE_CATEGORIES = [
   'Structural', 'Entertainment', 'Other',
 ]
 
-export default function AddApplianceModal({ homeId, roomId, trigger = 'button' }: AddApplianceModalProps) {
+export default function AddApplianceModal({ homeId, roomId, roomCategory, trigger = 'button' }: AddApplianceModalProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -173,6 +179,20 @@ export default function AddApplianceModal({ homeId, roomId, trigger = 'button' }
                     required
                     className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
                   />
+                  {roomCategory === 'outdoor' && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {OUTDOOR_SUGGESTIONS.map(s => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => update('name', s)}
+                          className="text-xs px-2 py-1 rounded-full border border-[#C8BFB2] text-slate-600 hover:bg-[#d6ede8] hover:border-[#5a8a7d] hover:text-[#5a8a7d] transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>

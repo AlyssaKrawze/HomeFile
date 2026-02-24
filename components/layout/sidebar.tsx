@@ -17,6 +17,7 @@ import {
   BookOpen,
   Download,
   Lock,
+  FolderOpen,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -45,6 +46,7 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
     { href: `/dashboard/homes/${currentHomeId}/calendar`, label: 'Calendar', icon: Calendar },
     { href: `/dashboard/homes/${currentHomeId}/alerts`, label: 'Alerts', icon: Bell },
     { href: `/dashboard/homes/${currentHomeId}/members`, label: 'Members', icon: Users },
+    { href: `/dashboard/homes/${currentHomeId}/projects`, label: 'Projects', icon: FolderOpen },
     { href: `/dashboard/homes/${currentHomeId}/vault`, label: 'Vault', icon: Lock },
     { href: `/dashboard/homes/${currentHomeId}/binder`, label: 'Home Binder', icon: BookOpen },
     { href: `/dashboard/homes/${currentHomeId}/settings`, label: 'Settings', icon: Settings },

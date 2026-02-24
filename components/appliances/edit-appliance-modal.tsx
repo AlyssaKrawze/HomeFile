@@ -37,6 +37,7 @@ export default function EditApplianceModal({ appliance }: EditApplianceModalProp
     warranty_expiry: appliance.warranty_expiry ?? '',
     warranty_provider: appliance.warranty_provider ?? '',
     notes: appliance.notes ?? '',
+    include_in_binder: appliance.include_in_binder ?? true,
   })
   const router = useRouter()
   const supabase = createClient()
@@ -94,6 +95,7 @@ export default function EditApplianceModal({ appliance }: EditApplianceModalProp
       warranty_expiry: form.warranty_expiry || null,
       warranty_provider: form.warranty_provider || null,
       notes: form.notes || null,
+      include_in_binder: form.include_in_binder,
     }).eq('id', appliance.id)
 
     if (error) {
@@ -291,6 +293,19 @@ export default function EditApplianceModal({ appliance }: EditApplianceModalProp
                     rows={3}
                     className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] resize-none"
                   />
+                </div>
+
+                <div className="col-span-2 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="edit_include_in_binder"
+                    checked={form.include_in_binder}
+                    onChange={e => setForm(p => ({ ...p, include_in_binder: e.target.checked }))}
+                    className="rounded border-[#C8BFB2]"
+                  />
+                  <label htmlFor="edit_include_in_binder" className="text-sm text-slate-700">
+                    Include in Home Binder
+                  </label>
                 </div>
 
                 {suggestedTasks.length > 0 && (

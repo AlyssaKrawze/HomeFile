@@ -95,6 +95,7 @@ export interface Appliance {
   notes: string | null
   disaster_plan: string | null
   image_url: string | null
+  include_in_binder: boolean
   created_at: string
   updated_at: string
 }
@@ -134,6 +135,7 @@ export interface Document {
   file_size: number | null
   document_type: DocumentType
   description: string | null
+  include_in_binder: boolean
   created_at: string
   created_by: string | null
 }
@@ -196,7 +198,7 @@ export const ROOM_CATEGORIES: Record<PermissionCategory, {
   hvac:        { label: 'HVAC',        color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '❄️' },
   electrical:  { label: 'Electrical',  color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '⚡' },
   plumbing:    { label: 'Plumbing',    color: 'text-[#5a628a]', bgColor: 'bg-[#d6d9ee]', icon: '💧' },
-  outdoor:     { label: 'Outdoor',     color: 'text-[#5a8a7d]', bgColor: 'bg-[#d6ede8]', icon: '🌿' },
+  outdoor:     { label: 'Outdoor',     color: 'text-[#5a8a7d]', bgColor: 'bg-[#d6ede8]', icon: '🌳' },
   other:       { label: 'Other',       color: 'text-[#8a7a3a]', bgColor: 'bg-[#eee8cc]', icon: '📋' },
 }
 
@@ -244,4 +246,59 @@ export const PRIORITY_LABELS: Record<TaskPriority, { label: string; color: strin
   medium: { label: 'Medium', color: 'text-blue-700', bg: 'bg-blue-100' },
   high: { label: 'High', color: 'text-amber-700', bg: 'bg-amber-100' },
   urgent: { label: 'Urgent', color: 'text-red-700', bg: 'bg-red-100' },
+}
+
+export interface ServiceProvider {
+  id: string
+  appliance_id: string
+  home_id: string
+  name: string
+  company: string | null
+  phone: string | null
+  email: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface RoomAttachment {
+  id: string
+  room_id: string
+  home_id: string
+  name: string
+  file_url: string
+  file_type: string | null
+  file_size: number | null
+  description: string | null
+  include_in_binder: boolean
+  created_at: string
+}
+
+export type ProjectStatus = 'planned' | 'in_progress' | 'complete'
+export type ProjectTaskStatus = 'pending' | 'in_progress' | 'completed'
+
+export interface Project {
+  id: string
+  home_id: string
+  name: string
+  description: string | null
+  status: ProjectStatus
+  due_date: string | null
+  created_at: string
+  updated_at: string
+  tasks?: ProjectTask[]
+  room_count?: number
+  appliance_count?: number
+}
+
+export interface ProjectTask {
+  id: string
+  project_id: string
+  home_id: string
+  title: string
+  description: string | null
+  status: ProjectTaskStatus
+  assigned_to: string | null
+  due_date: string | null
+  created_at: string
+  assignee?: { id: string; full_name: string | null; email: string | null }
 }

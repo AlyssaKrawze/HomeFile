@@ -1,8 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, ChevronRight, AlertTriangle, CheckCircle2, Clock, Wrench, BookOpen } from 'lucide-react'
-import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
+import { ChevronRight, Clock, Wrench, BookOpen } from 'lucide-react'
+import RoomsGrid from '@/components/rooms/rooms-grid'
 import AddRoomModal from '@/components/rooms/add-room-modal'
 
 export default async function HomeOverviewPage({
@@ -39,7 +39,7 @@ export default async function HomeOverviewPage({
     .from('rooms')
     .select('*')
     .eq('home_id', homeId)
-    .order('floor')
+    .order('sort_order')
     .order('name')
 
   // Fetch appliance counts per room
@@ -139,56 +139,12 @@ export default async function HomeOverviewPage({
 
       {/* Rooms grid */}
       {(rooms || []).length > 0 ? (
-        <>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-semibold text-slate-700">Rooms & Areas</h2>
-            <Link
-              href={`/dashboard/homes/${homeId}/inventory`}
-              className="text-sm text-[#5B6C8F] hover:text-[#4a5c77] font-medium flex items-center gap-1"
-            >
-              View all items
-              <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {(rooms || []).map((room) => {
-              const cat = ROOM_CATEGORIES[room.category as PermissionCategory] || ROOM_CATEGORIES.other
-              const appCount = countsByRoom[room.id] || 0
-              return (
-                <Link
-                  key={room.id}
-                  href={`/dashboard/homes/${homeId}/rooms/${room.id}`}
-                  className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md transition-all duration-200 p-5"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-11 h-11 rounded-xl ${cat.bgColor} flex items-center justify-center text-2xl`}>
-                      {cat.icon}
-                    </div>
-                    {appCount > 0 && (
-                      <span className="text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
-                        {appCount} item{appCount !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors text-sm">
-                    {room.name}
-                  </h3>
-                  <p className={`text-xs font-medium mt-0.5 ${cat.color}`}>{cat.label}</p>
-                  {room.floor > 1 && (
-                    <p className="text-xs text-slate-400 mt-0.5">Floor {room.floor}</p>
-                  )}
-                  {appCount === 0 && (
-                    <p className="text-xs text-slate-400 mt-3 italic">No items yet</p>
-                  )}
-                </Link>
-              )
-            })}
-
-            {/* Add room card */}
-            {canManage && <AddRoomCard homeId={homeId} />}
-          </div>
-        </>
+        <RoomsGrid
+          rooms={(rooms || []).map(r => ({ ...r, sort_order: r.sort_order ?? 0 }))}
+          homeId={homeId}
+          canManage={canManage}
+          countsByRoom={countsByRoom}
+        />
       ) : (
         <NoRoomsState homeId={homeId} canManage={canManage} />
       )}
@@ -270,14 +226,6 @@ function StatCard({
   )
   if (href) return <Link href={href}>{content}</Link>
   return content
-}
-
-function AddRoomCard({ homeId }: { homeId: string }) {
-  return (
-    <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-32 transition-colors">
-      <AddRoomModal homeId={homeId} trigger="card" />
-    </div>
-  )
 }
 
 function NoRoomsState({ homeId, canManage }: { homeId: string; canManage: boolean }) {

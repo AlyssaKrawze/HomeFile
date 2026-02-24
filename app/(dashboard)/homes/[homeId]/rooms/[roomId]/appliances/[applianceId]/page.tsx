@@ -12,6 +12,7 @@ import ScheduledTasksSection from '@/components/appliances/scheduled-tasks-secti
 import AISuggestionsSection from '@/components/appliances/ai-suggestions-section'
 import EditApplianceModal from '@/components/appliances/edit-appliance-modal'
 import DisasterPlanSection from '@/components/appliances/disaster-plan-section'
+import ProvidersSection from '@/components/appliances/providers-section'
 
 export default async function AppliancePage({
   params,
@@ -40,7 +41,7 @@ export default async function AppliancePage({
 
   if (!home || !room || !appliance) notFound()
 
-  const [{ data: serviceRecords }, { data: documents }, { data: scheduledTasks }, { data: homeMembers }] = await Promise.all([
+  const [{ data: serviceRecords }, { data: documents }, { data: scheduledTasks }, { data: homeMembers }, { data: providers }] = await Promise.all([
     supabase
       .from('service_records')
       .select('*')
@@ -60,6 +61,11 @@ export default async function AppliancePage({
       .from('home_members')
       .select('user_id, profiles(id, full_name, email, avatar_url)')
       .eq('home_id', homeId),
+    supabase
+      .from('service_providers')
+      .select('*')
+      .eq('appliance_id', applianceId)
+      .order('created_at', { ascending: false }),
   ])
 
   const taskMembers: TaskAssigneeMember[] = (homeMembers || []).map(m => {
@@ -230,6 +236,13 @@ export default async function AppliancePage({
             serviceRecords={serviceRecords || []}
             canManage={canManage}
             userId={user.id}
+          />
+
+          <ProvidersSection
+            applianceId={applianceId}
+            homeId={homeId}
+            providers={providers || []}
+            canManage={canManage}
           />
 
           <ScheduledTasksSection
