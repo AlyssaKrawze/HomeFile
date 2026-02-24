@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname
 
-  const isAuthPage = path.startsWith('/login') || path.startsWith('/signup')
+  const isAuthPage = path.startsWith('/login') || path.startsWith('/signup') || path.startsWith('/forgot-password')
   const isPublicPath =
     path === '/' ||
     path.startsWith('/auth/') ||   // allow /auth/callback
