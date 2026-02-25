@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LayoutGrid, List } from 'lucide-react'
+import { LayoutGrid, List, GripVertical } from 'lucide-react'
 import {
   DndContext,
   closestCenter,
@@ -48,57 +48,64 @@ function SortableRoomCard({
   canManage: boolean
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: room.id })
+  const router = useRouter()
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.4 : 1,
+    touchAction: 'none',
   }
   const cat = ROOM_CATEGORIES[room.category as PermissionCategory] || ROOM_CATEGORIES.other
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <Link
-        href={`/dashboard/homes/${homeId}/rooms/${room.id}`}
-        className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md transition-all duration-200 p-5 block"
-      >
-        <div className="flex items-start justify-between mb-4">
-          <div
-            {...attributes}
-            {...listeners}
-            className="cursor-grab active:cursor-grabbing"
-            onClick={e => e.preventDefault()}
-          >
-            <div className={`w-11 h-11 rounded-xl ${cat.bgColor} flex items-center justify-center text-2xl`}>
-              {cat.icon}
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            {appCount > 0 && (
-              <span className="text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
-                {appCount} item{appCount !== 1 ? 's' : ''}
-              </span>
-            )}
-            {canManage && (
-              <DeleteRoomButton
-                homeId={homeId}
-                roomId={room.id}
-                roomName={room.name}
-                itemCount={appCount}
-              />
-            )}
-          </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => router.push(`/dashboard/homes/${homeId}/rooms/${room.id}`)}
+      className={`group relative bg-white rounded-2xl border transition-all duration-200 p-5 select-none ${
+        isDragging
+          ? 'cursor-grabbing border-[#9ab0c4] shadow-lg'
+          : 'cursor-grab border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md'
+      }`}
+    >
+      {/* Drag indicator */}
+      <GripVertical
+        size={14}
+        className="absolute top-3 left-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity"
+      />
+
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-11 h-11 rounded-xl ${cat.bgColor} flex items-center justify-center text-2xl`}>
+          {cat.icon}
         </div>
-        <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors text-sm">
-          {room.name}
-        </h3>
-        <p className={`text-xs font-medium mt-0.5 ${cat.color}`}>{cat.label}</p>
-        {room.floor > 1 && (
-          <p className="text-xs text-slate-400 mt-0.5">Floor {room.floor}</p>
-        )}
-        {appCount === 0 && (
-          <p className="text-xs text-slate-400 mt-3 italic">No items yet</p>
-        )}
-      </Link>
+        <div className="flex items-center gap-1">
+          {appCount > 0 && (
+            <span className="text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
+              {appCount} item{appCount !== 1 ? 's' : ''}
+            </span>
+          )}
+          {canManage && (
+            <DeleteRoomButton
+              homeId={homeId}
+              roomId={room.id}
+              roomName={room.name}
+              itemCount={appCount}
+            />
+          )}
+        </div>
+      </div>
+      <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors text-sm">
+        {room.name}
+      </h3>
+      <p className={`text-xs font-medium mt-0.5 ${cat.color}`}>{cat.label}</p>
+      {room.floor > 1 && (
+        <p className="text-xs text-slate-400 mt-0.5">Floor {room.floor}</p>
+      )}
+      {appCount === 0 && (
+        <p className="text-xs text-slate-400 mt-3 italic">No items yet</p>
+      )}
     </div>
   )
 }
@@ -114,6 +121,7 @@ export default function RoomsGrid({ rooms: initialRooms, homeId, canManage, coun
   const [activeId, setActiveId] = useState<string | null>(null)
   const router = useRouter()
 
+  // distance: 8 prevents accidental drags on simple clicks
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
   function handleViewToggle(v: 'card' | 'list') {
