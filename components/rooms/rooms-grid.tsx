@@ -21,6 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
 import AddRoomModal from '@/components/rooms/add-room-modal'
+import DeleteRoomButton from '@/components/rooms/delete-room-button'
 
 interface Room {
   id: string
@@ -38,12 +39,13 @@ interface RoomsGridProps {
 }
 
 function SortableRoomCard({
-  room, homeId, appCount, isDragging,
+  room, homeId, appCount, isDragging, canManage,
 }: {
   room: Room
   homeId: string
   appCount: number
   isDragging: boolean
+  canManage: boolean
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: room.id })
   const style = {
@@ -70,11 +72,21 @@ function SortableRoomCard({
               {cat.icon}
             </div>
           </div>
-          {appCount > 0 && (
-            <span className="text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
-              {appCount} item{appCount !== 1 ? 's' : ''}
-            </span>
-          )}
+          <div className="flex items-center gap-1">
+            {appCount > 0 && (
+              <span className="text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
+                {appCount} item{appCount !== 1 ? 's' : ''}
+              </span>
+            )}
+            {canManage && (
+              <DeleteRoomButton
+                homeId={homeId}
+                roomId={room.id}
+                roomName={room.name}
+                itemCount={appCount}
+              />
+            )}
+          </div>
         </div>
         <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors text-sm">
           {room.name}
@@ -174,6 +186,7 @@ export default function RoomsGrid({ rooms: initialRooms, homeId, canManage, coun
                   homeId={homeId}
                   appCount={countsByRoom[room.id] || 0}
                   isDragging={activeId === room.id}
+                  canManage={canManage}
                 />
               ))}
               {canManage && (

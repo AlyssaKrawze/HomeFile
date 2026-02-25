@@ -1,11 +1,12 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, Wrench, ShieldCheck, ShieldAlert, Clock } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { ROOM_CATEGORIES, type PermissionCategory } from '@/lib/types'
 import AddApplianceModal from '@/components/appliances/add-appliance-modal'
 import RoomNotesSection from '@/components/rooms/room-notes-section'
 import RoomAttachmentsSection from '@/components/rooms/room-attachments-section'
+import ApplianceSortGrid from '@/components/appliances/appliance-sort-grid'
 
 export default async function RoomPage({
   params,
@@ -68,7 +69,6 @@ export default async function RoomPage({
 
   const cat = ROOM_CATEGORIES[room.category as PermissionCategory] || ROOM_CATEGORIES.other
   const canManage = ['owner', 'manager'].includes(membership.role)
-  const today = new Date().toISOString().split('T')[0]
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
@@ -119,116 +119,15 @@ export default async function RoomPage({
 
       {/* Appliance grid */}
       {(appliances || []).length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {(appliances || []).map((appliance) => {
-            const lastService = lastServiceByAppliance[appliance.id]
-            const tasks = tasksByAppliance[appliance.id] || []
-            const hasOverdue = tasks.some(t => t.due_date < today)
-            const hasUrgent = tasks.some(t => t.priority === 'urgent')
-
-            // Warranty status
-            const warrantyExpiry = appliance.warranty_expiry
-            const warrantyDate = warrantyExpiry ? new Date(warrantyExpiry) : null
-            const now = new Date()
-            const warrantyStatus = !warrantyDate
-              ? 'unknown'
-              : warrantyDate < now
-              ? 'expired'
-              : warrantyDate < new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000)
-              ? 'expiring'
-              : 'active'
-
-            return (
-              <Link
-                key={appliance.id}
-                href={`/dashboard/homes/${homeId}/rooms/${roomId}/appliances/${appliance.id}`}
-                className="group bg-white rounded-2xl border border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md transition-all duration-200 p-5"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between gap-2 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-xl flex-shrink-0">
-                    {getApplianceEmoji(appliance.category || appliance.name)}
-                  </div>
-                  <div className="flex gap-1.5 flex-wrap justify-end">
-                    {hasOverdue && (
-                      <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
-                        Overdue
-                      </span>
-                    )}
-                    {hasUrgent && !hasOverdue && (
-                      <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
-                        Urgent
-                      </span>
-                    )}
-                    {tasks.length > 0 && !hasOverdue && !hasUrgent && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
-                        {tasks.length} task{tasks.length !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <h3 className="font-semibold text-[#2F3437] group-hover:text-[#5B6C8F] transition-colors">
-                  {appliance.name}
-                </h3>
-                {(appliance.brand || appliance.model) && (
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {[appliance.brand, appliance.model].filter(Boolean).join(' · ')}
-                  </p>
-                )}
-
-                <div className="mt-4 flex flex-col gap-2">
-                  {/* Warranty badge */}
-                  <div className="flex items-center gap-1.5">
-                    {warrantyStatus === 'active' && (
-                      <>
-                        <ShieldCheck size={13} className="text-green-500" />
-                        <span className="text-xs text-green-700">
-                          Warranty until {new Date(warrantyExpiry!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                        </span>
-                      </>
-                    )}
-                    {warrantyStatus === 'expiring' && (
-                      <>
-                        <ShieldAlert size={13} className="text-amber-500" />
-                        <span className="text-xs text-amber-700">Warranty expiring soon</span>
-                      </>
-                    )}
-                    {warrantyStatus === 'expired' && (
-                      <>
-                        <ShieldAlert size={13} className="text-slate-400" />
-                        <span className="text-xs text-slate-400">Warranty expired</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Last service */}
-                  {lastService && (
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={13} className="text-slate-400" />
-                      <span className="text-xs text-slate-500">
-                        Serviced {new Date(lastService).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                    </div>
-                  )}
-                  {!lastService && (
-                    <div className="flex items-center gap-1.5">
-                      <Wrench size={13} className="text-slate-300" />
-                      <span className="text-xs text-slate-400 italic">No service history</span>
-                    </div>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
-
-          {/* Add appliance card */}
-          {canManage && (
-            <div className="bg-white rounded-2xl border-2 border-dashed border-[#C8BFB2] hover:border-[#9ab0c4] flex items-center justify-center min-h-40 transition-colors">
-              <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} trigger="card" />
-            </div>
-          )}
-        </div>
+        <ApplianceSortGrid
+          appliances={appliances || []}
+          homeId={homeId}
+          roomId={roomId}
+          roomCategory={room.category}
+          canManage={canManage}
+          lastServiceByAppliance={lastServiceByAppliance}
+          tasksByAppliance={tasksByAppliance}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-6 text-4xl">
@@ -247,26 +146,3 @@ export default async function RoomPage({
   )
 }
 
-function getApplianceEmoji(hint: string): string {
-  const h = hint.toLowerCase()
-  if (h.includes('refriger') || h.includes('fridge')) return '🧊'
-  if (h.includes('dishwasher')) return '🍽️'
-  if (h.includes('oven') || h.includes('range') || h.includes('stove')) return '🔥'
-  if (h.includes('microwave')) return '📡'
-  if (h.includes('washer') || h.includes('washing')) return '🫧'
-  if (h.includes('dryer')) return '🌀'
-  if (h.includes('hvac') || h.includes('furnace') || h.includes('heater') || h.includes('heat')) return '🌡️'
-  if (h.includes('ac') || h.includes('air condition') || h.includes('cool')) return '❄️'
-  if (h.includes('water heater')) return '💧'
-  if (h.includes('toilet')) return '🚽'
-  if (h.includes('shower') || h.includes('bath')) return '🚿'
-  if (h.includes('window')) return '🪟'
-  if (h.includes('door')) return '🚪'
-  if (h.includes('fireplace')) return '🔥'
-  if (h.includes('garage')) return '🚗'
-  if (h.includes('generator')) return '⚡'
-  if (h.includes('water softener') || h.includes('filter')) return '💧'
-  if (h.includes('pool')) return '🏊'
-  if (h.includes('tv') || h.includes('television')) return '📺'
-  return '🔧'
-}

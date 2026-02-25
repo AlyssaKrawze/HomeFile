@@ -13,6 +13,7 @@ import AISuggestionsSection from '@/components/appliances/ai-suggestions-section
 import EditApplianceModal from '@/components/appliances/edit-appliance-modal'
 import DisasterPlanSection from '@/components/appliances/disaster-plan-section'
 import ProvidersSection from '@/components/appliances/providers-section'
+import DeleteApplianceButton from '@/components/appliances/delete-appliance-button'
 
 export default async function AppliancePage({
   params,
@@ -124,7 +125,17 @@ export default async function AppliancePage({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h1 className="font-playfair text-xl sm:text-2xl font-bold text-[#2F3437] leading-tight">{appliance.name}</h1>
-              {canManage && <div className="flex-shrink-0"><EditApplianceModal appliance={appliance} /></div>}
+              {canManage && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <EditApplianceModal appliance={appliance} />
+                  <DeleteApplianceButton
+                    homeId={homeId}
+                    roomId={roomId}
+                    applianceId={applianceId}
+                    applianceName={appliance.name}
+                  />
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2 flex-wrap mt-1">
               {appliance.brand && (
