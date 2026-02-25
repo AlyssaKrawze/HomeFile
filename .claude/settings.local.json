@@ -76,7 +76,8 @@
       "Bash(tree -L 3 /Users/alyssakrawze/homefile -I node_modules 2>/dev/null || find /Users/alyssakrawze/homefile -not -path \"*/node_modules/*\" -not -path \"*/.next/*\" -not -path \"*/.git/*\" -type d | sort)",
       "Bash(ls -la \"/Users/alyssakrawze/homefile/app/\\(dashboard\\)/dashboard/homes/[homeId]/rooms/[roomId]/appliances/[applianceId]/\")",
       "Bash(npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities 2>&1 | tail -5)",
-      "Bash(git add . && git commit -m \"Add providers, room notes, drag to reorder, projects tab, attachments, binder toggles, outdoor rooms\" && git push)"
+      "Bash(git add . && git commit -m \"Add providers, room notes, drag to reorder, projects tab, attachments, binder toggles, outdoor rooms\" && git push)",
+      "Bash(git add -A && git commit -m \"Fix rooms query: fall back to floor/name order if sort_order column missing\" && git push)"
     ]
   }
 }

@@ -34,13 +34,23 @@ export default async function HomeOverviewPage({
 
   if (!home) notFound()
 
-  // Fetch rooms with appliance counts
-  const { data: rooms } = await supabase
+  // Fetch rooms — try sort_order first (requires migration 014), fall back to floor/name
+  let { data: rooms, error: roomsError } = await supabase
     .from('rooms')
     .select('*')
     .eq('home_id', homeId)
     .order('sort_order')
     .order('name')
+
+  if (roomsError) {
+    const { data: fallback } = await supabase
+      .from('rooms')
+      .select('*')
+      .eq('home_id', homeId)
+      .order('floor')
+      .order('name')
+    rooms = fallback
+  }
 
   // Fetch appliance counts per room
   const { data: applianceCounts } = await supabase
