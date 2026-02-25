@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Plus, X } from 'lucide-react'
 
@@ -10,7 +9,7 @@ interface AddHomeModalProps {
   trigger?: 'button' | 'card'
 }
 
-export default function AddHomeModal({ userId, trigger = 'button' }: AddHomeModalProps) {
+export default function AddHomeModal({ userId: _userId, trigger = 'button' }: AddHomeModalProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,7 +23,6 @@ export default function AddHomeModal({ userId, trigger = 'button' }: AddHomeModa
     square_footage: '',
   })
   const router = useRouter()
-  const supabase = createClient()
 
   function updateForm(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -36,37 +34,22 @@ export default function AddHomeModal({ userId, trigger = 'button' }: AddHomeModa
     setLoading(true)
     setError(null)
 
-    const { data: home, error: homeErr } = await supabase
-      .from('homes')
-      .insert({
-        name: form.name.trim(),
-        address: form.address || null,
-        city: form.city || null,
-        state: form.state || null,
-        zip: form.zip || null,
-        year_built: form.year_built ? parseInt(form.year_built) : null,
-        square_footage: form.square_footage ? parseInt(form.square_footage) : null,
-        owner_id: userId,
-      })
-      .select()
-      .single()
+    const res = await fetch('/api/homes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+    const data = await res.json()
 
-    if (homeErr || !home) {
-      setError(homeErr?.message || 'Failed to create home')
+    if (!res.ok) {
+      setError(data.error || 'Failed to create home')
       setLoading(false)
       return
     }
 
-    // Add owner as home member
-    await supabase.from('home_members').insert({
-      home_id: home.id,
-      user_id: userId,
-      role: 'owner',
-    })
-
     setOpen(false)
     router.refresh()
-    router.push(`/dashboard/homes/${home.id}`)
+    router.push(`/dashboard/homes/${data.id}`)
   }
 
   const triggerEl = trigger === 'card' ? (
