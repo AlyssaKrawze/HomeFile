@@ -7,6 +7,7 @@ import AddApplianceModal from '@/components/appliances/add-appliance-modal'
 import RoomNotesSection from '@/components/rooms/room-notes-section'
 import RoomAttachmentsSection from '@/components/rooms/room-attachments-section'
 import ApplianceSortGrid from '@/components/appliances/appliance-sort-grid'
+import DeleteRoomButton from '@/components/rooms/delete-room-button'
 
 export default async function RoomPage({
   params,
@@ -93,7 +94,18 @@ export default async function RoomPage({
             {room.description && <p className="text-sm text-slate-500 mt-0.5">{room.description}</p>}
           </div>
         </div>
-        {canManage && <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} />}
+        {canManage && (
+          <div className="flex items-center gap-2">
+            <DeleteRoomButton
+              homeId={homeId}
+              roomId={roomId}
+              roomName={room.name}
+              itemCount={(appliances || []).length}
+              variant="button"
+            />
+            <AddApplianceModal homeId={homeId} roomId={roomId} roomCategory={room.category} />
+          </div>
+        )}
       </div>
 
       {/* Room Notes + Attachments */}
