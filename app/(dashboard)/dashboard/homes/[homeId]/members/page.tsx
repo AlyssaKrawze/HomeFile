@@ -1,7 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, Users, Shield, Edit3 } from 'lucide-react'
+import { ChevronRight, Shield, Edit3 } from 'lucide-react'
+import InviteMemberModal from '@/components/homes/invite-member-modal'
 
 export default async function MembersPage({
   params,
@@ -74,13 +75,7 @@ export default async function MembersPage({
 
       <div className="flex items-center justify-between mb-8 gap-3">
         <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Members &amp; Access</h1>
-        {isOwner && (
-          <button className="flex items-center gap-2 bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors flex-shrink-0">
-            <Users size={15} />
-            <span className="hidden sm:inline">Invite Member</span>
-            <span className="sm:hidden">Invite</span>
-          </button>
-        )}
+        {isOwner && <InviteMemberModal />}
       </div>
 
       {/* Current members */}

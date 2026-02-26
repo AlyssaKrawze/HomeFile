@@ -24,7 +24,7 @@ export default function DashboardShell({
     <div className="flex h-screen overflow-hidden bg-[#F4F1EA]">
       {/* ── Sidebar (hidden on mobile) ───────────────────── */}
       <div className="hidden lg:flex flex-shrink-0">
-        <Sidebar homes={homes} userName={userName} />
+        <Sidebar homes={homes} userName={userName} userId={userId} />
       </div>
 
       {/* ── Mobile top bar ──────────────────────────────── */}

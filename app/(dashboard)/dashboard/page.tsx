@@ -31,11 +31,6 @@ export default async function DashboardPage() {
     return h ? { ...h, member_role: m.role } : null
   }).filter(Boolean) as HomeRow[]
 
-  // If user has exactly one home, redirect there
-  if (homes.length === 1) {
-    redirect(`/dashboard/homes/${homes[0].id}`)
-  }
-
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-10">
       {/* Header */}

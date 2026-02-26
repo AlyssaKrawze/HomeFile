@@ -6,7 +6,7 @@ import { Plus, X } from 'lucide-react'
 
 interface AddHomeModalProps {
   userId: string
-  trigger?: 'button' | 'card'
+  trigger?: 'button' | 'card' | 'icon'
 }
 
 export default function AddHomeModal({ userId: _userId, trigger = 'button' }: AddHomeModalProps) {
@@ -52,7 +52,15 @@ export default function AddHomeModal({ userId: _userId, trigger = 'button' }: Ad
     router.push(`/dashboard/homes/${data.id}`)
   }
 
-  const triggerEl = trigger === 'card' ? (
+  const triggerEl = trigger === 'icon' ? (
+    <button
+      onClick={() => setOpen(true)}
+      className="text-slate-400 hover:text-[#7a8fa8] transition-colors"
+      title="Add home"
+    >
+      <Plus size={14} />
+    </button>
+  ) : trigger === 'card' ? (
     <button
       onClick={() => setOpen(true)}
       className="flex flex-col items-center gap-3 text-slate-400 hover:text-[#5B6C8F] transition-colors group"

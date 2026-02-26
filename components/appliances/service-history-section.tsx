@@ -14,14 +14,20 @@ interface ServiceHistorySectionProps {
   userId: string
 }
 
+function localToday() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 export default function ServiceHistorySection({
   applianceId, homeId, serviceRecords, canManage, userId
 }: ServiceHistorySectionProps) {
   const [showForm, setShowForm] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [descriptionError, setDescriptionError] = useState(false)
   const [form, setForm] = useState({
-    service_date: new Date().toISOString().split('T')[0],
+    service_date: localToday(),
     service_type: 'maintenance' as ServiceType,
     description: '',
     cost: '',
@@ -36,11 +42,15 @@ export default function ServiceHistorySection({
 
   function update(field: string, value: string) {
     setForm(p => ({ ...p, [field]: value }))
+    if (field === 'description') setDescriptionError(false)
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.description.trim()) return
+    if (!form.description.trim()) {
+      setDescriptionError(true)
+      return
+    }
     setLoading(true)
 
     await supabase.from('service_records').insert({
@@ -59,8 +69,9 @@ export default function ServiceHistorySection({
     })
 
     setShowForm(false)
+    setDescriptionError(false)
     setForm({
-      service_date: new Date().toISOString().split('T')[0],
+      service_date: localToday(),
       service_type: 'maintenance',
       description: '',
       cost: '',
@@ -137,10 +148,14 @@ export default function ServiceHistorySection({
                 value={form.description}
                 onChange={e => update('description', e.target.value)}
                 placeholder="What was done?"
-                required
                 rows={2}
-                className="w-full px-3 py-2 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] resize-none"
+                className={`w-full px-3 py-2 rounded-lg border text-[#2F3437] text-sm focus:outline-none focus:ring-2 resize-none ${
+                  descriptionError ? 'border-red-400 focus:ring-red-300' : 'border-[#C8BFB2] focus:ring-[#5B6C8F]'
+                }`}
               />
+              {descriptionError && (
+                <p className="text-xs text-red-600 mt-1">Description is required</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">

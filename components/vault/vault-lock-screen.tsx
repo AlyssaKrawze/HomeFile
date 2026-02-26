@@ -117,7 +117,7 @@ export default function VaultLockScreen({ homeId, hasPinSet, onUnlocked }: Vault
               <input
                 key={i}
                 ref={el => { newPinRefs[i] = el }}
-                type="text"
+                type="password"
                 inputMode="numeric"
                 maxLength={1}
                 value={digit}
@@ -169,7 +169,7 @@ export default function VaultLockScreen({ homeId, hasPinSet, onUnlocked }: Vault
               <input
                 key={i}
                 ref={el => { inputRefs.current[i] = el }}
-                type="text"
+                type="password"
                 inputMode="numeric"
                 maxLength={1}
                 value={digit}

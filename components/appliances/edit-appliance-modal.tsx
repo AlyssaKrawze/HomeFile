@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Loader2, Pencil, Search, X } from 'lucide-react'
@@ -41,6 +41,29 @@ export default function EditApplianceModal({ appliance }: EditApplianceModalProp
   })
   const router = useRouter()
   const supabase = createClient()
+
+  // Reset form to latest appliance data each time the modal opens
+  useEffect(() => {
+    if (open) {
+      setForm({
+        name: appliance.name,
+        category: appliance.category ?? '',
+        brand: appliance.brand ?? '',
+        model: appliance.model ?? '',
+        serial_number: appliance.serial_number ?? '',
+        purchase_date: appliance.purchase_date ?? '',
+        installation_date: appliance.installation_date ?? '',
+        purchase_price: appliance.purchase_price != null ? String(appliance.purchase_price) : '',
+        warranty_expiry: appliance.warranty_expiry ?? '',
+        warranty_provider: appliance.warranty_provider ?? '',
+        notes: appliance.notes ?? '',
+        include_in_binder: appliance.include_in_binder ?? true,
+      })
+      setError(null)
+      setLookupStatus(null)
+      setSuggestedTasks([])
+    }
+  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function update(field: string, value: string) {
     setForm(p => ({ ...p, [field]: value }))

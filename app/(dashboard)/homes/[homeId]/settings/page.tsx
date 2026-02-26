@@ -1,8 +1,10 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, Settings, Home, Trash2, Users } from 'lucide-react'
+import { ChevronRight, Home, Trash2, Users } from 'lucide-react'
 import SignOutButton from '@/components/layout/sign-out-button'
+import HomeDetailsForm from '@/components/settings/home-details-form'
+import NotificationToggles from '@/components/settings/notification-toggles'
 
 export default async function SettingsPage({
   params,
@@ -33,6 +35,11 @@ export default async function SettingsPage({
 
   const isOwner = membership.role === 'owner'
 
+  const defaultPrefs = { month: true, week: true, day: false }
+  const notifPrefs = home.notification_prefs
+    ? { ...defaultPrefs, ...home.notification_prefs }
+    : defaultPrefs
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
@@ -51,37 +58,36 @@ export default async function SettingsPage({
           <Home size={16} className="text-slate-500" />
           <h2 className="font-semibold text-[#2F3437]">Home Details</h2>
         </div>
-        <div className="p-4 sm:p-6 flex flex-col gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Home name</label>
-              <p className="text-sm text-[#2F3437]">{home.name}</p>
+        <div className="p-4 sm:p-6">
+          {isOwner ? (
+            <HomeDetailsForm home={home} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Home name</label>
+                <p className="text-sm text-[#2F3437]">{home.name}</p>
+              </div>
+              {home.year_built && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Year built</label>
+                  <p className="text-sm text-[#2F3437]">{home.year_built}</p>
+                </div>
+              )}
+              {home.address && (
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Address</label>
+                  <p className="text-sm text-[#2F3437]">
+                    {[home.address, home.city, home.state, home.zip].filter(Boolean).join(', ')}
+                  </p>
+                </div>
+              )}
+              {home.square_footage && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Square footage</label>
+                  <p className="text-sm text-[#2F3437]">{home.square_footage.toLocaleString()} sq ft</p>
+                </div>
+              )}
             </div>
-            {home.year_built && (
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Year built</label>
-                <p className="text-sm text-[#2F3437]">{home.year_built}</p>
-              </div>
-            )}
-            {home.address && (
-              <div className="col-span-2">
-                <label className="block text-xs font-medium text-slate-500 mb-1">Address</label>
-                <p className="text-sm text-[#2F3437]">
-                  {[home.address, home.city, home.state, home.zip].filter(Boolean).join(', ')}
-                </p>
-              </div>
-            )}
-            {home.square_footage && (
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Square footage</label>
-                <p className="text-sm text-[#2F3437]">{home.square_footage.toLocaleString()} sq ft</p>
-              </div>
-            )}
-          </div>
-          {isOwner && (
-            <button className="self-start bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-              Edit Details
-            </button>
           )}
         </div>
       </div>
@@ -92,19 +98,8 @@ export default async function SettingsPage({
           <h2 className="font-semibold text-[#2F3437]">Notifications</h2>
           <p className="text-xs text-slate-500 mt-0.5">Default alert schedule for upcoming tasks</p>
         </div>
-        <div className="p-4 sm:p-6 flex flex-col gap-4">
-          {[
-            { label: '1 month before due date', enabled: true },
-            { label: '1 week before due date', enabled: true },
-            { label: '1 day before due date', enabled: false },
-          ].map((notif) => (
-            <div key={notif.label} className="flex items-center justify-between">
-              <span className="text-sm text-slate-700">{notif.label}</span>
-              <div className={`w-10 h-5 rounded-full transition-colors ${notif.enabled ? 'bg-[#5B6C8F]' : 'bg-slate-200'} flex items-center px-0.5`}>
-                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${notif.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
-              </div>
-            </div>
-          ))}
+        <div className="p-4 sm:p-6">
+          <NotificationToggles homeId={homeId} initialPrefs={notifPrefs} />
         </div>
       </div>
 

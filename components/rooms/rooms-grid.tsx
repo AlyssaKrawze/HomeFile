@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { LayoutGrid, List, GripVertical } from 'lucide-react'
@@ -112,14 +112,15 @@ function SortableRoomCard({
 
 export default function RoomsGrid({ rooms: initialRooms, homeId, canManage, countsByRoom }: RoomsGridProps) {
   const [rooms, setRooms] = useState(initialRooms)
-  const [view, setView] = useState<'card' | 'list'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('homefile_rooms_view') as 'card' | 'list') || 'card'
-    }
-    return 'card'
-  })
+  const [view, setView] = useState<'card' | 'list'>('card')
   const [activeId, setActiveId] = useState<string | null>(null)
   const router = useRouter()
+
+  // Hydration-safe: read localStorage only after mount
+  useEffect(() => {
+    const saved = localStorage.getItem('homefile_rooms_view')
+    if (saved === 'list') setView('list')
+  }, [])
 
   // distance: 8 prevents accidental drags on simple clicks
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))

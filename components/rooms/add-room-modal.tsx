@@ -15,6 +15,7 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [nameError, setNameError] = useState(false)
   const [form, setForm] = useState({
     name: '',
     category: 'other' as PermissionCategory,
@@ -26,7 +27,10 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.name.trim()) return
+    if (!form.name.trim()) {
+      setNameError(true)
+      return
+    }
     setLoading(true)
     setError(null)
 
@@ -45,6 +49,7 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
     }
 
     setOpen(false)
+    setNameError(false)
     setForm({ name: '', category: 'other', floor: '1', description: '' })
     router.refresh()
   }
@@ -92,11 +97,15 @@ export default function AddRoomModal({ homeId, trigger = 'button' }: AddRoomModa
                 <input
                   type="text"
                   value={form.name}
-                  onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))}
+                  onChange={(e) => { setForm(p => ({ ...p, name: e.target.value })); setNameError(false) }}
                   placeholder="e.g. Main Kitchen, Master Bathroom"
-                  required
-                  className="w-full px-4 py-2.5 rounded-lg border border-[#C8BFB2] text-[#2F3437] text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F]"
+                  className={`w-full px-4 py-2.5 rounded-lg border text-[#2F3437] text-sm focus:outline-none focus:ring-2 ${
+                    nameError ? 'border-red-400 focus:ring-red-300' : 'border-[#C8BFB2] focus:ring-[#5B6C8F]'
+                  }`}
                 />
+                {nameError && (
+                  <p className="text-xs text-red-600 mt-1">Room name is required</p>
+                )}
               </div>
 
               <div>

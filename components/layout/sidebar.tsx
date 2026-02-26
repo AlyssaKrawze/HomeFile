@@ -19,13 +19,15 @@ import {
   Lock,
   FolderOpen,
 } from 'lucide-react'
+import AddHomeModal from '@/components/homes/add-home-modal'
 
 interface SidebarProps {
   homes: { id: string; name: string }[]
   userName?: string | null
+  userId?: string
 }
 
-export default function Sidebar({ homes, userName }: SidebarProps) {
+export default function Sidebar({ homes, userName, userId }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -71,13 +73,17 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
             <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
               My Homes
             </span>
-            <Link
-              href="/dashboard"
-              className="text-slate-400 hover:text-[#7a8fa8] transition-colors"
-              title="Manage homes"
-            >
-              <Plus size={14} />
-            </Link>
+            {userId ? (
+              <AddHomeModal userId={userId} trigger="icon" />
+            ) : (
+              <Link
+                href="/dashboard"
+                className="text-slate-400 hover:text-[#7a8fa8] transition-colors"
+                title="Add home"
+              >
+                <Plus size={14} />
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-col gap-0.5">
@@ -139,14 +145,13 @@ export default function Sidebar({ homes, userName }: SidebarProps) {
 
       {/* Getting started guide */}
       <div className="px-3 pb-2">
-        <a
-          href="/api/guide"
-          download
+        <Link
+          href="/guide"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-slate-500 hover:bg-[#2d3a52] hover:text-white"
         >
           <Download size={14} />
           <span>Getting Started Guide</span>
-        </a>
+        </Link>
       </div>
 
       {/* User + sign out */}
