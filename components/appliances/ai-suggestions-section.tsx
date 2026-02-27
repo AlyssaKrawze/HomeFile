@@ -117,7 +117,7 @@ export default function AISuggestionsSection({
     <div className="bg-white rounded-2xl border border-[#C8BFB2]">
       <div className="px-5 py-4 border-b border-[#E0D9D0]">
         <div className="flex items-center gap-2 mb-1">
-          <Sparkles size={16} className="text-[#6B7EB8]" />
+          <Sparkles size={16} className="text-[#7B8EC8]" />
           <h2 className="font-semibold text-[#2F3437]">AI Suggestions</h2>
         </div>
         <p className="text-xs text-slate-500">
@@ -136,7 +136,7 @@ export default function AISuggestionsSection({
             {(!generated || suggestions.length === 0) && !loading && (
               <button
                 onClick={generateSuggestions}
-                className="w-full flex items-center justify-center gap-2 bg-[#6B7EB8] hover:bg-[#5B6C8F] text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-[#7B8EC8] hover:bg-[#5B6C8F] text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors"
               >
                 <Sparkles size={15} />
                 {generated ? 'Generate Again' : 'Generate Suggestions'}
@@ -146,7 +146,7 @@ export default function AISuggestionsSection({
             {/* Loading */}
             {loading && (
               <div className="flex flex-col items-center gap-3 py-6">
-                <Loader2 size={24} className="text-[#6B7EB8] animate-spin" />
+                <Loader2 size={24} className="text-[#7B8EC8] animate-spin" />
                 <div className="text-center">
                   <p className="text-sm font-medium text-slate-700">Analyzing appliance data...</p>
                   <p className="text-xs text-slate-400 mt-1">Claude is reviewing your service history</p>
@@ -177,7 +177,7 @@ export default function AISuggestionsSection({
                   return (
                     <div
                       key={i}
-                      className="border border-[#c5ccdf] bg-[#eef0f7] rounded-xl p-4"
+                      className="border border-[#c8d0e8] bg-[#eef0fb] rounded-xl p-4"
                     >
                       <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
@@ -210,7 +210,7 @@ export default function AISuggestionsSection({
                       {/* Reasoning toggle */}
                       <button
                         onClick={() => setExpanded(isExpanded ? null : i)}
-                        className="flex items-center gap-1 text-xs text-[#6B7EB8] mt-2"
+                        className="flex items-center gap-1 text-xs text-[#7B8EC8] mt-2"
                       >
                         {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                         Why this suggestion?
@@ -226,7 +226,7 @@ export default function AISuggestionsSection({
                       <button
                         onClick={() => acceptSuggestion(suggestion, i)}
                         disabled={accepting === i}
-                        className="w-full mt-3 flex items-center justify-center gap-1.5 bg-white border border-[#c5ccdf] hover:bg-[#6B7EB8] hover:text-white hover:border-[#6B7EB8] text-[#6B7EB8] text-xs font-medium px-3 py-2 rounded-lg transition-all disabled:opacity-50"
+                        className="w-full mt-3 flex items-center justify-center gap-1.5 bg-white border border-[#c8d0e8] hover:bg-[#7B8EC8] hover:text-white hover:border-[#7B8EC8] text-[#7B8EC8] text-xs font-medium px-3 py-2 rounded-lg transition-all disabled:opacity-50"
                       >
                         {accepting === i ? (
                           <Loader2 size={12} className="animate-spin" />
@@ -242,7 +242,7 @@ export default function AISuggestionsSection({
                 {/* Regenerate button */}
                 <button
                   onClick={generateSuggestions}
-                  className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-[#6B7EB8] transition-colors py-1"
+                  className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-[#7B8EC8] transition-colors py-1"
                 >
                   <Sparkles size={11} />
                   Regenerate suggestions
@@ -255,7 +255,7 @@ export default function AISuggestionsSection({
                 <p className="text-xs text-slate-500">All suggestions dismissed.</p>
                 <button
                   onClick={generateSuggestions}
-                  className="text-xs text-[#6B7EB8] underline mt-1"
+                  className="text-xs text-[#7B8EC8] underline mt-1"
                 >
                   Generate new suggestions
                 </button>
