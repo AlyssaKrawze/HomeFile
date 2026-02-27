@@ -196,7 +196,7 @@ export default function ProvidersSection({
               </button>
               <button
                 type="submit"
-                disabled={loading || !form.name.trim()}
+                disabled={loading}
                 className="flex-1 bg-[#5B6C8F] hover:bg-[#4a5c77] disabled:bg-[#7a8fa8] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 {loading ? 'Saving...' : 'Save Provider'}

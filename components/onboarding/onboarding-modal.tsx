@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
   X, ArrowRight, ArrowLeft,
@@ -66,14 +66,15 @@ const STEPS = [
 const LS_KEY = 'homefile_onboarding_seen'
 
 export default function OnboardingModal({ userId, show: initialShow }: OnboardingModalProps) {
-  const [show, setShow] = useState(() => {
-    if (!initialShow) return false
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(LS_KEY) !== 'true'
-    }
-    return true
-  })
+  const [show, setShow] = useState(false)
   const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    if (!initialShow) return
+    if (localStorage.getItem(LS_KEY) !== 'true') {
+      setShow(true)
+    }
+  }, [initialShow])
   const supabase = createClient()
 
   if (!show) return null
