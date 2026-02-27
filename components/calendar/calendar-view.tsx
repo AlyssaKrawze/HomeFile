@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Task {
@@ -33,12 +33,24 @@ function getFirstDayOfMonth(year: number, month: number): number {
 }
 
 export default function CalendarView({ tasks }: CalendarViewProps) {
-  const today = new Date()
-  const [viewDate, setViewDate] = useState({ year: today.getFullYear(), month: today.getMonth() })
+  // Use UTC for initial values so server and client agree during hydration.
+  // After mount, correct to the user's local timezone.
+  const [viewDate, setViewDate] = useState(() => {
+    const d = new Date()
+    return { year: d.getUTCFullYear(), month: d.getUTCMonth() }
+  })
+  const [todayStr, setTodayStr] = useState(() => new Date().toISOString().split('T')[0])
+
+  useEffect(() => {
+    const d = new Date()
+    setViewDate({ year: d.getFullYear(), month: d.getMonth() })
+    setTodayStr(
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    )
+  }, [])
 
   const daysInMonth = getDaysInMonth(viewDate.year, viewDate.month)
   const firstDay = getFirstDayOfMonth(viewDate.year, viewDate.month)
-  const todayStr = today.toISOString().split('T')[0]
 
   const tasksByDate = tasks.reduce<Record<string, Task[]>>((acc, task) => {
     const date = task.due_date
