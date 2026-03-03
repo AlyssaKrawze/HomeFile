@@ -1,7 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, BookOpen, Download, FileText, ShieldCheck, Wrench } from 'lucide-react'
+import { ChevronRight, BookOpen, Download, FileText, ShieldCheck, Wrench, Users } from 'lucide-react'
+import HomeContactsImportTrigger from '@/components/contacts/home-contacts-import-modal-trigger'
 
 export default async function BinderPage({
   params,
@@ -22,6 +23,8 @@ export default async function BinderPage({
 
   if (!membership) notFound()
 
+  const isOwnerOrManager = ['owner', 'manager'].includes(membership.role)
+
   const { data: home } = await supabase
     .from('homes')
     .select('id, name')
@@ -30,7 +33,12 @@ export default async function BinderPage({
 
   if (!home) notFound()
 
-  const [{ count: applianceCount }, { count: taskCount }] = await Promise.all([
+  const [
+    { count: applianceCount },
+    { count: taskCount },
+    { count: contactCount },
+    { data: recentContacts },
+  ] = await Promise.all([
     supabase
       .from('appliances')
       .select('*', { count: 'exact', head: true })
@@ -40,6 +48,16 @@ export default async function BinderPage({
       .select('*', { count: 'exact', head: true })
       .eq('home_id', homeId)
       .eq('status', 'completed'),
+    supabase
+      .from('home_contacts')
+      .select('*', { count: 'exact', head: true })
+      .eq('home_id', homeId),
+    supabase
+      .from('home_contacts')
+      .select('id, name, company, category, phone, email')
+      .eq('home_id', homeId)
+      .order('created_at', { ascending: false })
+      .limit(5),
   ])
 
   return (
@@ -95,6 +113,66 @@ export default async function BinderPage({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Vendors & Contacts */}
+      <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+        <div className="px-6 py-4 border-b border-[#E0D9D0] flex items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-0.5">
+              <Users size={15} className="text-[#5B6C8F]" />
+              <h2 className="font-semibold text-[#2F3437]">Vendors &amp; Contacts</h2>
+            </div>
+            <p className="text-xs text-slate-500">
+              {contactCount
+                ? `${contactCount} contact${contactCount !== 1 ? 's' : ''} in your home directory`
+                : 'Import your plumbers, electricians, and service contacts'}
+            </p>
+          </div>
+          {isOwnerOrManager && (
+            <HomeContactsImportTrigger
+              homeId={homeId}
+              contactCount={contactCount ?? 0}
+              buttonVariant="primary"
+            />
+          )}
+        </div>
+
+        {recentContacts && recentContacts.length > 0 ? (
+          <div className="divide-y divide-[#F0EBE3]">
+            {recentContacts.map(c => (
+              <div key={c.id} className="px-6 py-3 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[#2F3437]">{c.name}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    {c.company && <span className="text-xs text-slate-500">{c.company}</span>}
+                    {c.category && (
+                      <span className="text-xs text-[#5B6C8F] bg-[#eef1f6] px-1.5 py-0.5 rounded-full">
+                        {c.category}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  {c.phone && <p className="text-xs text-slate-500">{c.phone}</p>}
+                  {c.email && <p className="text-xs text-slate-400">{c.email}</p>}
+                </div>
+              </div>
+            ))}
+            {(contactCount ?? 0) > 5 && (
+              <div className="px-6 py-3 text-center">
+                <p className="text-xs text-slate-400">+{(contactCount ?? 0) - 5} more contacts</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="px-6 py-6 text-center">
+            <p className="text-xs text-slate-400">
+              No contacts yet.{' '}
+              {isOwnerOrManager && 'Upload a spreadsheet to bulk-import your vendor list.'}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Download */}

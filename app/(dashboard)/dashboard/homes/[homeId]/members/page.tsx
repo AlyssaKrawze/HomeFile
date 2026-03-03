@@ -1,8 +1,10 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { ChevronRight, Shield, Edit3 } from 'lucide-react'
+import { ChevronRight, Shield, Edit3, Upload } from 'lucide-react'
 import InviteMemberModal from '@/components/homes/invite-member-modal'
+import PendingInvites from '@/components/homes/pending-invites'
+import HomeContactsImportModal from '@/components/contacts/home-contacts-import-modal-trigger'
 
 export default async function MembersPage({
   params,
@@ -23,18 +25,38 @@ export default async function MembersPage({
 
   if (!membership) notFound()
 
-  const [{ data: home }, { data: members }] = await Promise.all([
+  const isOwnerOrManager = ['owner', 'manager'].includes(membership.role)
+  const isOwner = membership.role === 'owner'
+
+  const [
+    { data: home },
+    { data: members },
+    { data: rooms },
+    { data: invites },
+    { count: contactCount },
+  ] = await Promise.all([
     supabase.from('homes').select('id, name').eq('id', homeId).single(),
     supabase
       .from('home_members')
       .select('*, profiles(id, full_name, email, avatar_url)')
       .eq('home_id', homeId)
       .order('created_at'),
+    supabase.from('rooms').select('id, name').eq('home_id', homeId).order('sort_order').order('name'),
+    isOwnerOrManager
+      ? supabase
+          .from('home_invites')
+          .select('id, email, role, permissions, created_at, expires_at, accepted_at')
+          .eq('home_id', homeId)
+          .is('accepted_at', null)
+          .order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from('home_contacts')
+      .select('*', { count: 'exact', head: true })
+      .eq('home_id', homeId),
   ])
 
   if (!home) notFound()
-
-  const isOwner = membership.role === 'owner'
 
   const ROLE_DESCRIPTIONS: Record<string, { label: string; color: string; bg: string; description: string }> = {
     owner: {
@@ -53,7 +75,7 @@ export default async function MembersPage({
       label: 'Limited Access',
       color: 'text-slate-600',
       bg: 'bg-slate-100',
-      description: 'Custom per-category permissions set by owner or manager',
+      description: 'Can only view and update the specific rooms selected at invite time',
     },
   }
 
@@ -73,10 +95,25 @@ export default async function MembersPage({
         <span className="text-slate-700 font-medium">Members</span>
       </div>
 
-      <div className="flex items-center justify-between mb-8 gap-3">
+      <div className="flex items-center justify-between mb-8 gap-3 flex-wrap">
         <h1 className="font-playfair text-2xl font-bold text-[#2F3437]">Members &amp; Access</h1>
-        {isOwner && <InviteMemberModal />}
+        <div className="flex items-center gap-2 flex-wrap">
+          {isOwnerOrManager && (
+            <HomeContactsImportModal homeId={homeId} contactCount={contactCount ?? 0} />
+          )}
+          {isOwner && (
+            <InviteMemberModal
+              homeId={homeId}
+              rooms={(rooms ?? []).map(r => ({ id: r.id, name: r.name }))}
+            />
+          )}
+        </div>
       </div>
+
+      {/* Pending invites */}
+      {isOwnerOrManager && invites && invites.length > 0 && (
+        <PendingInvites homeId={homeId} invites={invites} />
+      )}
 
       {/* Current members */}
       <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
@@ -122,6 +159,34 @@ export default async function MembersPage({
           })}
         </div>
       </div>
+
+      {/* Vendor directory teaser */}
+      {isOwnerOrManager && (
+        <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">
+          <div className="px-4 py-4 sm:px-6 border-b border-[#E0D9D0] flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-semibold text-[#2F3437]">Vendor Directory</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {contactCount ? `${contactCount} contact${contactCount !== 1 ? 's' : ''} in your home directory` : 'Bulk-import your plumbers, electricians, and other service contacts'}
+              </p>
+            </div>
+            <HomeContactsImportModal
+              homeId={homeId}
+              contactCount={contactCount ?? 0}
+              buttonVariant="subtle"
+            />
+          </div>
+          {contactCount === 0 && (
+            <div className="px-6 py-6 flex items-center gap-3">
+              <Upload size={16} className="text-slate-300 flex-shrink-0" />
+              <p className="text-xs text-slate-400">
+                Import a spreadsheet of vendors and service contacts — any column layout works.
+                Claude maps your columns automatically.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Role descriptions */}
       <div className="bg-white rounded-2xl border border-[#C8BFB2] mb-6">

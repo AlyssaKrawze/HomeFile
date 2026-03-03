@@ -302,3 +302,28 @@ export interface ProjectTask {
   created_at: string
   assignee?: { id: string; full_name: string | null; email: string | null }
 }
+
+export interface HomeContact {
+  id: string
+  home_id: string
+  name: string
+  company: string | null
+  phone: string | null
+  email: string | null
+  category: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface HomeInvite {
+  id: string
+  home_id: string
+  email: string
+  role: UserRole
+  permissions: { room_ids?: string[] }
+  token: string
+  invited_by: string | null
+  created_at: string
+  expires_at: string
+  accepted_at: string | null
+}
