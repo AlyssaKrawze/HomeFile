@@ -3,8 +3,9 @@
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, Phone, Mail, Building2, ScanLine, Loader2, Users } from 'lucide-react'
+import { Plus, Trash2, Phone, Mail, Building2, ScanLine, Loader2, Users, Upload } from 'lucide-react'
 import { type ServiceProvider } from '@/lib/types'
+import ImportContactsModal from './import-contacts-modal'
 
 interface ProvidersSectionProps {
   applianceId: string
@@ -17,6 +18,7 @@ export default function ProvidersSection({
   applianceId, homeId, providers, canManage
 }: ProvidersSectionProps) {
   const [showForm, setShowForm] = useState(false)
+  const [showImport, setShowImport] = useState(false)
   const [loading, setLoading] = useState(false)
   const [scanning, setScanning] = useState(false)
   const [nameError, setNameError] = useState(false)
@@ -95,13 +97,22 @@ export default function ProvidersSection({
           </p>
         </div>
         {canManage && (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-1.5 text-sm font-medium text-[#5B6C8F] hover:text-[#4a5c77] transition-colors"
-          >
-            <Plus size={15} />
-            Add Provider
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowImport(true)}
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#5B6C8F] transition-colors"
+            >
+              <Upload size={14} />
+              Import
+            </button>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="flex items-center gap-1.5 text-sm font-medium text-[#5B6C8F] hover:text-[#4a5c77] transition-colors"
+            >
+              <Plus size={15} />
+              Add Provider
+            </button>
+          </div>
         )}
       </div>
 
@@ -256,6 +267,14 @@ export default function ProvidersSection({
           ))
         )}
       </div>
+
+      {showImport && (
+        <ImportContactsModal
+          applianceId={applianceId}
+          homeId={homeId}
+          onClose={() => setShowImport(false)}
+        />
+      )}
     </div>
   )
 }
