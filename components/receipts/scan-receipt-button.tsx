@@ -34,6 +34,8 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
   const [showModal, setShowModal] = useState(false)
   const [extracted, setExtracted] = useState<ExtractedData | null>(null)
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null)
+  const [receiptFileType, setReceiptFileType] = useState<string | null>(null)
+  const [receiptFileSize, setReceiptFileSize] = useState<number | null>(null)
   const [selectedRoomId, setSelectedRoomId] = useState('')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
@@ -66,16 +68,13 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
 
       const data = await res.json()
 
-      if (data.action === 'updated') {
-        alert(`Updated ${data.item_name} with receipt info`)
-        router.refresh()
-      } else if (data.action === 'needs_room') {
-        // Show room picker modal
-        setExtracted(data.extracted)
-        setReceiptUrl(data.receipt_url || null)
-        setSelectedRoomId('')
-        setShowModal(true)
-      }
+      // Show room picker modal with extracted data
+      setExtracted(data.extracted)
+      setReceiptUrl(data.receipt_url || null)
+      setReceiptFileType(data.file_type || null)
+      setReceiptFileSize(data.file_size || null)
+      setSelectedRoomId('')
+      setShowModal(true)
     } catch {
       alert('Failed to scan receipt')
     } finally {
@@ -118,6 +117,8 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
           appliance_id: newAppliance.id,
           name: `Receipt – ${itemName}`,
           file_url: receiptUrl,
+          file_type: receiptFileType,
+          file_size: receiptFileSize,
           document_type: 'receipt',
           include_in_binder: true,
         })

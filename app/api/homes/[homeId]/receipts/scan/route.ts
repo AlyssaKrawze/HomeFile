@@ -134,67 +134,13 @@ Use null for any field you cannot find. Do not include any explanation, just the
       }
     }
 
-    // Match existing appliance
-    step = 'match-appliance'
-    const { data: appliances } = await supabase
-      .from('appliances')
-      .select('id, name, model, room_id')
-      .eq('home_id', homeId)
-
-    let matchedAppliance: { id: string; name: string; model: string | null; room_id: string } | null = null
-    if (appliances && appliances.length > 0) {
-      if (extracted.model) {
-        matchedAppliance = appliances.find(
-          a => a.model && a.model.toLowerCase() === extracted.model!.toLowerCase()
-        ) || null
-      }
-      if (!matchedAppliance && extracted.name) {
-        matchedAppliance = appliances.find(
-          a => a.name.toLowerCase() === extracted.name!.toLowerCase()
-        ) || null
-      }
-    }
-
-    // Match found → update appliance + attach receipt document
-    if (matchedAppliance) {
-      step = 'update-appliance'
-      const updates: Record<string, unknown> = {}
-      if (extracted.purchase_price != null) updates.purchase_price = extracted.purchase_price
-      if (extracted.purchase_date) updates.purchase_date = extracted.purchase_date
-      if (extracted.warranty_expiry) updates.warranty_expiry = extracted.warranty_expiry
-      if (extracted.warranty_provider) updates.warranty_provider = extracted.warranty_provider
-      if (extracted.warranty_contact) updates.warranty_contact = extracted.warranty_contact
-      if (extracted.brand) updates.brand = extracted.brand
-
-      if (Object.keys(updates).length > 0) {
-        await supabase.from('appliances').update(updates).eq('id', matchedAppliance.id)
-      }
-
-      if (receiptUrl) {
-        await supabase.from('documents').insert({
-          home_id: homeId,
-          appliance_id: matchedAppliance.id,
-          name: `Receipt – ${extracted.name || matchedAppliance.name}`,
-          file_url: receiptUrl,
-          file_type: file.type,
-          file_size: file.size,
-          document_type: 'receipt',
-          include_in_binder: true,
-          created_by: user.id,
-        })
-      }
-
-      return NextResponse.json({
-        action: 'updated' as const,
-        item_name: matchedAppliance.name,
-      })
-    }
-
-    // No match → return extracted data so client can prompt for room
+    // Always return extracted data — let the client show room picker modal
     return NextResponse.json({
       action: 'needs_room' as const,
       extracted,
       receipt_url: receiptUrl,
+      file_type: file.type,
+      file_size: file.size,
     })
 
   } catch (err) {
