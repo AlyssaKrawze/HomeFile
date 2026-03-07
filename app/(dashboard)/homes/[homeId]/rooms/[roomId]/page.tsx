@@ -29,11 +29,12 @@ export default async function RoomPage({
 
   if (!membership) notFound()
 
-  const [{ data: home }, { data: room }, { data: appliances }, { data: roomAttachments }] = await Promise.all([
+  const [{ data: home }, { data: room }, { data: appliances }, { data: roomAttachments }, { data: allRooms }] = await Promise.all([
     supabase.from('homes').select('id, name').eq('id', homeId).single(),
     supabase.from('rooms').select('*').eq('id', roomId).eq('home_id', homeId).single(),
     supabase.from('appliances').select('*').eq('room_id', roomId).order('name'),
     supabase.from('room_attachments').select('*').eq('room_id', roomId).order('created_at', { ascending: false }),
+    supabase.from('rooms').select('id, name').eq('home_id', homeId).order('name'),
   ])
 
   if (!home || !room) notFound()
@@ -97,7 +98,7 @@ export default async function RoomPage({
         </div>
         {canManage && (
           <div className="flex items-center gap-2">
-            <ScanReceiptButton homeId={homeId} />
+            <ScanReceiptButton homeId={homeId} rooms={(allRooms || []).map(r => ({ id: r.id, name: r.name }))} />
             <DeleteRoomButton
               homeId={homeId}
               roomId={roomId}

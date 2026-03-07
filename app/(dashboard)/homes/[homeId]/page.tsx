@@ -5,8 +5,6 @@ import { ChevronRight, Clock, Wrench, BookOpen } from 'lucide-react'
 import RoomsGrid from '@/components/rooms/rooms-grid'
 import AddRoomModal from '@/components/rooms/add-room-modal'
 import ScanReceiptButton from '@/components/receipts/scan-receipt-button'
-import PendingReceiptsModal from '@/components/receipts/pending-receipts-modal'
-import type { PendingReceipt } from '@/lib/types'
 
 export default async function HomeOverviewPage({
   params,
@@ -84,19 +82,6 @@ export default async function HomeOverviewPage({
 
   const canManage = ['owner', 'manager'].includes(membership.role)
 
-  // Fetch pending receipts (safe — table may not exist if migration 021 not yet applied)
-  let pendingReceipts: PendingReceipt[] | null = null
-  try {
-    const { data } = await supabase
-      .from('pending_receipts')
-      .select('*')
-      .eq('home_id', homeId)
-      .order('created_at', { ascending: false })
-    pendingReceipts = data
-  } catch {
-    // table may not exist yet
-  }
-
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
@@ -117,7 +102,7 @@ export default async function HomeOverviewPage({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <ScanReceiptButton homeId={homeId} />
+          <ScanReceiptButton homeId={homeId} rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))} />
           {canManage && <AddRoomModal homeId={homeId} />}
         </div>
       </div>
@@ -231,15 +216,7 @@ export default async function HomeOverviewPage({
         </div>
       )}
 
-      {(pendingReceipts || []).length > 0 && (
-        <PendingReceiptsModal
-          homeId={homeId}
-          pendingReceipts={pendingReceipts || []}
-          rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))}
-        />
-      )}
-
-      <ScanReceiptButton homeId={homeId} variant="fab" />
+      <ScanReceiptButton homeId={homeId} rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))} variant="fab" />
     </div>
   )
 }

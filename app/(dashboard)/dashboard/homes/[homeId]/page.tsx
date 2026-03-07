@@ -102,7 +102,7 @@ export default async function HomeOverviewPage({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <ScanReceiptButton homeId={homeId} />
+          <ScanReceiptButton homeId={homeId} rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))} />
           {canManage && <AddRoomModal homeId={homeId} />}
         </div>
       </div>
