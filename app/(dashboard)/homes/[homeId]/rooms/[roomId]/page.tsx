@@ -8,6 +8,7 @@ import RoomNotesSection from '@/components/rooms/room-notes-section'
 import RoomAttachmentsSection from '@/components/rooms/room-attachments-section'
 import ApplianceSortGrid from '@/components/appliances/appliance-sort-grid'
 import DeleteRoomButton from '@/components/rooms/delete-room-button'
+import ScanReceiptButton from '@/components/receipts/scan-receipt-button'
 
 export default async function RoomPage({
   params,
@@ -96,6 +97,7 @@ export default async function RoomPage({
         </div>
         {canManage && (
           <div className="flex items-center gap-2">
+            <ScanReceiptButton homeId={homeId} />
             <DeleteRoomButton
               homeId={homeId}
               roomId={roomId}

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Sidebar from '@/components/layout/sidebar'
 import MobileNav from '@/components/layout/mobile-nav'
 import OnboardingModal from '@/components/onboarding/onboarding-modal'
+import { Toaster } from 'sonner'
 
 interface DashboardShellProps {
   homes: { id: string; name: string }[]
@@ -49,6 +50,7 @@ export default function DashboardShell({
       <MobileNav homes={homes} userName={userName} />
 
       <OnboardingModal userId={userId} show={showOnboarding} />
+      <Toaster position="bottom-right" richColors />
     </div>
   )
 }

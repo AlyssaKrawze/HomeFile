@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ChevronRight, Clock, Wrench, BookOpen } from 'lucide-react'
 import RoomsGrid from '@/components/rooms/rooms-grid'
 import AddRoomModal from '@/components/rooms/add-room-modal'
+import ScanReceiptButton from '@/components/receipts/scan-receipt-button'
+import PendingReceiptsModal from '@/components/receipts/pending-receipts-modal'
 
 export default async function HomeOverviewPage({
   params,
@@ -81,6 +83,13 @@ export default async function HomeOverviewPage({
 
   const canManage = ['owner', 'manager'].includes(membership.role)
 
+  // Fetch pending receipts
+  const { data: pendingReceipts } = await supabase
+    .from('pending_receipts')
+    .select('*')
+    .eq('home_id', homeId)
+    .order('created_at', { ascending: false })
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:px-8 sm:py-8">
       {/* Breadcrumb */}
@@ -100,7 +109,12 @@ export default async function HomeOverviewPage({
             </p>
           )}
         </div>
-        {canManage && <AddRoomModal homeId={homeId} />}
+        {canManage && (
+          <div className="flex items-center gap-2">
+            <ScanReceiptButton homeId={homeId} />
+            <AddRoomModal homeId={homeId} />
+          </div>
+        )}
       </div>
 
       {/* Stats bar */}
@@ -210,6 +224,14 @@ export default async function HomeOverviewPage({
             <ChevronRight size={16} className="text-slate-400 ml-auto" />
           </Link>
         </div>
+      )}
+
+      {canManage && (pendingReceipts || []).length > 0 && (
+        <PendingReceiptsModal
+          homeId={homeId}
+          pendingReceipts={pendingReceipts || []}
+          rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))}
+        />
       )}
     </div>
   )

@@ -303,6 +303,24 @@ export interface ProjectTask {
   assignee?: { id: string; full_name: string | null; email: string | null }
 }
 
+export interface PendingReceipt {
+  id: string
+  home_id: string
+  name: string
+  brand: string | null
+  model: string | null
+  category: string | null
+  purchase_price: number | null
+  purchase_date: string | null
+  store_vendor: string | null
+  warranty_expiry: string | null
+  warranty_provider: string | null
+  warranty_contact: string | null
+  receipt_image_url: string | null
+  scanned_by: string | null
+  created_at: string
+}
+
 export interface HomeContact {
   id: string
   home_id: string
