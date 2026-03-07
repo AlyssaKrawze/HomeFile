@@ -6,68 +6,87 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ homeId: string }> }
 ) {
-  const { homeId } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const { data: membership } = await supabase
-    .from('home_members')
-    .select('role')
-    .eq('home_id', homeId)
-    .eq('user_id', user.id)
-    .single()
-
-  if (!membership || !['owner', 'manager'].includes(membership.role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  }
-
-  let formData: FormData
+  let step = 'init'
   try {
-    formData = await req.formData()
-  } catch {
-    return NextResponse.json({ error: 'Invalid form data' }, { status: 400 })
-  }
+    const { homeId } = await params
 
-  const file = formData.get('file') as File | null
-  if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+    // ── Step 1: Auth ──────────────────────────────────────
+    step = 'auth'
+    console.log('[receipt-scan] Step 1: Authenticating user')
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Not logged in', step }, { status: 401 })
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const base64 = buffer.toString('base64')
-  const isPdf = file.type === 'application/pdf'
+    const { data: membership } = await supabase
+      .from('home_members')
+      .select('role')
+      .eq('home_id', homeId)
+      .eq('user_id', user.id)
+      .single()
 
-  // 1. Upload receipt to storage
-  const ext = file.name.split('.').pop() || 'jpg'
-  const storagePath = `${homeId}/${crypto.randomUUID()}.${ext}`
-  const { error: uploadError } = await supabase.storage
-    .from('receipts')
-    .upload(storagePath, buffer, { contentType: file.type })
+    if (!membership || !['owner', 'manager'].includes(membership.role)) {
+      return NextResponse.json({ error: 'You need owner or manager role to scan receipts', step }, { status: 403 })
+    }
+    console.log('[receipt-scan] Auth OK — role:', membership.role)
 
-  let receiptUrl: string | null = null
-  if (uploadError) {
-    // Storage upload failed — continue without storing the image
-    // Most likely the "receipts" bucket doesn't exist
-    console.error('Receipt storage upload failed:', uploadError.message)
-  } else {
-    const { data: publicUrl } = supabase.storage.from('receipts').getPublicUrl(storagePath)
-    receiptUrl = publicUrl.publicUrl
-  }
+    // ── Step 2: Read file ─────────────────────────────────
+    step = 'read-file'
+    console.log('[receipt-scan] Step 2: Reading uploaded file')
+    let formData: FormData
+    try {
+      formData = await req.formData()
+    } catch (e) {
+      console.error('[receipt-scan] FormData parse failed:', e)
+      return NextResponse.json({ error: 'Could not read uploaded file', step }, { status: 400 })
+    }
 
-  // 2. Extract receipt data with Claude Haiku vision
-  let extracted = {
-    name: null as string | null,
-    brand: null as string | null,
-    model: null as string | null,
-    purchase_price: null as number | null,
-    purchase_date: null as string | null,
-    store_vendor: null as string | null,
-    warranty_expiry: null as string | null,
-    warranty_provider: null as string | null,
-    warranty_contact: null as string | null,
-  }
+    const file = formData.get('file') as File | null
+    if (!file) return NextResponse.json({ error: 'No file attached', step }, { status: 400 })
 
-  try {
-    const client = new Anthropic()
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const isPdf = file.type === 'application/pdf'
+    console.log('[receipt-scan] File OK — name:', file.name, 'type:', file.type, 'size:', buffer.length, 'bytes')
+
+    if (buffer.length === 0) {
+      return NextResponse.json({ error: 'Uploaded file is empty', step }, { status: 400 })
+    }
+
+    // ── Step 3: Upload to Supabase Storage ────────────────
+    step = 'storage-upload'
+    console.log('[receipt-scan] Step 3: Uploading to Supabase Storage bucket "receipts"')
+    const ext = file.name.split('.').pop() || 'jpg'
+    const storagePath = `${homeId}/${crypto.randomUUID()}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('receipts')
+      .upload(storagePath, buffer, { contentType: file.type })
+
+    let receiptUrl: string | null = null
+    if (uploadError) {
+      console.error('[receipt-scan] Storage upload FAILED:', uploadError.message)
+      console.error('[receipt-scan] This usually means the "receipts" bucket does not exist in Supabase Storage.')
+      console.error('[receipt-scan] Create it in Supabase Dashboard → Storage → New Bucket → name: "receipts", public: true')
+      // Non-fatal — continue without stored file
+    } else {
+      const { data: publicUrl } = supabase.storage.from('receipts').getPublicUrl(storagePath)
+      receiptUrl = publicUrl.publicUrl
+      console.log('[receipt-scan] Storage upload OK — URL:', receiptUrl)
+    }
+
+    // ── Step 4: Claude AI vision extraction ───────────────
+    step = 'claude-api'
+    console.log('[receipt-scan] Step 4: Calling Claude Haiku vision API')
+
+    const apiKey = process.env.ANTHROPIC_API_KEY
+    if (!apiKey) {
+      console.error('[receipt-scan] ANTHROPIC_API_KEY is not set!')
+      return NextResponse.json(
+        { error: 'AI service not configured — ANTHROPIC_API_KEY environment variable is missing', step },
+        { status: 500 }
+      )
+    }
+    console.log('[receipt-scan] ANTHROPIC_API_KEY is set (starts with:', apiKey.substring(0, 8) + '...)')
+
+    const base64 = buffer.toString('base64')
 
     const prompt = `Extract product/item information from this receipt or invoice. Return ONLY a JSON object with these fields:
 - name (product/item name)
@@ -81,7 +100,6 @@ export async function POST(
 - warranty_contact (warranty phone/email if visible)
 Use null for any field you cannot find. Do not include any explanation, just the JSON.`
 
-    // Build the content block — PDFs use 'document' type, images use 'image' type
     const fileBlock = isPdf
       ? {
           type: 'document' as const,
@@ -100,123 +118,170 @@ Use null for any field you cannot find. Do not include any explanation, just the
           },
         }
 
-    const message = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            fileBlock,
-            { type: 'text', text: prompt },
-          ],
-        },
-      ],
-    })
+    let extracted = {
+      name: null as string | null,
+      brand: null as string | null,
+      model: null as string | null,
+      purchase_price: null as number | null,
+      purchase_date: null as string | null,
+      store_vendor: null as string | null,
+      warranty_expiry: null as string | null,
+      warranty_provider: null as string | null,
+      warranty_contact: null as string | null,
+    }
 
-    const text = message.content[0]?.type === 'text' ? message.content[0].text : '{}'
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    let message
+    try {
+      const client = new Anthropic()
+      message = await client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [fileBlock, { type: 'text', text: prompt }],
+          },
+        ],
+      })
+      console.log('[receipt-scan] Claude API OK — stop_reason:', message.stop_reason)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error('[receipt-scan] Claude API FAILED:', msg)
+      return NextResponse.json(
+        { error: `AI scan failed: ${msg}`, step },
+        { status: 502 }
+      )
+    }
+
+    const aiText = message.content[0]?.type === 'text' ? message.content[0].text : ''
+    console.log('[receipt-scan] Claude raw response:', aiText.substring(0, 500))
+
+    const jsonMatch = aiText.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
       try {
         const parsed = JSON.parse(jsonMatch[0])
         extracted = { ...extracted, ...parsed }
-      } catch {
-        // AI returned non-JSON — keep defaults
+        console.log('[receipt-scan] Parsed extraction:', JSON.stringify(extracted))
+      } catch (e) {
+        console.error('[receipt-scan] JSON parse failed on AI output:', e)
+      }
+    } else {
+      console.warn('[receipt-scan] No JSON found in AI response')
+    }
+
+    // ── Step 5: Match existing appliance ──────────────────
+    step = 'match-appliance'
+    console.log('[receipt-scan] Step 5: Matching against existing appliances')
+    const { data: appliances, error: appError } = await supabase
+      .from('appliances')
+      .select('id, name, model, room_id')
+      .eq('home_id', homeId)
+
+    if (appError) {
+      console.error('[receipt-scan] Appliance query failed:', appError.message)
+    }
+
+    let matchedAppliance: { id: string; name: string; model: string | null; room_id: string } | null = null
+    if (appliances && appliances.length > 0) {
+      console.log('[receipt-scan] Found', appliances.length, 'appliances to match against')
+      if (extracted.model) {
+        matchedAppliance = appliances.find(
+          a => a.model && a.model.toLowerCase() === extracted.model!.toLowerCase()
+        ) || null
+      }
+      if (!matchedAppliance && extracted.name) {
+        matchedAppliance = appliances.find(
+          a => a.name.toLowerCase() === extracted.name!.toLowerCase()
+        ) || null
       }
     }
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Unknown error'
-    console.error('Claude API error during receipt scan:', msg)
-    return NextResponse.json(
-      { error: `AI scan failed: ${msg}` },
-      { status: 502 }
-    )
-  }
 
-  // 3. Try to match an existing appliance by model number or name
-  const { data: appliances } = await supabase
-    .from('appliances')
-    .select('id, name, model, room_id')
-    .eq('home_id', homeId)
+    if (matchedAppliance) {
+      console.log('[receipt-scan] Matched appliance:', matchedAppliance.name, matchedAppliance.id)
+      step = 'update-appliance'
+      const updates: Record<string, unknown> = {}
+      if (extracted.purchase_price != null) updates.purchase_price = extracted.purchase_price
+      if (extracted.purchase_date) updates.purchase_date = extracted.purchase_date
+      if (extracted.warranty_expiry) updates.warranty_expiry = extracted.warranty_expiry
+      if (extracted.warranty_provider) updates.warranty_provider = extracted.warranty_provider
+      if (extracted.warranty_contact) updates.warranty_contact = extracted.warranty_contact
+      if (extracted.brand) updates.brand = extracted.brand
 
-  let matchedAppliance: { id: string; name: string; model: string | null; room_id: string } | null = null
-  if (appliances && appliances.length > 0) {
-    if (extracted.model) {
-      matchedAppliance = appliances.find(
-        a => a.model && a.model.toLowerCase() === extracted.model!.toLowerCase()
-      ) || null
-    }
-    if (!matchedAppliance && extracted.name) {
-      matchedAppliance = appliances.find(
-        a => a.name.toLowerCase() === extracted.name!.toLowerCase()
-      ) || null
-    }
-  }
+      if (Object.keys(updates).length > 0) {
+        const { error: updateErr } = await supabase.from('appliances').update(updates).eq('id', matchedAppliance.id)
+        if (updateErr) console.error('[receipt-scan] Appliance update failed:', updateErr.message)
+        else console.log('[receipt-scan] Appliance updated with:', Object.keys(updates).join(', '))
+      }
 
-  if (matchedAppliance) {
-    const updates: Record<string, unknown> = {}
-    if (extracted.purchase_price != null) updates.purchase_price = extracted.purchase_price
-    if (extracted.purchase_date) updates.purchase_date = extracted.purchase_date
-    if (extracted.warranty_expiry) updates.warranty_expiry = extracted.warranty_expiry
-    if (extracted.warranty_provider) updates.warranty_provider = extracted.warranty_provider
-    if (extracted.warranty_contact) updates.warranty_contact = extracted.warranty_contact
-    if (extracted.brand) updates.brand = extracted.brand
+      if (receiptUrl) {
+        const { error: docErr } = await supabase.from('documents').insert({
+          home_id: homeId,
+          appliance_id: matchedAppliance.id,
+          name: `Receipt – ${extracted.name || matchedAppliance.name}`,
+          file_url: receiptUrl,
+          file_type: file.type,
+          file_size: file.size,
+          document_type: 'receipt',
+          include_in_binder: true,
+          created_by: user.id,
+        })
+        if (docErr) console.error('[receipt-scan] Document insert failed:', docErr.message)
+        else console.log('[receipt-scan] Receipt document attached')
+      }
 
-    if (Object.keys(updates).length > 0) {
-      await supabase.from('appliances').update(updates).eq('id', matchedAppliance.id)
-    }
-
-    if (receiptUrl) {
-      await supabase.from('documents').insert({
-        home_id: homeId,
-        appliance_id: matchedAppliance.id,
-        name: `Receipt – ${extracted.name || matchedAppliance.name}`,
-        file_url: receiptUrl,
-        file_type: file.type,
-        file_size: file.size,
-        document_type: 'receipt',
-        include_in_binder: true,
-        created_by: user.id,
+      console.log('[receipt-scan] DONE — action: updated')
+      return NextResponse.json({
+        action: 'updated' as const,
+        item_name: matchedAppliance.name,
       })
     }
 
-    return NextResponse.json({
-      action: 'updated' as const,
-      item_name: matchedAppliance.name,
+    // ── Step 6: Save as pending receipt ───────────────────
+    step = 'save-pending'
+    console.log('[receipt-scan] Step 6: No match — saving as pending receipt')
+    const itemName = extracted.name || 'Unknown Item'
+    const { error: pendingError } = await supabase.from('pending_receipts').insert({
+      home_id: homeId,
+      name: itemName,
+      brand: extracted.brand,
+      model: extracted.model,
+      category: null,
+      purchase_price: extracted.purchase_price,
+      purchase_date: extracted.purchase_date,
+      store_vendor: extracted.store_vendor,
+      warranty_expiry: extracted.warranty_expiry,
+      warranty_provider: extracted.warranty_provider,
+      warranty_contact: extracted.warranty_contact,
+      receipt_image_url: receiptUrl,
+      scanned_by: user.id,
     })
-  }
 
-  // 4. No match — try to insert as pending receipt
-  const { error: pendingError } = await supabase.from('pending_receipts').insert({
-    home_id: homeId,
-    name: extracted.name || 'Unknown Item',
-    brand: extracted.brand,
-    model: extracted.model,
-    category: null,
-    purchase_price: extracted.purchase_price,
-    purchase_date: extracted.purchase_date,
-    store_vendor: extracted.store_vendor,
-    warranty_expiry: extracted.warranty_expiry,
-    warranty_provider: extracted.warranty_provider,
-    warranty_contact: extracted.warranty_contact,
-    receipt_image_url: receiptUrl,
-    scanned_by: user.id,
-  })
+    if (pendingError) {
+      console.error('[receipt-scan] pending_receipts insert FAILED:', pendingError.message)
+      console.error('[receipt-scan] The "pending_receipts" table probably does not exist.')
+      console.error('[receipt-scan] Run: supabase db push  (or apply migration 021_pending_receipts.sql)')
+      // Return extracted data so the user still sees something useful
+      return NextResponse.json({
+        action: 'scanned' as const,
+        item_name: itemName,
+        extracted,
+        warning: `Scanned OK but could not save: ${pendingError.message}`,
+      })
+    }
 
-  if (pendingError) {
-    // pending_receipts table likely doesn't exist (migration 021 not applied)
-    console.error('Failed to save pending receipt:', pendingError.message)
-    // Still return success with the extracted data so the user sees results
+    console.log('[receipt-scan] DONE — action: pending, item:', itemName)
     return NextResponse.json({
-      action: 'scanned' as const,
-      item_name: extracted.name || 'Unknown Item',
-      extracted,
-      warning: 'Receipt scanned but could not be saved. Run migration 021 to enable pending receipts.',
+      action: 'pending' as const,
+      item_name: itemName,
     })
-  }
 
-  return NextResponse.json({
-    action: 'pending' as const,
-    item_name: extracted.name || 'Unknown Item',
-  })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[receipt-scan] UNHANDLED error at step "${step}":`, msg)
+    console.error(err)
+    return NextResponse.json(
+      { error: `Receipt scan failed at step "${step}": ${msg}`, step },
+      { status: 500 }
+    )
+  }
 }
