@@ -59,16 +59,16 @@ export default function ScanReceiptButton({ homeId }: { homeId: string }) {
       <button
         onClick={() => fileRef.current?.click()}
         disabled={scanning}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-[#5B6C8F] text-white hover:bg-[#4a5a7a] transition-colors disabled:opacity-60"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#5B6C8F] text-white shadow-sm hover:bg-[#4a5a7a] hover:shadow-md transition-all disabled:opacity-60"
       >
         {scanning ? (
           <>
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2 size={18} className="animate-spin" />
             Scanning…
           </>
         ) : (
           <>
-            <Camera size={16} />
+            <Camera size={18} />
             Scan Receipt
           </>
         )}

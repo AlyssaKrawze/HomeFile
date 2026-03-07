@@ -109,12 +109,10 @@ export default async function HomeOverviewPage({
             </p>
           )}
         </div>
-        {canManage && (
-          <div className="flex items-center gap-2">
-            <ScanReceiptButton homeId={homeId} />
-            <AddRoomModal homeId={homeId} />
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {canManage && <ScanReceiptButton homeId={homeId} />}
+          {canManage && <AddRoomModal homeId={homeId} />}
+        </div>
       </div>
 
       {/* Stats bar */}
