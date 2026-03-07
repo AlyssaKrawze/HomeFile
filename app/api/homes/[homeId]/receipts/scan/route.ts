@@ -48,17 +48,19 @@ export async function POST(
     // Upload receipt to storage (non-fatal if bucket missing)
     step = 'storage-upload'
     const ext = file.name.split('.').pop() || 'jpg'
-    const storagePath = `${homeId}/${crypto.randomUUID()}.${ext}`
+    const storagePath = `receipts/${homeId}/${crypto.randomUUID()}.${ext}`
     const { error: uploadError } = await supabase.storage
-      .from('receipts')
+      .from('documents')
       .upload(storagePath, buffer, { contentType: file.type })
 
     let receiptUrl: string | null = null
     if (uploadError) {
       console.error('[receipt-scan] Storage upload failed:', uploadError.message)
     } else {
-      const { data: publicUrl } = supabase.storage.from('receipts').getPublicUrl(storagePath)
-      receiptUrl = publicUrl.publicUrl
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(storagePath)
+      receiptUrl = publicUrl
     }
 
     // Claude AI vision extraction
