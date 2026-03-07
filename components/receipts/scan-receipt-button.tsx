@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Camera, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface ScanReceiptButtonProps {
   homeId: string
@@ -31,21 +30,21 @@ export default function ScanReceiptButton({ homeId, variant = 'inline' }: ScanRe
 
       if (!res.ok) {
         const err = await res.json()
-        toast.error(err.error || 'Failed to scan receipt')
+        alert(err.error || 'Failed to scan receipt')
         return
       }
 
       const data = await res.json()
 
       if (data.action === 'updated') {
-        toast.success(`Updated ${data.item_name} with receipt info`)
+        alert(`Updated ${data.item_name} with receipt info`)
       } else {
-        toast.success(`${data.item_name} saved — assign a room on your next visit`)
+        alert(`${data.item_name} saved — assign a room on your next visit`)
       }
 
       router.refresh()
     } catch {
-      toast.error('Failed to scan receipt')
+      alert('Failed to scan receipt')
     } finally {
       setScanning(false)
       if (fileRef.current) fileRef.current.value = ''
