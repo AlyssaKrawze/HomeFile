@@ -257,16 +257,11 @@ Use null for any field you cannot find. Do not include any explanation, just the
     })
 
     if (pendingError) {
-      console.error('[receipt-scan] pending_receipts insert FAILED:', pendingError.message)
-      console.error('[receipt-scan] The "pending_receipts" table probably does not exist.')
-      console.error('[receipt-scan] Run: supabase db push  (or apply migration 021_pending_receipts.sql)')
-      // Return extracted data so the user still sees something useful
-      return NextResponse.json({
-        action: 'scanned' as const,
-        item_name: itemName,
-        extracted,
-        warning: `Scanned OK but could not save: ${pendingError.message}`,
-      })
+      console.error('[receipt-scan] pending_receipts insert FAILED:', pendingError.message, pendingError.code)
+      return NextResponse.json(
+        { error: `Failed to save pending receipt: ${pendingError.message}`, step },
+        { status: 500 }
+      )
     }
 
     console.log('[receipt-scan] DONE — action: pending, item:', itemName)
