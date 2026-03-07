@@ -95,9 +95,13 @@ export default async function AppliancePage({
 
   // Age calculation
   const installDate = appliance.installation_date || appliance.purchase_date
-  const ageYears = installDate
-    ? Math.floor((now.getTime() - new Date(installDate).getTime()) / (1000 * 60 * 60 * 24 * 365))
+  const ageDays = installDate
+    ? Math.floor((now.getTime() - new Date(installDate).getTime()) / (1000 * 60 * 60 * 24))
     : null
+  const ageLabel = ageDays === null ? null
+    : ageDays >= 365 ? `${Math.floor(ageDays / 365)} yr${Math.floor(ageDays / 365) !== 1 ? 's' : ''} old`
+    : ageDays >= 30 ? `${Math.floor(ageDays / 30)} mo${Math.floor(ageDays / 30) !== 1 ? 's' : ''} old`
+    : 'New'
 
   // Last service
   const lastService = (serviceRecords || [])[0]
@@ -197,8 +201,8 @@ export default async function AppliancePage({
 
         {/* Detail grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-5 border-t border-[#E0D9D0]">
-          {ageYears !== null && (
-            <DetailItem icon={<Calendar size={14} />} label="Age" value={`${ageYears} yr${ageYears !== 1 ? 's' : ''} old`} />
+          {ageLabel && (
+            <DetailItem icon={<Calendar size={14} />} label="Age" value={ageLabel} />
           )}
           {appliance.purchase_price && (
             <DetailItem
