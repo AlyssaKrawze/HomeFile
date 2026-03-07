@@ -29,14 +29,22 @@ export default function ScanReceiptButton({ homeId, variant = 'inline' }: ScanRe
       })
 
       if (!res.ok) {
-        const err = await res.json()
-        alert(err.error || 'Failed to scan receipt')
+        let errorMsg = `Server error (${res.status})`
+        try {
+          const err = await res.json()
+          errorMsg = err.error || errorMsg
+        } catch {
+          // response wasn't JSON
+        }
+        alert(errorMsg)
         return
       }
 
       const data = await res.json()
 
-      if (data.action === 'updated') {
+      if (data.warning) {
+        alert(`${data.item_name}: ${data.warning}`)
+      } else if (data.action === 'updated') {
         alert(`Updated ${data.item_name} with receipt info`)
       } else {
         alert(`${data.item_name} saved — assign a room on your next visit`)
