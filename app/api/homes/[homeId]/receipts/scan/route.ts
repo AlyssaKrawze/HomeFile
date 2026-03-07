@@ -116,7 +116,7 @@ Use null for any field you cannot find. Do not include any explanation, just the
     try {
       const client = new Anthropic()
       message = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-haiku-4-5',
         max_tokens: 1024,
         messages: [{ role: 'user', content: [fileBlock, { type: 'text', text: prompt }] }],
       })
