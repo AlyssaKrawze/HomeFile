@@ -231,6 +231,8 @@ export default async function HomeOverviewPage({
           rooms={(rooms || []).map(r => ({ id: r.id, name: r.name }))}
         />
       )}
+
+      {canManage && <ScanReceiptButton homeId={homeId} variant="fab" />}
     </div>
   )
 }

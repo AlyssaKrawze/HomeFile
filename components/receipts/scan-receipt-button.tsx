@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation'
 import { Camera, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-export default function ScanReceiptButton({ homeId }: { homeId: string }) {
+interface ScanReceiptButtonProps {
+  homeId: string
+  variant?: 'inline' | 'fab'
+}
+
+export default function ScanReceiptButton({ homeId, variant = 'inline' }: ScanReceiptButtonProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [scanning, setScanning] = useState(false)
   const router = useRouter()
@@ -47,28 +52,52 @@ export default function ScanReceiptButton({ homeId }: { homeId: string }) {
     }
   }
 
+  const input = (
+    <input
+      ref={fileRef}
+      type="file"
+      accept="image/*,.pdf"
+      className="hidden"
+      onChange={handleFile}
+    />
+  )
+
+  if (variant === 'fab') {
+    return (
+      <>
+        {input}
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={scanning}
+          className="fixed bottom-24 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full bg-[#5B6C8F] text-white shadow-lg hover:bg-[#4a5a7a] hover:shadow-xl hover:scale-105 transition-all disabled:opacity-60 flex items-center justify-center"
+          title="Scan Receipt"
+        >
+          {scanning ? (
+            <Loader2 size={22} className="animate-spin" />
+          ) : (
+            <Camera size={22} />
+          )}
+        </button>
+      </>
+    )
+  }
+
   return (
     <>
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*,.pdf"
-        className="hidden"
-        onChange={handleFile}
-      />
+      {input}
       <button
         onClick={() => fileRef.current?.click()}
         disabled={scanning}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#5B6C8F] text-white shadow-sm hover:bg-[#4a5a7a] hover:shadow-md transition-all disabled:opacity-60"
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium border border-[#5B6C8F] text-[#5B6C8F] bg-white hover:bg-[#eef1f6] transition-colors disabled:opacity-60"
       >
         {scanning ? (
           <>
-            <Loader2 size={18} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" />
             Scanning…
           </>
         ) : (
           <>
-            <Camera size={18} />
+            <Camera size={15} />
             Scan Receipt
           </>
         )}
