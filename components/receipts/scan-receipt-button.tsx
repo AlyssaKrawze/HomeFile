@@ -92,7 +92,7 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
       const supabase = createClient()
       const itemName = extracted.name || 'Unknown Item'
 
-      const { error } = await supabase.from('appliances').insert({
+      const { data: newAppliance, error } = await supabase.from('appliances').insert({
         home_id: homeId,
         room_id: selectedRoomId,
         name: itemName,
@@ -104,17 +104,18 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
         warranty_provider: extracted.warranty_provider,
         warranty_contact: extracted.warranty_contact,
         include_in_binder: true,
-      })
+      }).select('id').single()
 
       if (error) {
         alert(`Failed to save item: ${error.message}`)
         return
       }
 
-      // Attach receipt as document if we have a URL
+      // Attach receipt as document linked to the new appliance
       if (receiptUrl) {
         await supabase.from('documents').insert({
           home_id: homeId,
+          appliance_id: newAppliance.id,
           name: `Receipt – ${itemName}`,
           file_url: receiptUrl,
           document_type: 'receipt',
