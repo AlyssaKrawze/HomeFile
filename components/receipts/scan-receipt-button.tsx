@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Camera, Loader2, X, ChevronDown, Package } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 interface Room {
   id: string
@@ -88,40 +87,27 @@ export default function ScanReceiptButton({ homeId, rooms, variant = 'inline' }:
 
     setSaving(true)
     try {
-      const supabase = createClient()
-      const itemName = extracted.name || 'Unknown Item'
+      const res = await fetch(`/api/homes/${homeId}/receipts/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          room_id: selectedRoomId,
+          extracted,
+          receipt_url: receiptUrl,
+          file_type: receiptFileType,
+          file_size: receiptFileSize,
+        }),
+      })
 
-      const { data: newAppliance, error } = await supabase.from('appliances').insert({
-        home_id: homeId,
-        room_id: selectedRoomId,
-        name: itemName,
-        brand: extracted.brand,
-        model: extracted.model,
-        purchase_price: extracted.purchase_price,
-        purchase_date: extracted.purchase_date,
-        warranty_expiry: extracted.warranty_expiry,
-        warranty_provider: extracted.warranty_provider,
-        warranty_contact: extracted.warranty_contact,
-        include_in_binder: true,
-      }).select('id').single()
+      const data = await res.json()
 
-      if (error) {
-        alert(`Failed to save item: ${error.message}`)
+      if (!res.ok) {
+        alert(data.error || 'Failed to save item')
         return
       }
 
-      // Attach receipt as document linked to the new appliance
-      if (receiptUrl) {
-        await supabase.from('documents').insert({
-          home_id: homeId,
-          appliance_id: newAppliance.id,
-          name: `Receipt – ${itemName}`,
-          file_url: receiptUrl,
-          file_type: receiptFileType,
-          file_size: receiptFileSize,
-          document_type: 'receipt',
-          include_in_binder: true,
-        })
+      if (data.document_error) {
+        alert(`Item saved but receipt document failed to attach: ${data.document_error}`)
       }
 
       setShowModal(false)
