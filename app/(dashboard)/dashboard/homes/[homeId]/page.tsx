@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ChevronRight, Clock, Wrench, BookOpen } from 'lucide-react'
 import RoomsGrid from '@/components/rooms/rooms-grid'
 import AddRoomModal from '@/components/rooms/add-room-modal'
+import ScanReceiptButton from '@/components/receipts/scan-receipt-button'
 
 export default async function HomeOverviewPage({
   params,
@@ -100,7 +101,10 @@ export default async function HomeOverviewPage({
             </p>
           )}
         </div>
-        {canManage && <AddRoomModal homeId={homeId} />}
+        <div className="flex items-center gap-3">
+          <ScanReceiptButton homeId={homeId} />
+          {canManage && <AddRoomModal homeId={homeId} />}
+        </div>
       </div>
 
       {/* Stats bar */}
