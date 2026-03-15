@@ -333,6 +333,22 @@ export interface HomeContact {
   created_at: string
 }
 
+export type ReminderType = '1_month' | '1_week' | '1_day' | 'due_date'
+export type ReminderStatus = 'pending' | 'sent' | 'dismissed'
+
+export interface ScheduledReminder {
+  id: string
+  task_id: string
+  user_id: string
+  home_id: string
+  appliance_id: string | null
+  reminder_date: string
+  reminder_type: ReminderType
+  status: ReminderStatus
+  sent_at: string | null
+  created_at: string
+}
+
 export interface HomeInvite {
   id: string
   home_id: string

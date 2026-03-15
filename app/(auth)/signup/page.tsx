@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import FooterLinks from '@/components/layout/footer-links'
 
 export default function SignupPage() {
   const [fullName, setFullName] = useState('')
@@ -159,6 +160,8 @@ export default function SignupPage() {
               Sign in
             </Link>
           </p>
+
+          <FooterLinks />
         </div>
       </div>
     </div>

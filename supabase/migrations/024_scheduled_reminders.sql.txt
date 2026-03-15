@@ -1,0 +1,82 @@
+-- ============================================================
+-- 024: Scheduled Reminders
+-- Table + trigger to auto-create email reminders for tasks
+-- ============================================================
+
+-- Reminder table
+create table if not exists scheduled_reminders (
+  id              uuid default gen_random_uuid() primary key,
+  task_id         uuid references scheduled_tasks(id) on delete cascade not null,
+  user_id         uuid references auth.users(id) on delete cascade not null,
+  home_id         uuid references homes(id) on delete cascade not null,
+  appliance_id    uuid references appliances(id) on delete set null,
+  reminder_date   date not null,
+  reminder_type   text not null check (reminder_type in ('1_month', '1_week', '1_day', 'due_date')),
+  status          text default 'pending' check (status in ('pending', 'sent', 'dismissed')),
+  sent_at         timestamptz,
+  created_at      timestamptz default now() not null
+);
+
+-- Indexes
+create index idx_reminders_date_status on scheduled_reminders (reminder_date, status);
+create index idx_reminders_task on scheduled_reminders (task_id);
+create index idx_reminders_user on scheduled_reminders (user_id);
+
+-- RLS: service-role bypasses; home members can read their own reminders
+alter table scheduled_reminders enable row level security;
+
+create policy "Users can read own reminders"
+  on scheduled_reminders for select
+  using (user_id = auth.uid());
+
+
+-- ============================================================
+-- Trigger function: auto-create reminders on task insert
+-- ============================================================
+create or replace function create_reminders_for_task()
+returns trigger as $$
+declare
+  recipient uuid;
+  today date := current_date;
+begin
+  -- Determine recipient: assigned_to if set, else created_by
+  recipient := coalesce(NEW.assigned_to, NEW.created_by);
+
+  -- If no recipient, skip
+  if recipient is null then
+    return NEW;
+  end if;
+
+  -- 1_month reminder (due_date - 30 days)
+  if NEW.notify_at_1_month and (NEW.due_date - 30) >= today then
+    insert into scheduled_reminders (task_id, user_id, home_id, appliance_id, reminder_date, reminder_type)
+    values (NEW.id, recipient, NEW.home_id, NEW.appliance_id, NEW.due_date - 30, '1_month');
+  end if;
+
+  -- 1_week reminder (due_date - 7 days)
+  if NEW.notify_at_1_week and (NEW.due_date - 7) >= today then
+    insert into scheduled_reminders (task_id, user_id, home_id, appliance_id, reminder_date, reminder_type)
+    values (NEW.id, recipient, NEW.home_id, NEW.appliance_id, NEW.due_date - 7, '1_week');
+  end if;
+
+  -- 1_day reminder (due_date - 1 day)
+  if NEW.notify_at_1_day and (NEW.due_date - 1) >= today then
+    insert into scheduled_reminders (task_id, user_id, home_id, appliance_id, reminder_date, reminder_type)
+    values (NEW.id, recipient, NEW.home_id, NEW.appliance_id, NEW.due_date - 1, '1_day');
+  end if;
+
+  -- due_date reminder (always, if not past)
+  if NEW.due_date >= today then
+    insert into scheduled_reminders (task_id, user_id, home_id, appliance_id, reminder_date, reminder_type)
+    values (NEW.id, recipient, NEW.home_id, NEW.appliance_id, NEW.due_date, 'due_date');
+  end if;
+
+  return NEW;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger
+create trigger trg_create_reminders
+  after insert on scheduled_tasks
+  for each row
+  execute function create_reminders_for_task();

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import FooterLinks from '@/components/layout/footer-links'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -130,6 +131,8 @@ export default function LoginPage() {
               Create one free
             </Link>
           </p>
+
+          <FooterLinks />
         </div>
       </div>
     </div>

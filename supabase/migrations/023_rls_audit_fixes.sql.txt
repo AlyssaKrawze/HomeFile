@@ -1,0 +1,24 @@
+-- RLS Audit Fixes
+-- 1. role_templates: missing RLS entirely
+-- 2. room_attachments: missing RLS entirely (migration was .sql.txt)
+-- 3. service_providers: missing UPDATE policy
+
+-- 1. role_templates: enable RLS + authenticated SELECT
+ALTER TABLE role_templates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can read role templates"
+  ON role_templates FOR SELECT
+  USING (auth.uid() IS NOT NULL);
+
+-- 2. room_attachments: enable RLS + standard policies
+ALTER TABLE room_attachments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Home members can read room attachments"
+  ON room_attachments FOR SELECT
+  USING (get_home_member_role(home_id, auth.uid()) IS NOT NULL);
+CREATE POLICY "Owners and managers can manage room attachments"
+  ON room_attachments FOR ALL
+  USING (get_home_member_role(home_id, auth.uid()) IN ('owner', 'manager'));
+
+-- 3. service_providers: add missing UPDATE policy
+CREATE POLICY "service_providers: owners/managers update"
+  ON service_providers FOR UPDATE
+  USING (get_home_member_role(home_id, auth.uid()) IN ('owner', 'manager'));

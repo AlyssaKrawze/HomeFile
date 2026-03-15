@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/sidebar'
 import MobileNav from '@/components/layout/mobile-nav'
 import OnboardingModal from '@/components/onboarding/onboarding-modal'
 import { Toaster } from 'sonner'
+import FooterLinks from '@/components/layout/footer-links'
 
 interface DashboardShellProps {
   homes: { id: string; name: string }[]
@@ -44,6 +45,7 @@ export default function DashboardShell({
       {/* ── Main content ────────────────────────────────── */}
       <main className="flex-1 min-w-0 overflow-y-auto pt-12 lg:pt-0 pb-20 lg:pb-0">
         {children}
+        <FooterLinks />
       </main>
 
       {/* ── Mobile bottom nav ────────────────────────────── */}

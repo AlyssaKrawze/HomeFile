@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import FooterLinks from '@/components/layout/footer-links'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -121,6 +122,8 @@ export default function ForgotPasswordPage() {
               </p>
             </>
           )}
+
+          <FooterLinks />
         </div>
       </div>
     </div>
