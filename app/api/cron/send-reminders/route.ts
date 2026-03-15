@@ -173,7 +173,7 @@ export async function GET(request: Request) {
 
   if (fetchError) {
     console.error('Failed to fetch reminders:', fetchError)
-    return NextResponse.json({ error: 'Failed to fetch reminders' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to fetch reminders', details: fetchError.message, code: fetchError.code }, { status: 500 })
   }
 
   if (!reminders || reminders.length === 0) {
