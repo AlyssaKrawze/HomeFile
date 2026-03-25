@@ -37,14 +37,14 @@ export default function ForgotPasswordPage() {
           <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="text-white font-semibold text-xl">TheHomePage</span>
+          <span className="text-white font-semibold text-xl">Homefile</span>
         </div>
         <div>
           <blockquote className="text-slate-300 text-2xl font-light leading-relaxed">
             &ldquo;Think of it as CARFAX for your home — complete history, smart reminders, total peace of mind.&rdquo;
           </blockquote>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 TheHomePage. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2025 Homefile. All rights reserved.</p>
       </div>
 
       {/* Right panel */}
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
             <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-[#2F3437] font-semibold text-xl">TheHomePage</span>
+            <span className="text-[#2F3437] font-semibold text-xl">Homefile</span>
           </div>
 
           {sent ? (

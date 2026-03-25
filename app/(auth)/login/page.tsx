@@ -38,7 +38,7 @@ export default function LoginPage() {
           <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="text-white font-semibold text-xl">TheHomePage</span>
+          <span className="text-white font-semibold text-xl">Homefile</span>
         </div>
         <div>
           <blockquote className="text-slate-300 text-2xl font-light leading-relaxed">
@@ -58,7 +58,7 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 TheHomePage. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2025 Homefile. All rights reserved.</p>
       </div>
 
       {/* Right panel */}
@@ -68,11 +68,11 @@ export default function LoginPage() {
             <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="text-[#2F3437] font-semibold text-xl">TheHomePage</span>
+            <span className="text-[#2F3437] font-semibold text-xl">Homefile</span>
           </div>
 
           <h1 className="text-3xl font-bold text-[#2F3437] mb-2">Welcome back</h1>
-          <p className="text-slate-500 mb-8">Sign in to your TheHomePage account</p>
+          <p className="text-slate-500 mb-8">Sign in to your Homefile account</p>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div>

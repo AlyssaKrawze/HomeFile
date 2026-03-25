@@ -57,7 +57,7 @@ function buildEmailHtml(params: {
           <!-- Header -->
           <tr>
             <td style="background-color:#5B6C8F;padding:20px 24px;border-radius:12px 12px 0 0;">
-              <span style="color:#ffffff;font-size:18px;font-weight:600;letter-spacing:0.5px;">TheHomePage</span>
+              <span style="color:#ffffff;font-size:18px;font-weight:600;letter-spacing:0.5px;">Homefile</span>
             </td>
           </tr>
           <!-- Body -->
@@ -126,7 +126,7 @@ function buildEmailHtml(params: {
           <tr>
             <td style="padding:20px 24px;text-align:center;">
               <p style="margin:0;font-size:12px;color:#9ca3af;">
-                ${homeName} &middot; Sent by TheHomePage
+                ${homeName} &middot; Sent by Homefile
               </p>
             </td>
           </tr>
@@ -223,7 +223,7 @@ export async function GET(request: Request) {
       })
 
       await resend.emails.send({
-        from: 'TheHomePage <reminders@thehomepage.app>',
+        from: 'Homefile <reminders@thehomepage.app>',
         to: userData.user.email,
         subject: `${subjectPrefix} — ${homeName}`,
         html,

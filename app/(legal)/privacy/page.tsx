@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             <div className="w-7 h-7 rounded-lg bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-sm">H</span>
             </div>
-            <span className="font-semibold text-[#2F3437]">TheHomePage</span>
+            <span className="font-semibold text-[#2F3437]">Homefile</span>
           </div>
         </div>
       </header>

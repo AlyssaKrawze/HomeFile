@@ -38,7 +38,7 @@ export default function DashboardShell({
           <div className="w-7 h-7 rounded-lg bg-[#5B6C8F] flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">H</span>
           </div>
-          <span className="font-semibold text-[#2F3437] text-base" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>TheHomePage</span>
+          <span className="font-semibold text-[#2F3437] text-base" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>Homefile</span>
         </Link>
       </div>
 

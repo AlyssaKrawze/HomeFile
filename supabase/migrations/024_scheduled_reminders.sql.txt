@@ -22,6 +22,10 @@ create index idx_reminders_date_status on scheduled_reminders (reminder_date, st
 create index idx_reminders_task on scheduled_reminders (task_id);
 create index idx_reminders_user on scheduled_reminders (user_id);
 
+-- Table grants
+grant all on scheduled_reminders to service_role;
+grant select on scheduled_reminders to authenticated;
+
 -- RLS: service-role bypasses; home members can read their own reminders
 alter table scheduled_reminders enable row level security;
 

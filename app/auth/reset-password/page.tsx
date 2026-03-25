@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
           <div className="w-9 h-9 rounded-xl bg-[#5B6C8F] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="text-[#2F3437] font-semibold text-xl">TheHomePage</span>
+          <span className="text-[#2F3437] font-semibold text-xl">Homefile</span>
         </div>
 
         <div className="bg-white rounded-2xl border border-[#C8BFB2] p-8">

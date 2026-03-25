@@ -61,7 +61,7 @@ export default function GuidePage() {
           <h1 className="font-bold text-2xl text-[#2F3437]" style={{ fontFamily: 'Georgia, serif' }}>
             Getting Started Guide
           </h1>
-          <p className="text-sm text-slate-500 mt-0.5">TheHomePage in 8 simple steps</p>
+          <p className="text-sm text-slate-500 mt-0.5">Homefile in 8 simple steps</p>
         </div>
       </div>
 
