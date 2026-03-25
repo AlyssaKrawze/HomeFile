@@ -23,13 +23,13 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Homefile — Home Maintenance Tracker',
+  title: 'TheHomeFile — Home Maintenance Tracker',
   description: 'The smart way to track, schedule, and manage everything in your home.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Homefile',
+    title: 'TheHomeFile',
   },
 }
 

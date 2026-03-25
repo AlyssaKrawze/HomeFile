@@ -16,7 +16,7 @@ export default function TermsPage() {
             <div className="w-7 h-7 rounded-lg bg-[#5B6C8F] flex items-center justify-center">
               <span className="text-white font-bold text-sm">H</span>
             </div>
-            <span className="font-semibold text-[#2F3437]">Homefile</span>
+            <span className="font-semibold text-[#2F3437]">TheHomeFile</span>
           </div>
         </div>
       </header>
@@ -40,12 +40,12 @@ export default function TermsPage() {
                 AGREEMENT TO OUR LEGAL TERMS
               </h2>
               <p className="mb-3">
-                We are Homefile (&ldquo;Company,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; &ldquo;our&rdquo;). We operate home-file.vercel.app, as well as any other related products and services that refer or link to these legal terms (the &ldquo;Legal Terms&rdquo;) (collectively, the &ldquo;Services&rdquo;). You can contact us by email at{' '}
+                We are TheHomeFile (&ldquo;Company,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; &ldquo;our&rdquo;). We operate home-file.vercel.app, as well as any other related products and services that refer or link to these legal terms (the &ldquo;Legal Terms&rdquo;) (collectively, the &ldquo;Services&rdquo;). You can contact us by email at{' '}
                 <a href="mailto:alyssakrawze@gmail.com" className="text-[#5B6C8F] underline hover:text-[#4a5c77]">alyssakrawze@gmail.com</a>{' '}
                 or by mail to 30 Peabody St, Apt 2401, Nashville, TN 37210.
               </p>
               <p className="mb-3">
-                These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&ldquo;you&rdquo;), and Homefile, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+                These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&ldquo;you&rdquo;), and TheHomeFile, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
               </p>
               <p>
                 We reserve the right to make changes to these Legal Terms at any time. We will alert you about changes by updating the &lsquo;Last updated&rsquo; date. Your continued use of the Services after such changes constitutes acceptance.
@@ -234,7 +234,7 @@ export default function TermsPage() {
                 INDEMNIFICATION
               </h2>
               <p>
-                You agree to defend, indemnify, and hold Homefile harmless from any claims arising from your use of the Services, breach of these Legal Terms, or violation of any third-party rights.
+                You agree to defend, indemnify, and hold TheHomeFile harmless from any claims arising from your use of the Services, breach of these Legal Terms, or violation of any third-party rights.
               </p>
             </section>
 
@@ -270,7 +270,7 @@ export default function TermsPage() {
                 MISCELLANEOUS
               </h2>
               <p>
-                These Legal Terms constitute the entire agreement between you and Homefile. If any provision is found unenforceable, the remaining provisions remain in full effect.
+                These Legal Terms constitute the entire agreement between you and TheHomeFile. If any provision is found unenforceable, the remaining provisions remain in full effect.
               </p>
             </section>
 
@@ -282,7 +282,7 @@ export default function TermsPage() {
                 CONTACT US
               </h2>
               <p>
-                Homefile<br />
+                TheHomeFile<br />
                 30 Peabody St, Apt 2401<br />
                 Nashville, TN 37210<br />
                 <a href="mailto:alyssakrawze@gmail.com" className="text-[#5B6C8F] underline hover:text-[#4a5c77]">alyssakrawze@gmail.com</a>

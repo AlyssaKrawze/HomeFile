@@ -15,9 +15,9 @@ interface OnboardingModalProps {
 const STEPS = [
   {
     icon: Sparkles,
-    title: 'Welcome to Homefile',
+    title: 'Welcome to TheHomeFile',
     description:
-      "Homefile is your home's complete history — like CARFAX but for your house. Every appliance, every repair, every document, all in one place. Let's take a quick tour.",
+      "TheHomeFile is your home's complete history — like CARFAX but for your house. Every appliance, every repair, every document, all in one place. Let's take a quick tour.",
   },
   {
     icon: Home,

@@ -62,7 +62,7 @@ export default function Sidebar({ homes, userName, userId }: SidebarProps) {
           <div className="w-8 h-8 rounded-lg bg-[#5B6C8F] flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-base">H</span>
           </div>
-          <span className="text-white font-semibold text-lg" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>Homefile</span>
+          <span className="text-white font-semibold text-lg" style={{ fontFamily: 'var(--font-playfair-display), Georgia, serif' }}>TheHomeFile</span>
         </Link>
       </div>
 
