@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AlertTriangle, Info, Bell, Loader2, RefreshCw } from 'lucide-react'
 
 interface Alert {
@@ -58,7 +58,6 @@ function UrgencyIcon({ urgency }: { urgency: Alert['urgency'] }) {
 export default function HomeAlerts({ city, state }: HomeAlertsProps) {
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [loading, setLoading] = useState(false)
-  const [generated, setGenerated] = useState(false)
 
   const location = [city, state].filter(Boolean).join(', ')
   const hasLocation = Boolean(city || state)
@@ -80,14 +79,8 @@ export default function HomeAlerts({ city, state }: HomeAlertsProps) {
       // silent
     } finally {
       setLoading(false)
-      setGenerated(true)
     }
   }
-
-  useEffect(() => {
-    generate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (!hasLocation) {
     return (
@@ -110,20 +103,20 @@ export default function HomeAlerts({ city, state }: HomeAlertsProps) {
     )
   }
 
-  if (generated && alerts.length === 0) {
+  if (alerts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-[#C8BFB2]">
         <Bell size={40} className="text-slate-300 mb-4" />
-        <h3 className="font-playfair text-lg font-semibold text-slate-700 mb-2">No alerts right now</h3>
+        <h3 className="font-playfair text-lg font-semibold text-slate-700 mb-2">Seasonal Alerts</h3>
         <p className="text-sm text-slate-500 max-w-sm mb-4">
-          Your home in {location} looks good for this time of year.
+          Get AI-powered maintenance alerts tailored to {location} and the current season.
         </p>
         <button
           onClick={generate}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+          className="flex items-center gap-2 text-sm font-medium text-white bg-[#5B6C8F] hover:bg-[#4a5c77] px-4 py-2.5 rounded-lg transition-colors"
         >
           <RefreshCw size={14} />
-          Refresh
+          Generate Alerts
         </button>
       </div>
     )
