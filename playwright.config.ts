@@ -47,6 +47,24 @@ export default defineConfig({
       },
     },
     {
+      name: 'firefox',
+      testIgnore: /login\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: 'tests/.auth/user.json',
+      },
+    },
+    {
+      name: 'webkit',
+      testIgnore: /login\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: 'tests/.auth/user.json',
+      },
+    },
+    {
       name: 'no-auth',
       testMatch: /login\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
