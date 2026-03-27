@@ -47,6 +47,22 @@ View the last HTML report:
 npx playwright show-report
 ```
 
+Run only desktop or mobile tests:
+
+```bash
+npx playwright test --project=smoke
+npx playwright test --project=mobile
+```
+
+### Projects
+
+| Project | Viewport | Description |
+|---------|----------|-------------|
+| `setup` | - | Authenticates and saves session state |
+| `smoke` | Desktop Chrome (1280x720) | All smoke tests with saved auth |
+| `mobile` | iPhone 14 (390x844) | Same smoke tests at mobile viewport |
+| `no-auth` | Desktop Chrome | Login test only (no saved auth) |
+
 ### Test Structure
 
 | File | Auth | Purpose |
@@ -56,6 +72,11 @@ npx playwright show-report
 | `tests/add-home.spec.ts` | Saved | Adds a home from the dashboard |
 | `tests/add-appliance.spec.ts` | Saved | Adds an item to a room |
 | `tests/receipt-scan.spec.ts` | Saved | Uploads a receipt and files it to a room |
+| `tests/vault.spec.ts` | Saved | Unlocks the password vault with PIN |
+| `tests/binder.spec.ts` | Saved | Triggers PDF download from Home Binder |
+| `tests/ai-maintenance.spec.ts` | Saved | Generates AI maintenance suggestions |
+| `tests/alerts.spec.ts` | Saved | Generates seasonal home alerts |
+| `tests/invite-member.spec.ts` | Saved | Invites a member by email |
 
 ## k6 (Load Tests)
 
