@@ -35,6 +35,18 @@ export default defineConfig({
       },
     },
     {
+      name: 'android',
+      testIgnore: /login\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 412, height: 915 },
+        isMobile: true,
+        hasTouch: true,
+        storageState: 'tests/.auth/user.json',
+      },
+    },
+    {
       name: 'no-auth',
       testMatch: /login\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
