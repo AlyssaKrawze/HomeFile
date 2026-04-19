@@ -1,12 +1,12 @@
 {
   "name": "TheHomeFile",
   "short_name": "TheHomeFile",
-  "description": "Track appliances, schedule maintenance, and manage your home.",
+  "description": "CARFAX for your home",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f8fafc",
-  "theme_color": "#0d9488",
+  "background_color": "#F4F1EA",
+  "theme_color": "#5B6C8F",
   "categories": ["utilities", "productivity"],
   "icons": [
     {
