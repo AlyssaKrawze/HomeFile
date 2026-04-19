@@ -23,7 +23,11 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Use getSession() instead of getUser() to avoid a network request to Supabase
+  // on every request. getSession() reads the JWT from cookies locally, keeping
+  // middleware well under Vercel's 1.5s Edge runtime limit.
+  // Server components and API routes should still use getUser() for verified auth.
+  const { data: { session } } = await supabase.auth.getSession()
 
   const path = request.nextUrl.pathname
 
@@ -34,13 +38,13 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/api/') ||
     path.startsWith('/_next/')
 
-  if (!user && !isAuthPage && !isPublicPath) {
+  if (!session && !isAuthPage && !isPublicPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthPage) {
+  if (session && isAuthPage) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
