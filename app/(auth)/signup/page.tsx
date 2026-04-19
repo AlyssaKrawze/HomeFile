@@ -77,7 +77,7 @@ export default function SignupPage() {
             TheHomeFile keeps it all organized for you.
           </p>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 TheHomeFile. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2026 TheHomeFile. All rights reserved.</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-8">

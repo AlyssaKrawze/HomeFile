@@ -58,7 +58,7 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 TheHomeFile. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2026 TheHomeFile. All rights reserved.</p>
       </div>
 
       {/* Right panel */}

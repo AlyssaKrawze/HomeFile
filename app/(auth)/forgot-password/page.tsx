@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
             &ldquo;Think of it as CARFAX for your home — complete history, smart reminders, total peace of mind.&rdquo;
           </blockquote>
         </div>
-        <p className="text-slate-500 text-sm">© 2025 TheHomeFile. All rights reserved.</p>
+        <p className="text-slate-500 text-sm">© 2026 TheHomeFile. All rights reserved.</p>
       </div>
 
       {/* Right panel */}
