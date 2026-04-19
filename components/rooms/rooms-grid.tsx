@@ -7,7 +7,8 @@ import { LayoutGrid, List, GripVertical } from 'lucide-react'
 import {
   DndContext,
   closestCenter,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -49,11 +50,12 @@ function SortableRoomCard({
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: room.id })
   const router = useRouter()
+  const baseTransform = CSS.Transform.toString(transform)
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.4 : 1,
-    touchAction: 'none',
+    transform: isDragging ? `${baseTransform ?? ''} scale(1.03)`.trim() : baseTransform,
+    transition: isDragging ? `${transition ?? ''}, transform 150ms ease`.replace(/^, /, '') : transition,
+    opacity: isDragging ? 0.85 : 1,
+    touchAction: isDragging ? 'none' as const : 'auto' as const,
   }
   const cat = ROOM_CATEGORIES[room.category as PermissionCategory] || ROOM_CATEGORIES.other
 
@@ -66,14 +68,14 @@ function SortableRoomCard({
       onClick={() => router.push(`/dashboard/homes/${homeId}/rooms/${room.id}`)}
       className={`group relative bg-white rounded-2xl border transition-all duration-200 p-5 select-none ${
         isDragging
-          ? 'cursor-grabbing border-[#9ab0c4] shadow-lg'
+          ? 'cursor-grabbing border-[#5B6C8F] shadow-xl ring-2 ring-[#5B6C8F]/20'
           : 'cursor-grab border-[#C8BFB2] hover:border-[#9ab0c4] hover:shadow-md'
       }`}
     >
-      {/* Drag indicator */}
+      {/* Drag indicator — visible on hover (desktop) and always on touch devices */}
       <GripVertical
         size={14}
-        className="absolute top-3 left-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute top-3 left-3 text-slate-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
       />
 
       <div className="flex items-start justify-between mb-4">
@@ -122,8 +124,12 @@ export default function RoomsGrid({ rooms: initialRooms, homeId, canManage, coun
     if (saved === 'list') setView('list')
   }, [])
 
-  // distance: 8 prevents accidental drags on simple clicks
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+  // Mouse: small distance prevents accidental drags on clicks
+  // Touch: long press (300ms hold) activates drag; normal scrolling is unaffected
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 300, tolerance: 5 } }),
+  )
 
   function handleViewToggle(v: 'card' | 'list') {
     setView(v)
@@ -183,7 +189,13 @@ export default function RoomsGrid({ rooms: initialRooms, homeId, canManage, coun
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
-          onDragStart={e => setActiveId(String(e.active.id))}
+          onDragStart={e => {
+            setActiveId(String(e.active.id))
+            // Haptic feedback on mobile when drag activates
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+              navigator.vibrate(50)
+            }
+          }}
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={rooms.map(r => r.id)} strategy={rectSortingStrategy}>
