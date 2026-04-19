@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Sparkles, CheckCircle2, X, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { type Appliance, type ServiceRecord, type AISuggestion, PRIORITY_LABELS } from '@/lib/types'
 
 interface AISuggestionsSectionProps {
@@ -91,20 +92,32 @@ export default function AISuggestionsSection({
   async function acceptSuggestion(suggestion: AISuggestion, index: number) {
     setAccepting(index)
 
-    await supabase.from('scheduled_tasks').insert({
-      home_id: homeId,
-      appliance_id: appliance.id,
-      title: suggestion.title,
-      description: suggestion.description,
-      due_date: suggestion.due_date,
-      priority: suggestion.priority,
-      source: 'ai',
-      ai_reasoning: suggestion.reasoning,
-      created_by: userId,
-    })
+    try {
+      const { error } = await supabase.from('scheduled_tasks').insert({
+        home_id: homeId,
+        appliance_id: appliance.id,
+        title: suggestion.title,
+        description: suggestion.description,
+        due_date: suggestion.due_date,
+        priority: suggestion.priority,
+        source: 'ai',
+        ai_reasoning: suggestion.reasoning,
+        created_by: userId,
+      })
 
-    setAccepting(null)
-    router.refresh()
+      if (error) {
+        toast.error('Failed to add task: ' + error.message)
+        return
+      }
+
+      dismiss(index)
+      toast.success('Task added to schedule')
+      router.refresh()
+    } catch {
+      toast.error('Failed to add task. Please try again.')
+    } finally {
+      setAccepting(null)
+    }
   }
 
   function dismiss(index: number) {
