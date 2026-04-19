@@ -242,12 +242,17 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
                 Go to Dashboard
               </Link>
             ) : (
-              <a
-                href="#hero-email"
-                className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-              >
-                Get Early Access
-              </a>
+              <div className="flex items-center gap-4">
+                <Link href="/login" className="text-sm text-slate-600 hover:text-[#5B6C8F] transition-colors">
+                  Sign in
+                </Link>
+                <a
+                  href="#hero-email"
+                  className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                >
+                  Get Early Access
+                </a>
+              </div>
             )}
           </div>
 
@@ -272,9 +277,14 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
                 Go to Dashboard
               </Link>
             ) : (
-              <a href="#hero-email" onClick={() => setMobileMenuOpen(false)} className="bg-[#5B6C8F] text-white text-sm font-semibold px-5 py-2.5 rounded-xl text-center">
-                Get Early Access
-              </a>
+              <>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-[#5B6C8F]">
+                  Sign in
+                </Link>
+                <a href="#hero-email" onClick={() => setMobileMenuOpen(false)} className="bg-[#5B6C8F] text-white text-sm font-semibold px-5 py-2.5 rounded-xl text-center">
+                  Get Early Access
+                </a>
+              </>
             )}
           </div>
         )}
