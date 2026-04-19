@@ -69,33 +69,50 @@ const STEPS = [
 
 const PRICING = [
   {
+    name: 'Free',
+    price: '$0',
+    period: '',
+    description: 'Get started with the basics.',
+    popular: false,
+    cta: 'Get started free',
+    features: [
+      '1 home',
+      'Unlimited rooms & appliances (basic info)',
+      'Basic service history logging',
+      'Manual maintenance reminders',
+    ],
+  },
+  {
     name: 'Pro',
-    price: '$49',
+    price: '$19',
     period: '/month',
     description: 'Everything you need for one home.',
     popular: false,
+    cta: 'Start free trial',
     features: [
       '1 home',
-      'Unlimited appliances & rooms',
+      'Everything in Free, plus:',
       'AI maintenance scheduling',
-      'Service history tracking',
-      'Home binder PDF export',
+      'Receipt scanning',
+      'Home Binder PDF export',
       'Email reminders',
+      'Password vault',
+      'Document storage',
     ],
   },
   {
     name: 'Estate',
-    price: '$99',
+    price: '$49',
     period: '/month',
     description: 'For property managers and multi-home owners.',
     popular: true,
+    cta: 'Start free trial',
     features: [
       'Up to 5 homes',
-      'Everything in Pro',
-      'Encrypted password vault',
+      'Everything in Pro, plus:',
       'Shared access & roles',
+      'Contractor marketplace',
       'Priority support',
-      'Contractor marketplace (coming soon)',
     ],
   },
 ]
@@ -408,15 +425,26 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
       </section>
 
       {/* ─── Pricing ─── */}
-      <section id="pricing" className="max-w-5xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
+      <section id="pricing" className="max-w-6xl mx-auto px-6 py-24">
+        <div className="text-center mb-10">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
           <p className="text-slate-600 max-w-lg mx-auto">
-            Start free during beta. Choose a plan when we launch.
+            Start free forever. Upgrade when you need more.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        {/* Trial banner */}
+        <div className="max-w-3xl mx-auto mb-12 bg-[#5B6C8F]/8 border border-[#5B6C8F]/20 rounded-2xl px-6 py-5 text-center">
+          <p className="text-sm text-[#2F3437] leading-relaxed">
+            <span className="font-semibold">All plans start with a 30-day free Pro trial.</span>{' '}
+            No credit card required. See what AI-powered home management feels like, then decide.
+          </p>
+          <p className="text-xs text-slate-500 mt-2">
+            After the trial, accounts revert to Free — all data is kept, new additions become manual only.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {PRICING.map((plan) => (
             <div
               key={plan.name}
@@ -435,7 +463,7 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
               <p className="text-sm text-slate-500 mb-4">{plan.description}</p>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="text-4xl font-bold font-playfair">{plan.price}</span>
-                <span className="text-slate-500 text-sm">{plan.period}</span>
+                {plan.period && <span className="text-slate-500 text-sm">{plan.period}</span>}
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
@@ -453,7 +481,7 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
                     : 'bg-[#5B6C8F]/10 hover:bg-[#5B6C8F]/20 text-[#5B6C8F]'
                 }`}
               >
-                Get Early Access
+                {plan.cta}
               </a>
             </div>
           ))}
