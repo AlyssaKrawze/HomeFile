@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display, Fraunces, JetBrains_Mono, Geist, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import RegisterSW from '@/components/pwa/register-sw'
 
@@ -12,6 +12,32 @@ const inter = Inter({
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair-display',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
+  subsets: ['latin'],
+  axes: ['opsz', 'SOFT', 'WONK'],
+  display: 'swap',
+})
+
+const geist = Geist({
+  variable: '--font-geist',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+const instrumentSerif = Instrument_Serif({
+  variable: '--font-instrument-serif',
+  subsets: ['latin'],
+  weight: '400',
   display: 'swap',
 })
 
@@ -36,7 +62,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfairDisplay.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfairDisplay.variable} ${fraunces.variable} ${geist.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased`}>
         {children}
         <RegisterSW />
       </body>

@@ -1,162 +1,1495 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import Link from 'next/link'
-import {
-  Home,
-  Wrench,
-  Calendar,
-  Shield,
-  FileText,
-  Users,
-  ArrowRight,
-  Check,
-  Star,
-  Menu,
-  X,
-} from 'lucide-react'
+import './landing.css'
+import { LI, type LIKey } from './landing-icons'
+import { MobileMockup } from './landing-mockup'
 
-const FEATURES = [
-  {
-    icon: Home,
-    title: 'Appliance Inventory',
-    description: 'Track every appliance, warranty, and manual in one place. Never lose a receipt again.',
-  },
-  {
-    icon: Wrench,
-    title: 'Service History',
-    description: 'Log every repair, service call, and maintenance event with dates, costs, and provider details.',
-  },
-  {
-    icon: Calendar,
-    title: 'AI Maintenance Scheduling',
-    description: 'Claude AI analyzes your appliances and generates smart maintenance reminders before things break.',
-  },
-  {
-    icon: Shield,
-    title: 'Encrypted Vault',
-    description: 'Store Wi-Fi passwords, security codes, and gate codes in an AES-256 encrypted vault.',
-  },
-  {
-    icon: FileText,
-    title: 'Home Binder',
-    description: 'Generate a professional PDF binder of your entire home — perfect for selling or insurance claims.',
-  },
-  {
-    icon: Users,
-    title: 'Shared Access',
-    description: 'Invite family members, property managers, or contractors with role-based permissions.',
-  },
-]
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      el.classList.add('in')
+      return
+    }
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add('in')
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in')
+            io.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.12 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return ref
+}
 
-const STEPS = [
-  {
-    number: '1',
-    title: 'Add your home',
-    description: 'Enter your address and start adding rooms, appliances, and documents in minutes.',
-  },
-  {
-    number: '2',
-    title: 'Track everything',
-    description: 'Log service records, upload receipts, and let AI schedule your maintenance calendar.',
-  },
-  {
-    number: '3',
-    title: 'Build your binder',
-    description: 'Generate a complete home history — ready for buyers, insurers, or your own peace of mind.',
-  },
-]
+function Reveal({
+  as: As = 'div',
+  className = '',
+  style,
+  children,
+}: {
+  as?: 'div' | 'section' | 'article'
+  className?: string
+  style?: React.CSSProperties
+  children: ReactNode
+}) {
+  const ref = useReveal<HTMLDivElement>()
+  return (
+    <As ref={ref as React.Ref<HTMLDivElement>} className={`reveal ${className}`} style={style}>
+      {children}
+    </As>
+  )
+}
 
-const PRICING = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: '',
-    description: 'Get started with the basics.',
-    popular: false,
-    cta: 'Get started free',
-    features: [
-      '1 home',
-      'Unlimited rooms & appliances (basic info)',
-      'Basic service history logging',
-      'Manual maintenance reminders',
-    ],
-  },
-  {
-    name: 'Pro',
-    price: '$19',
-    period: '/month',
-    description: 'Everything you need for one home.',
-    popular: false,
-    cta: 'Start free trial',
-    features: [
-      '1 home',
-      'Everything in Free, plus:',
-      'AI maintenance scheduling',
-      'Receipt scanning',
-      'Home Binder PDF export',
-      'Email reminders',
-      'Password vault',
-      'Document storage',
-    ],
-  },
-  {
-    name: 'Estate',
-    price: '$49',
-    period: '/month',
-    description: 'For property managers and multi-home owners.',
-    popular: true,
-    cta: 'Start free trial',
-    features: [
-      'Up to 5 homes',
-      'Everything in Pro, plus:',
-      'Shared access & roles',
-      'Contractor marketplace',
-      'Priority support',
-    ],
-  },
-]
+function Wordmark({ size = 22 }: { size?: number }) {
+  return (
+    <Link href="/" className="wordmark" style={{ fontSize: size }}>
+      The<span className="it">Home</span>File
+      <span style={{ color: 'var(--accent)', marginLeft: 2 }}>.</span>
+    </Link>
+  )
+}
 
-const TESTIMONIALS = [
-  {
-    quote: 'TheHomeFile saved me hours when we sold our house. The buyers were impressed with the complete history.',
-    name: 'Sarah M.',
-    role: 'Homeowner',
-    placeholder: true,
-  },
-  {
-    quote: 'I manage 12 properties and this is the first tool that actually keeps everything organized in one place.',
-    name: 'James K.',
-    role: 'Property Manager',
-    placeholder: true,
-  },
-  {
-    quote: 'The AI maintenance reminders caught a furnace filter I forgot about for 6 months. Worth it just for that.',
-    name: 'Lisa T.',
-    role: 'Homeowner',
-    placeholder: true,
-  },
-]
+function Nav({ isLoggedIn }: { isLoggedIn: boolean }) {
+  return (
+    <header className="nav">
+      <div className="container nav-inner">
+        <Wordmark />
+        <nav className="nav-links">
+          <a href="#what">What we file</a>
+          <a href="#how">How it works</a>
+          <a href="#binder">The binder</a>
+          <a href="#pricing">Pricing</a>
+          {isLoggedIn ? (
+            <Link href="/dashboard" className="ulink">
+              Go to dashboard →
+            </Link>
+          ) : (
+            <Link href="/login" className="ulink">
+              Sign in →
+            </Link>
+          )}
+          <a href="#waitlist" className="btn btn-primary">
+            Join the waitlist
+          </a>
+        </nav>
+      </div>
+    </header>
+  )
+}
 
-export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
-  const [heroEmail, setHeroEmail] = useState('')
-  const [ctaEmail, setCtaEmail] = useState('')
-  const [heroStatus, setHeroStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [ctaStatus, setCtaStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [heroMessage, setHeroMessage] = useState('')
-  const [ctaMessage, setCtaMessage] = useState('')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+function Hero() {
+  return (
+    <section className="hero">
+      <div className="container">
+        <div className="hero-grid">
+          <div>
+            <div
+              className="ifade"
+              style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}
+            >
+              <span className="eyebrow">The Home File · Vol. I</span>
+              <span style={{ flex: 1, height: 1, background: 'var(--rule)' }} />
+              <span className="num" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                EST. 2026
+              </span>
+            </div>
 
-  async function handleSubmit(
-    e: FormEvent,
-    email: string,
-    setStatus: typeof setHeroStatus,
-    setMessage: typeof setHeroMessage,
-    setEmail: typeof setHeroEmail,
-  ) {
+            <h1 className="hero-display ifade d1">
+              It&rsquo;s like
+              <br />
+              <span className="display-italic">CARFAX</span>,<br />
+              for your home.
+            </h1>
+
+            <p
+              className="ifade d2"
+              style={{
+                marginTop: 32,
+                fontSize: 18,
+                lineHeight: 1.5,
+                color: 'var(--ink-2)',
+                maxWidth: 520,
+              }}
+            >
+              A complete archive of every appliance, room, receipt, warranty and service visit. Filed,
+              indexed, and ready when you need it. The record your house never had.
+            </p>
+
+            <div
+              className="ifade d3"
+              style={{ marginTop: 36, display: 'flex', gap: 12, flexWrap: 'wrap' }}
+            >
+              <a href="#waitlist" className="btn btn-primary btn-lg">
+                Start your file <LI.Arrow size={14} stroke={1.6} />
+              </a>
+              <a href="#what" className="btn btn-lg">
+                Tour the app
+              </a>
+            </div>
+
+            <div
+              className="ifade d4"
+              style={{
+                marginTop: 32,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                fontSize: 13,
+                color: 'var(--ink-3)',
+              }}
+            >
+              <span className="dot" style={{ background: 'var(--green)' }} />
+              <span>Private beta · 1,247 households on the list</span>
+            </div>
+          </div>
+
+          <div style={{ position: 'relative', minHeight: 740 }}>
+            <MobileMockup />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Marquee() {
+  const items = [
+    'WARRANTIES',
+    'MODEL NUMBERS',
+    'SERVICE HISTORY',
+    'PAINT COLORS',
+    'WIFI CODES',
+    'CONTRACTORS',
+    'FILTER SIZES',
+    'APPLIANCE MANUALS',
+    'CLOSING DOCS',
+    'INSURANCE',
+    'PROPERTY TAXES',
+    'FLOOR PLANS',
+    'FINISHES',
+    'KEY COPIES',
+    'GATE CODES',
+    'INSPECTION REPORTS',
+  ]
+  return (
+    <div
+      style={{
+        borderTop: '1px solid var(--rule)',
+        borderBottom: '1px solid var(--rule)',
+        padding: '18px 0',
+        overflow: 'hidden',
+      }}
+    >
+      <div className="marquee-mask">
+        <div className="marquee">
+          {[...items, ...items].map((it, i) => (
+            <span
+              key={i}
+              style={{
+                fontFamily: 'var(--serif)',
+                fontStyle: 'italic',
+                fontWeight: 350,
+                fontSize: 28,
+                color: i % 4 === 0 ? 'var(--ink)' : 'var(--ink-3)',
+                letterSpacing: '-0.01em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 56,
+              }}
+            >
+              {it}
+              <span
+                style={{
+                  color: 'var(--ink-4)',
+                  fontStyle: 'normal',
+                  fontFamily: 'var(--mono)',
+                  fontSize: 11,
+                }}
+              >
+                ※
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function FileMark({ num, title, meta }: { num: string; title: string; meta: string }) {
+  return (
+    <Reveal className="file-mark" style={{ marginBottom: 48 }}>
+      <span className="num-badge">{num}</span>
+      <span>{title}</span>
+      <span style={{ marginLeft: 'auto', color: 'var(--ink-4)' }}>{meta}</span>
+    </Reveal>
+  )
+}
+
+function Ledger() {
+  const rows = [
+    { v: '142', k: 'Appliances filed', sub: 'in an average home' },
+    { v: '$4,800', k: 'Annual maintenance', sub: 'preventable spending' },
+    { v: '7 yrs', k: 'Median ownership', sub: 'longer than you think' },
+    { v: '38%', k: 'Resale uplift', sub: 'with documented history' },
+  ]
+  return (
+    <section style={{ padding: '80px 0' }}>
+      <div className="container">
+        <FileMark num="FILE 02" title="By the numbers" meta="§ 2.0 · household statistics" />
+        <Reveal className="ledger">
+          {rows.map((r) => (
+            <div key={r.k}>
+              <div className="display num" style={{ fontSize: 48, color: 'var(--ink)' }}>
+                {r.v}
+              </div>
+              <div className="eyebrow" style={{ marginTop: 10 }}>
+                {r.k}
+              </div>
+              <div className="label-sm" style={{ marginTop: 6, color: 'var(--ink-3)' }}>
+                {r.sub}
+              </div>
+            </div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function Manifesto() {
+  return (
+    <section style={{ padding: '40px 0 100px' }}>
+      <div className="container">
+        <Reveal
+          className="manifesto-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 2fr',
+            gap: 80,
+            alignItems: 'start',
+          }}
+        >
+          <div>
+            <div className="eyebrow">A note from the editors</div>
+          </div>
+          <div
+            className="display"
+            style={{
+              fontSize: 'clamp(28px, 3.4vw, 44px)',
+              lineHeight: 1.18,
+              fontWeight: 350,
+              letterSpacing: '-0.012em',
+            }}
+          >
+            Your home is the largest, most complicated thing you&rsquo;ll ever own, and almost nobody has a real{' '}
+            <span className="display-italic">record</span> of it. We started TheHomeFile because the receipt for
+            your $11,000 range shouldn&rsquo;t live in a kitchen drawer, and the WiFi password shouldn&rsquo;t live{' '}
+            <span className="display-italic">only</span> in your spouse&rsquo;s head.
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function WhatWeFile() {
+  const cats = [
+    {
+      n: '01',
+      t: 'Appliances',
+      d: 'Brand, model, serial, install date, warranty, manual, every service visit. From your fridge to your sump pump.',
+      tags: ['Wolf range', 'Sub-Zero 648PRO', 'Bosch dishwasher', 'Trane XR16', '+ 138 more'],
+    },
+    {
+      n: '02',
+      t: 'Rooms & finishes',
+      d: 'Paint colors with formulas, flooring specs, fixtures, hardware. The exact off-white in the entry hall.',
+      tags: ['BM Decorator White', 'Walnut #4 oak', 'Carrara honed', 'Lutron Caséta', '+ 80 more'],
+    },
+    {
+      n: '03',
+      t: 'Documents',
+      d: "Closing docs, surveys, insurance, deeds, tax records, inspection reports. Organized, OCR'd, searchable.",
+      tags: ['Closing docs', 'Survey', 'Title', 'Tax records', 'Insurance', 'Permits'],
+    },
+    {
+      n: '04',
+      t: 'Vendors & contacts',
+      d: 'Your plumber, electrician, landscaper, cleaner. With history of every job, every invoice, every photo.',
+      tags: ['Riverside Plumbing', 'Greene Electric', 'Lawn & Order', '+ 14 more'],
+    },
+    {
+      n: '05',
+      t: 'Codes & credentials',
+      d: 'WiFi, alarm, gate, garage, smart home. Encrypted in the Vault, shareable to staff for a window of time.',
+      tags: ['WiFi', 'Alarm', 'Gate', 'Garage', 'Nest', 'Lutron'],
+    },
+    {
+      n: '06',
+      t: 'Maintenance',
+      d: 'AI-suggested schedules. Filter changes, gutter cleans, HVAC service, seasonal turnovers. Assigned to people.',
+      tags: [
+        'Furnace filter · monthly',
+        'HVAC · semi-annual',
+        'Gutters · spring/fall',
+        'Generator · annual',
+      ],
+    },
+  ]
+
+  return (
+    <section id="what" style={{ padding: '80px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <FileMark num="FILE 03" title="The catalog" meta="§ 3.0 · what gets filed" />
+
+        <Reveal
+          className="what-intro"
+          style={{
+            marginBottom: 40,
+            display: 'grid',
+            gridTemplateColumns: '1fr 1.4fr',
+            gap: 60,
+            alignItems: 'baseline',
+          }}
+        >
+          <h2 className="display" style={{ fontSize: 'var(--section-display)', margin: 0 }}>
+            What we
+            <br />
+            <span className="display-italic">file</span>.
+          </h2>
+          <p
+            style={{
+              fontSize: 17,
+              lineHeight: 1.5,
+              color: 'var(--ink-2)',
+              margin: 0,
+              maxWidth: 540,
+            }}
+          >
+            Six categories. Hundreds of items per home. We start with what you&rsquo;ve got: receipts in a drawer,
+            photos on a phone, model numbers in your head, and end with a clean, searchable archive.
+          </p>
+        </Reveal>
+
+        <Reveal className="three-col">
+          {cats.map((c) => (
+            <article key={c.n}>
+              <div
+                className="num"
+                style={{
+                  fontSize: 11,
+                  color: 'var(--ink-3)',
+                  letterSpacing: '0.1em',
+                  marginBottom: 12,
+                }}
+              >
+                {c.n}
+              </div>
+              <h3 className="display" style={{ fontSize: 28, margin: '0 0 10px', fontWeight: 350 }}>
+                {c.t}
+              </h3>
+              <p
+                style={{
+                  fontSize: 14,
+                  color: 'var(--ink-2)',
+                  lineHeight: 1.55,
+                  margin: '0 0 18px',
+                }}
+              >
+                {c.d}
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {c.tags.map((t) => (
+                  <span key={t} className="tag">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function HowItWorks() {
+  const steps = [
+    {
+      n: '01',
+      t: 'Walk through',
+      d: 'Open the app and walk room by room. Snap a photo of every appliance, and we read the model number, find the manual, file the warranty.',
+    },
+    {
+      n: '02',
+      t: 'Forward receipts',
+      d: 'Forward every home receipt to your private inbox. Or drop a folder of PDFs. Our AI reads them and links each to the right room.',
+    },
+    {
+      n: '03',
+      t: 'Invite your people',
+      d: 'Add your spouse, your contractor, your house manager. Each gets the right level of access. Read-only, full edit, or just one wing.',
+    },
+    {
+      n: '04',
+      t: 'Live with it',
+      d: 'Reminders arrive when filters need changing. Vendors get the model numbers they ask for. The closet light bulb is the same kind, every time.',
+    },
+  ]
+  return (
+    <section
+      id="how"
+      style={{ padding: '80px 0', borderTop: '1px solid var(--rule)', background: 'var(--paper)' }}
+    >
+      <div className="container">
+        <FileMark num="FILE 04" title="How it works" meta="§ 4.0 · four steps" />
+
+        <Reveal style={{ marginBottom: 56 }}>
+          <h2 className="display" style={{ fontSize: 'var(--section-display)', margin: 0 }}>
+            Onboard in an
+            <br />
+            <span className="display-italic">afternoon</span>.
+          </h2>
+        </Reveal>
+
+        <Reveal
+          className="how-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            borderTop: '1px solid var(--rule)',
+            borderLeft: '1px solid var(--rule)',
+          }}
+        >
+          {steps.map((s) => (
+            <div
+              key={s.n}
+              style={{
+                padding: '32px 28px',
+                borderRight: '1px solid var(--rule)',
+                borderBottom: '1px solid var(--rule)',
+                position: 'relative',
+                minHeight: 280,
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 24,
+                  right: 24,
+                  width: 32,
+                  height: 32,
+                  borderRadius: 99,
+                  border: '1px solid var(--ink)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--ink)',
+                }}
+              >
+                <LI.Arrow size={14} stroke={1.6} />
+              </div>
+              <div
+                className="num"
+                style={{
+                  fontSize: 11,
+                  color: 'var(--ink-3)',
+                  letterSpacing: '0.1em',
+                  marginBottom: 16,
+                }}
+              >
+                STEP {s.n}
+              </div>
+              <h3 className="display" style={{ fontSize: 26, margin: '0 0 12px', fontWeight: 350 }}>
+                {s.t}
+              </h3>
+              <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.55, margin: 0 }}>{s.d}</p>
+            </div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function ReceiptDemo() {
+  return (
+    <section style={{ padding: '120px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <FileMark num="FILE 05" title="Demonstration · Receipt → Record" meta="§ 5.0 · AI extraction" />
+
+        <Reveal
+          className="receipt-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 80,
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <h2 className="display" style={{ fontSize: 'clamp(40px, 5vw, 72px)', margin: '0 0 28px' }}>
+              From a crumpled
+              <br />
+              receipt to a
+              <br />
+              <span className="display-italic">filed record</span>.
+            </h2>
+            <p
+              style={{
+                fontSize: 16,
+                lineHeight: 1.55,
+                color: 'var(--ink-2)',
+                maxWidth: 520,
+                marginBottom: 28,
+              }}
+            >
+              Snap, forward, or drag-and-drop. Our model reads the brand, model, serial, price and warranty
+              terms. It looks up the manual, links the right room, and adds the right maintenance schedule,
+              automatically.
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {[
+                'Reads handwritten + printed receipts',
+                'Pulls manuals from manufacturer libraries',
+                'Detects duplicates, attaches to existing records',
+                'Always reviewable. Never auto-trusted',
+              ].map((x) => (
+                <li
+                  key={x}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    padding: '8px 0',
+                    borderBottom: '1px solid var(--rule-soft)',
+                    fontSize: 14,
+                    color: 'var(--ink)',
+                  }}
+                >
+                  <span style={{ color: 'var(--green)', marginTop: 2 }}>
+                    <LI.Check size={14} stroke={2} />
+                  </span>
+                  <span>{x}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <ReceiptToRecord />
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function ReceiptToRecord() {
+  const fields: [string, string][] = [
+    ['Brand', 'Wolf'],
+    ['Model', 'GR364C-LP'],
+    ['Serial', '47-2-0184'],
+    ['Installed', 'Mar 04, 2026'],
+    ['Warranty', '2 years · ends 2028'],
+    ['Cost', '$11,420.00'],
+    ['Vendor', 'Hudson Hearth & Home'],
+  ]
+  return (
+    <div style={{ position: 'relative', minHeight: 460 }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '5%',
+          width: 220,
+          background: '#fff',
+          padding: 18,
+          borderRadius: 4,
+          boxShadow: '0 20px 50px -20px rgba(27,26,23,0.25)',
+          transform: 'rotate(-4deg)',
+          fontFamily: 'var(--mono)',
+          fontSize: 10,
+          lineHeight: 1.6,
+          zIndex: 2,
+        }}
+      >
+        <div style={{ fontWeight: 600, fontSize: 11 }}>HUDSON HEARTH & HOME</div>
+        <div style={{ fontSize: 8, color: '#888' }}>Greenwich, CT · #00482</div>
+        <div style={{ fontSize: 8, color: '#888' }}>Order #29481 · Mar 04, 2026</div>
+        <div style={{ borderTop: '1px dashed #ccc', marginTop: 10, paddingTop: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Wolf 36&quot; GR</span>
+            <span>10,899.00</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Install kit</span>
+            <span>89.00</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Warranty +2yr</span>
+            <span>432.00</span>
+          </div>
+        </div>
+        <div
+          style={{
+            borderTop: '1px solid #000',
+            marginTop: 8,
+            paddingTop: 6,
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontWeight: 600,
+          }}
+        >
+          <span>TOTAL</span>
+          <span>$11,420.00</span>
+        </div>
+        <div
+          style={{
+            marginTop: 14,
+            height: 18,
+            background: 'repeating-linear-gradient(90deg, #000 0 1.5px, transparent 1.5px 3px)',
+          }}
+        />
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '46%',
+          left: '38%',
+          zIndex: 3,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          fontFamily: 'var(--mono)',
+          fontSize: 9,
+          textTransform: 'uppercase',
+          letterSpacing: '0.16em',
+          color: 'var(--ink-3)',
+        }}
+      >
+        <div style={{ width: 60, height: 1, background: 'var(--ink-3)' }} />
+        <span>AI</span>
+        <div style={{ width: 16, height: 1, background: 'var(--ink-3)' }} />
+        <LI.Arrow size={12} />
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          right: 0,
+          width: 280,
+          background: 'var(--paper)',
+          border: '1px solid var(--rule)',
+          borderRadius: 6,
+          padding: 22,
+          boxShadow: '0 24px 60px -24px rgba(27,26,23,0.20)',
+          zIndex: 4,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 14,
+          }}
+        >
+          <div className="eyebrow">RECORD · APPLIANCE</div>
+          <span className="tag tag-ink">FILED</span>
+        </div>
+        <div className="display" style={{ fontSize: 22, fontWeight: 350, marginBottom: 4 }}>
+          Wolf 36&quot; Range
+        </div>
+        <div className="display-italic" style={{ fontSize: 14, color: 'var(--ink-3)', marginBottom: 16 }}>
+          Kitchen · primary cooktop
+        </div>
+
+        <div style={{ borderTop: '1px solid var(--rule-soft)' }}>
+          {fields.map(([k, v]) => (
+            <div
+              key={k}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '7px 0',
+                borderBottom: '1px solid var(--rule-soft)',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 9,
+                  color: 'var(--ink-3)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                }}
+              >
+                {k}
+              </span>
+              <span className="num" style={{ fontSize: 12, color: 'var(--ink)' }}>
+                {v}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 14, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <span className="tag">
+            <LI.File size={9} /> Receipt.pdf
+          </span>
+          <span className="tag">
+            <LI.Book size={9} /> Manual.pdf
+          </span>
+          <span className="tag">
+            <LI.Calendar size={9} /> 4 tasks scheduled
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AISection() {
+  const qa = [
+    {
+      q: 'When did we last service the boiler?',
+      a: 'Riverside Mechanical, Nov 14, 2025. Replaced expansion tank ($412). Next service: May 2026.',
+    },
+    {
+      q: 'What kind of light bulbs in the dining room?',
+      a: 'Philips Hue White Ambiance E26, 75W equivalent. 6 in chandelier, 4 in sconces. Last bought Feb 2025.',
+    },
+    {
+      q: 'How much have we spent on the kitchen this year?',
+      a: '$14,832. Largest line: Wolf range ($11,420). Itemized in Records › Kitchen.',
+    },
+  ]
+  return (
+    <section
+      style={{
+        padding: '100px 0',
+        borderTop: '1px solid var(--rule)',
+        background: 'var(--ink)',
+        color: 'var(--paper)',
+      }}
+    >
+      <div className="container">
+        <Reveal style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 40 }}>
+          <span
+            style={{
+              fontFamily: 'var(--mono)',
+              fontSize: 11,
+              color: 'var(--ink-4)',
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+            }}
+          >
+            FILE 06 · INTELLIGENCE
+          </span>
+          <span style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.18)' }} />
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-4)' }}>§ 6.0</span>
+        </Reveal>
+
+        <Reveal
+          className="ai-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 80,
+            alignItems: 'start',
+          }}
+        >
+          <div>
+            <h2
+              className="display"
+              style={{ fontSize: 'var(--section-display)', margin: 0, color: 'var(--paper)' }}
+            >
+              An AI that
+              <br />
+              actually <span className="display-italic">knows</span>
+              <br />
+              your house.
+            </h2>
+            <p
+              style={{
+                marginTop: 32,
+                fontSize: 17,
+                lineHeight: 1.55,
+                color: 'rgba(250,247,241,0.75)',
+                maxWidth: 520,
+              }}
+            >
+              Ask in plain English. Get answers from your own home&rsquo;s history. Not a generic chatbot. Every
+              answer cites the receipt, manual, or log entry it came from.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 6,
+              padding: 24,
+            }}
+          >
+            {qa.map((r, i) => (
+              <div
+                key={r.q}
+                style={{
+                  borderBottom: i < qa.length - 1 ? '1px solid rgba(255,255,255,0.10)' : 'none',
+                  padding: '14px 0',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    marginBottom: 6,
+                  }}
+                >
+                  <span
+                    style={{
+                      color: 'var(--ink-4)',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 10,
+                      marginTop: 4,
+                    }}
+                  >
+                    YOU
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: 'var(--serif)',
+                      fontStyle: 'italic',
+                      fontSize: 17,
+                      color: 'var(--paper)',
+                    }}
+                  >
+                    {r.q}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <span
+                    style={{
+                      color: 'var(--ink-4)',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 10,
+                      marginTop: 4,
+                    }}
+                  >
+                    HF
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 13.5,
+                      color: 'rgba(250,247,241,0.85)',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {r.a}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function UseCases() {
+  const cases: { t: string; d: string; who: string; icon: LIKey }[] = [
+    {
+      t: 'For owners',
+      d: 'Stop hunting for the manual. Stop missing the warranty window. Know what you own.',
+      who: 'You · your spouse',
+      icon: 'Home',
+    },
+    {
+      t: 'For staff',
+      d: 'House manager, cleaner, contractor. They get the codes, models, and schedules they need, nothing more.',
+      who: 'House manager · cleaner',
+      icon: 'Users',
+    },
+    {
+      t: 'For vendors',
+      d: "They ask for the model, you tap a button, it's in their inbox. No hunting in the basement.",
+      who: 'Plumber · electrician',
+      icon: 'Wrench',
+    },
+    {
+      t: 'For sale',
+      d: 'Hand the next owner a beautiful, complete archive at closing. The home keeps its memory.',
+      who: 'Buyers · agents',
+      icon: 'Book',
+    },
+  ]
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <FileMark num="FILE 07" title="Who it's for" meta="§ 7.0 · four audiences" />
+        <Reveal style={{ marginBottom: 48 }}>
+          <h2 className="display" style={{ fontSize: 'var(--section-display)', margin: 0 }}>
+            One file.
+            <br />
+            Many <span className="display-italic">readers</span>.
+          </h2>
+        </Reveal>
+        <Reveal
+          className="use-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 0,
+            borderTop: '1px solid var(--rule)',
+            borderLeft: '1px solid var(--rule)',
+          }}
+        >
+          {cases.map((c) => {
+            const Ico = LI[c.icon] || LI.Home
+            return (
+              <div
+                key={c.t}
+                style={{
+                  padding: '36px 28px',
+                  borderRight: '1px solid var(--rule)',
+                  borderBottom: '1px solid var(--rule)',
+                  minHeight: 280,
+                }}
+              >
+                <Ico size={28} stroke={1.2} />
+                <h3 className="display" style={{ fontSize: 26, margin: '24px 0 10px', fontWeight: 350 }}>
+                  {c.t}
+                </h3>
+                <p
+                  style={{
+                    fontSize: 13.5,
+                    color: 'var(--ink-2)',
+                    lineHeight: 1.55,
+                    margin: '0 0 20px',
+                  }}
+                >
+                  {c.d}
+                </p>
+                <div className="eyebrow">{c.who}</div>
+              </div>
+            )
+          })}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function PullQuote() {
+  return (
+    <section style={{ padding: '120px 0', borderTop: '1px solid var(--rule)', background: 'var(--paper)' }}>
+      <div className="container">
+        <Reveal style={{ maxWidth: 980 }}>
+          <div
+            style={{
+              fontFamily: 'var(--serif)',
+              fontSize: 80,
+              lineHeight: 1,
+              color: 'var(--rule)',
+              marginBottom: -12,
+            }}
+          >
+            &ldquo;
+          </div>
+          <p className="pull">
+            We sold our house last spring. The buyer&rsquo;s agent said the file we handed them. Every receipt,
+            every paint color, every service visit, added six figures to the offer. That&rsquo;s not{' '}
+            <span className="display-italic">marketing</span>. That&rsquo;s what actually happened.
+          </p>
+          <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 99,
+                background: 'var(--ink)',
+                color: 'var(--paper)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'var(--serif)',
+                fontStyle: 'italic',
+                fontSize: 18,
+              }}
+            >
+              EM
+            </div>
+            <div>
+              <div style={{ fontSize: 14, color: 'var(--ink)' }}>Eleanor Marchetti</div>
+              <div className="label-sm">Sold a 1928 colonial · Greenwich, CT · 2025</div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function Binder() {
+  const stats: [string, string][] = [
+    ['148', 'Pages, indexed'],
+    ['$89', 'Per linen binder'],
+    ['8.4 MB', 'PDF, free'],
+    ['Yearly', 'Auto-refresh'],
+  ]
+  return (
+    <section id="binder" style={{ padding: '120px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <FileMark num="FILE 08" title="The Binder" meta="§ 8.0 · printed archive" />
+
+        <Reveal
+          className="binder-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.1fr 1fr',
+            gap: 80,
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <h2 className="display" style={{ fontSize: 'var(--section-display)', margin: 0 }}>
+              Print it. Hand it
+              <br />
+              over at <span className="display-italic">closing</span>.
+            </h2>
+            <p
+              style={{
+                marginTop: 32,
+                fontSize: 17,
+                lineHeight: 1.55,
+                color: 'var(--ink-2)',
+                maxWidth: 540,
+              }}
+            >
+              Once a year, or whenever you want, generate a beautiful printed binder of your entire archive.
+              Linen-bound, indexed, organized by room. We ship it. Or download a 148-page PDF and print it
+              yourself.
+            </p>
+            <div
+              style={{
+                marginTop: 32,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: 24,
+                maxWidth: 480,
+              }}
+            >
+              {stats.map(([v, k]) => (
+                <div key={k}>
+                  <div className="num display" style={{ fontSize: 28, color: 'var(--ink)' }}>
+                    {v}
+                  </div>
+                  <div className="eyebrow" style={{ marginTop: 4 }}>
+                    {k}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <BinderVisual />
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function BinderVisual() {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        minHeight: 480,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: 320,
+          height: 420,
+          background: 'linear-gradient(135deg, #6B2D2A 0%, #5A2522 100%)',
+          borderRadius: '4px 8px 8px 4px',
+          padding: '32px 36px',
+          boxShadow:
+            '0 30px 60px -20px rgba(27,26,23,0.45), inset -4px 0 0 rgba(0,0,0,0.15), inset 4px 0 0 rgba(255,255,255,0.05)',
+          color: '#F5E9DA',
+          position: 'relative',
+          transform: 'rotate(-2deg)',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            left: 14,
+            top: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-around',
+            padding: '40px 0',
+          }}
+        >
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 99,
+                background: '#3A1715',
+                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+              }}
+            />
+          ))}
+        </div>
+
+        <div style={{ paddingLeft: 24 }}>
+          <div
+            style={{
+              fontFamily: 'var(--mono)',
+              fontSize: 10,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              opacity: 0.7,
+            }}
+          >
+            VOLUME I · 2026
+          </div>
+          <div
+            style={{
+              width: 80,
+              height: 1,
+              background: 'rgba(245,233,218,0.4)',
+              margin: '14px 0 28px',
+            }}
+          />
+          <div
+            style={{
+              fontFamily: 'var(--serif)',
+              fontWeight: 400,
+              fontSize: 38,
+              lineHeight: 1.05,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            The
+            <br />
+            <span style={{ fontStyle: 'italic', fontWeight: 350 }}>Cliffwood</span>
+            <br />
+            House
+          </div>
+          <div style={{ marginTop: 20, fontSize: 12.5, opacity: 0.8, lineHeight: 1.5 }}>
+            Estate archive · 24 rooms
+            <br />
+            142 appliances · 236 documents
+            <br />
+            Compiled by The Marchetti Family
+          </div>
+
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 32,
+              left: 60,
+              right: 36,
+              borderTop: '1px solid rgba(245,233,218,0.3)',
+              paddingTop: 16,
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontFamily: 'var(--mono)',
+              fontSize: 9,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            <span>theHomeFile</span>
+            <span>148 pp.</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          right: 12,
+          transform: 'translateY(-50%) rotate(6deg)',
+          width: 200,
+          height: 280,
+          background: 'var(--paper)',
+          border: '1px solid var(--rule)',
+          borderRadius: 2,
+          padding: 18,
+          boxShadow: '0 16px 40px -16px rgba(27,26,23,0.3)',
+          fontFamily: 'var(--mono)',
+          fontSize: 7,
+          lineHeight: 1.6,
+          color: 'var(--ink-2)',
+          zIndex: 0,
+        }}
+      >
+        <div style={{ fontSize: 9, fontWeight: 600, marginBottom: 6 }}>§ 3 · KITCHEN</div>
+        <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 6 }}>
+          {[
+            ['Wolf 36" Range', 'p.49'],
+            ['Sub-Zero 648PRO', 'p.51'],
+            ['Bosch dishwasher', 'p.53'],
+            ['Miele coffee', 'p.55'],
+            ['BlueStar hood', 'p.57'],
+            ['Sharp drawer mw.', 'p.59'],
+          ].map(([n, p]) => (
+            <div key={n} style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>{n}</span>
+              <span>{p}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 10, fontSize: 9, fontWeight: 600 }}>§ 4 · LIVING</div>
+        <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 6 }}>
+          {[
+            ['Sonos amp', 'p.62'],
+            ['Lutron Caséta', 'p.64'],
+          ].map(([n, p]) => (
+            <div key={n} style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>{n}</span>
+              <span>{p}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Pricing() {
+  const tiers = [
+    {
+      n: '01',
+      t: 'Notebook',
+      p: '$0',
+      sub: 'free, forever',
+      d: 'For trying it out. One home, up to 25 appliances, 2 members.',
+      f: ['1 home', '25 appliances', '2 members', 'Email receipts', 'Mobile + web', 'Community support'],
+      cta: 'Start free',
+      primary: false,
+    },
+    {
+      n: '02',
+      t: 'File',
+      p: '$24',
+      sub: '/ month',
+      d: 'For most homeowners. Unlimited everything, family sharing, vault.',
+      f: [
+        'Unlimited appliances',
+        'Unlimited documents',
+        'Up to 6 members',
+        'Encrypted Vault',
+        'AI receipt scanning',
+        'Annual binder PDF',
+        'Priority support',
+      ],
+      cta: 'Join the waitlist',
+      primary: true,
+    },
+    {
+      n: '03',
+      t: 'Estate',
+      p: '$98',
+      sub: '/ month',
+      d: 'For multi-property households, with staff and concierge.',
+      f: [
+        'Up to 5 homes',
+        'Unlimited members',
+        'Staff + role permissions',
+        'Vendor portal',
+        'Concierge onboarding',
+        'Printed binder yearly',
+        'White-glove migration',
+      ],
+      cta: 'Talk to us',
+      primary: false,
+    },
+  ]
+  return (
+    <section id="pricing" style={{ padding: '120px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <FileMark num="FILE 09" title="Subscriptions" meta="§ 9.0 · three tiers" />
+
+        <Reveal style={{ marginBottom: 48 }}>
+          <h2 className="display" style={{ fontSize: 'var(--section-display)', margin: 0 }}>
+            Pay for what you
+            <br />
+            actually <span className="display-italic">file</span>.
+          </h2>
+        </Reveal>
+
+        <Reveal
+          className="pricing-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 0,
+            borderTop: '1px solid var(--rule)',
+            borderLeft: '1px solid var(--rule)',
+          }}
+        >
+          {tiers.map((t) => (
+            <div
+              key={t.n}
+              style={{
+                padding: '40px 32px 36px',
+                borderRight: '1px solid var(--rule)',
+                borderBottom: '1px solid var(--rule)',
+                background: t.primary ? 'var(--ink)' : 'transparent',
+                color: t.primary ? 'var(--paper)' : 'var(--ink)',
+                position: 'relative',
+              }}
+            >
+              {t.primary && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    fontFamily: 'var(--mono)',
+                    fontSize: 9,
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    padding: '3px 7px',
+                    border: '1px solid rgba(255,255,255,0.4)',
+                    borderRadius: 3,
+                    color: 'var(--paper)',
+                  }}
+                >
+                  RECOMMENDED
+                </div>
+              )}
+              <div
+                style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 10.5,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: t.primary ? 'rgba(250,247,241,0.6)' : 'var(--ink-3)',
+                }}
+              >
+                {t.n} · {t.t}
+              </div>
+              <div style={{ marginTop: 20, display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span
+                  className="display num"
+                  style={{ fontSize: 56, color: t.primary ? 'var(--paper)' : 'var(--ink)' }}
+                >
+                  {t.p}
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: t.primary ? 'rgba(250,247,241,0.6)' : 'var(--ink-3)',
+                  }}
+                >
+                  {t.sub}
+                </span>
+              </div>
+              <p
+                style={{
+                  marginTop: 14,
+                  fontSize: 13.5,
+                  lineHeight: 1.55,
+                  color: t.primary ? 'rgba(250,247,241,0.75)' : 'var(--ink-2)',
+                }}
+              >
+                {t.d}
+              </p>
+              <div
+                style={{
+                  height: 1,
+                  background: t.primary ? 'rgba(255,255,255,0.18)' : 'var(--rule)',
+                  margin: '24px 0',
+                }}
+              />
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {t.f.map((x) => (
+                  <li
+                    key={x}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 10,
+                      padding: '6px 0',
+                      fontSize: 13.5,
+                    }}
+                  >
+                    <span
+                      style={{
+                        marginTop: 2,
+                        color: t.primary ? 'rgba(250,247,241,0.9)' : 'var(--green)',
+                      }}
+                    >
+                      <LI.Check size={13} stroke={2} />
+                    </span>
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#waitlist"
+                className="btn btn-lg"
+                style={{
+                  marginTop: 28,
+                  width: '100%',
+                  justifyContent: 'center',
+                  background: t.primary ? 'var(--paper)' : 'transparent',
+                  color: 'var(--ink)',
+                  borderColor: t.primary ? 'var(--paper)' : 'var(--ink)',
+                }}
+              >
+                {t.cta}
+              </a>
+            </div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function Waitlist() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [message, setMessage] = useState('')
+
+  async function onSubmit(e: FormEvent) {
     e.preventDefault()
     if (!email.trim()) return
-
     setStatus('loading')
     try {
       const res = await fetch('/api/waitlist', {
@@ -170,7 +1503,7 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
         setMessage(data.error || 'Something went wrong.')
       } else {
         setStatus('success')
-        setMessage(data.message)
+        setMessage(data.message || "You're on the list. We'll be in touch.")
         setEmail('')
       }
     } catch {
@@ -179,397 +1512,272 @@ export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
     }
   }
 
-  function EmailForm({
-    email,
-    setEmail,
-    status,
-    message,
-    onSubmit,
-    dark = false,
-  }: {
-    email: string
-    setEmail: (v: string) => void
-    status: string
-    message: string
-    onSubmit: (e: FormEvent) => void
-    dark?: boolean
-  }) {
-    if (status === 'success') {
-      return (
-        <div className={`flex items-center gap-2 text-sm font-medium ${dark ? 'text-green-400' : 'text-green-700'}`}>
-          <Check size={16} />
-          {message}
-        </div>
-      )
-    }
-
-    return (
-      <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          className={`flex-1 px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-[#5B6C8F] ${
-            dark
-              ? 'bg-white/10 border-white/20 text-white placeholder-white/50'
-              : 'bg-white border-[#C8BFB2] text-[#2F3437] placeholder-slate-400'
-          }`}
-        />
-        <button
-          type="submit"
-          disabled={status === 'loading'}
-          className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors disabled:opacity-50 whitespace-nowrap"
-        >
-          {status === 'loading' ? 'Joining...' : 'Get Early Access'}
-        </button>
-        {status === 'error' && <p className="text-red-500 text-xs sm:col-span-2">{message}</p>}
-      </form>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-[#F4F1EA] text-[#2F3437]">
-      {/* ─── Nav ─── */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#C8BFB2]/40">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#5B6C8F] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">H</span>
-            </div>
-            <span className="font-playfair text-lg font-bold text-[#2F3437]">TheHomeFile</span>
-          </Link>
-
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-slate-600 hover:text-[#5B6C8F] transition-colors">Features</a>
-            <a href="#how-it-works" className="text-sm text-slate-600 hover:text-[#5B6C8F] transition-colors">How it works</a>
-            <a href="#pricing" className="text-sm text-slate-600 hover:text-[#5B6C8F] transition-colors">Pricing</a>
-          </div>
-
-          {/* CTA */}
-          <div className="hidden md:block">
-            {isLoggedIn ? (
-              <Link
-                href="/dashboard"
-                className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-              >
-                Go to Dashboard
-              </Link>
-            ) : (
-              <div className="flex items-center gap-4">
-                <Link href="/login" className="text-sm text-slate-600 hover:text-[#5B6C8F] transition-colors">
-                  Sign in
-                </Link>
-                <a
-                  href="#hero-email"
-                  className="bg-[#5B6C8F] hover:bg-[#4a5c77] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-                >
-                  Get Early Access
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-[#2F3437]"
-            aria-label="Toggle menu"
+    <section id="waitlist" style={{ padding: '100px 0', borderTop: '1px solid var(--rule)' }}>
+      <div className="container">
+        <Reveal className="cta-card">
+          <div
+            className="cta-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.2fr 1fr',
+              gap: 60,
+              alignItems: 'center',
+            }}
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[#C8BFB2]/40 bg-white px-6 py-4 flex flex-col gap-4">
-            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-[#5B6C8F]">Features</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-[#5B6C8F]">How it works</a>
-            <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-[#5B6C8F]">Pricing</a>
-            {isLoggedIn ? (
-              <Link href="/dashboard" className="bg-[#5B6C8F] text-white text-sm font-semibold px-5 py-2.5 rounded-xl text-center">
-                Go to Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-[#5B6C8F]">
-                  Sign in
-                </Link>
-                <a href="#hero-email" onClick={() => setMobileMenuOpen(false)} className="bg-[#5B6C8F] text-white text-sm font-semibold px-5 py-2.5 rounded-xl text-center">
-                  Get Early Access
-                </a>
-              </>
-            )}
-          </div>
-        )}
-      </nav>
-
-      {/* ─── Hero ─── */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-        {/* Beta badge */}
-        <div className="inline-flex items-center gap-2 bg-[#5B6C8F]/10 text-[#5B6C8F] text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
-          <span className="w-2 h-2 bg-[#5B6C8F] rounded-full animate-pulse" />
-          Now in private beta
-        </div>
-
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-3xl mx-auto">
-          Think of it as{' '}
-          <span className="text-[#5B6C8F]">CARFAX</span>{' '}
-          for your home.
-        </h1>
-
-        <p className="text-lg text-slate-600 max-w-xl mx-auto mb-10 leading-relaxed">
-          Track appliances, schedule maintenance, store documents, and build a complete home history — all in one place.
-        </p>
-
-        {/* Email capture */}
-        <div id="hero-email" className="flex justify-center mb-16">
-          <EmailForm
-            email={heroEmail}
-            setEmail={setHeroEmail}
-            status={heroStatus}
-            message={heroMessage}
-            onSubmit={(e) => handleSubmit(e, heroEmail, setHeroStatus, setHeroMessage, setHeroEmail)}
-          />
-        </div>
-
-        {/* App mockup placeholder */}
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-[#C8BFB2] shadow-lg overflow-hidden">
-          <div className="bg-[#5B6C8F]/5 border-b border-[#C8BFB2]/40 px-6 py-3 flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#C8BFB2]" />
-            <div className="w-3 h-3 rounded-full bg-[#C8BFB2]" />
-            <div className="w-3 h-3 rounded-full bg-[#C8BFB2]" />
-            <div className="flex-1 bg-[#C8BFB2]/30 rounded-full h-5 max-w-xs mx-auto" />
-          </div>
-          <div className="p-8 sm:p-12">
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-[#F4F1EA] rounded-xl h-24" />
-              <div className="bg-[#F4F1EA] rounded-xl h-24" />
-              <div className="bg-[#F4F1EA] rounded-xl h-24" />
+            <div>
+              <div className="eyebrow">JOIN THE PRIVATE BETA</div>
+              <h2
+                className="display"
+                style={{
+                  fontSize: 'clamp(40px, 5vw, 72px)',
+                  margin: '16px 0 24px',
+                  color: 'var(--paper)',
+                }}
+              >
+                Start your
+                <br />
+                <span className="display-italic">file</span>.
+              </h2>
+              <p
+                style={{
+                  fontSize: 16,
+                  lineHeight: 1.55,
+                  color: 'rgba(250,247,241,0.7)',
+                  maxWidth: 460,
+                  margin: 0,
+                }}
+              >
+                We&rsquo;re rolling out by city, starting in the Northeast. Drop your email, and we&rsquo;ll get
+                you onboarded and ship you a welcome packet.
+              </p>
             </div>
-            <div className="space-y-3">
-              <div className="bg-[#F4F1EA] rounded-lg h-4 w-3/4" />
-              <div className="bg-[#F4F1EA] rounded-lg h-4 w-1/2" />
-              <div className="bg-[#F4F1EA] rounded-lg h-4 w-2/3" />
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ─── Stats Bar ─── */}
-      <section className="border-y border-[#C8BFB2]/60 bg-white">
-        <div className="max-w-4xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#C8BFB2]/60">
-          {[
-            { value: '40+', label: 'Features Built' },
-            { value: 'AI', label: 'Powered Scheduling' },
-            { value: '100%', label: 'Home History' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center py-4 sm:py-0">
-              <div className="text-3xl font-bold text-[#5B6C8F] font-playfair">{stat.value}</div>
-              <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Features ─── */}
-      <section id="features" className="max-w-6xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything your home needs</h2>
-          <p className="text-slate-600 max-w-lg mx-auto">
-            From appliance tracking to AI-powered maintenance — TheHomeFile keeps your home running smoothly.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((feature) => (
-            <div
-              key={feature.title}
-              className="bg-white rounded-2xl border border-[#C8BFB2] p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="w-10 h-10 bg-[#5B6C8F]/10 rounded-xl flex items-center justify-center mb-4">
-                <feature.icon size={20} className="text-[#5B6C8F]" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── How It Works ─── */}
-      <section id="how-it-works" className="bg-[#F4F1EA] border-y border-[#C8BFB2]/60">
-        <div className="max-w-4xl mx-auto px-6 py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">How it works</h2>
-            <p className="text-slate-600 max-w-lg mx-auto">
-              Get started in minutes. No complicated setup required.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {STEPS.map((step) => (
-              <div key={step.number} className="text-center">
-                <div className="w-12 h-12 bg-[#5B6C8F] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 font-playfair">
-                  {step.number}
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Pricing ─── */}
-      <section id="pricing" className="max-w-6xl mx-auto px-6 py-24">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
-          <p className="text-slate-600 max-w-lg mx-auto">
-            Start free forever. Upgrade when you need more.
-          </p>
-        </div>
-
-        {/* Trial banner */}
-        <div className="max-w-3xl mx-auto mb-12 bg-[#5B6C8F]/8 border border-[#5B6C8F]/20 rounded-2xl px-6 py-5 text-center">
-          <p className="text-sm text-[#2F3437] leading-relaxed">
-            <span className="font-semibold">All plans start with a 30-day free Pro trial.</span>{' '}
-            No credit card required. See what AI-powered home management feels like, then decide.
-          </p>
-          <p className="text-xs text-slate-500 mt-2">
-            After the trial, accounts revert to Free — all data is kept, new additions become manual only.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {PRICING.map((plan) => (
-            <div
-              key={plan.name}
-              className={`bg-white rounded-2xl p-8 relative ${
-                plan.popular
-                  ? 'border-2 border-[#5B6C8F] shadow-lg'
-                  : 'border border-[#C8BFB2]'
-              }`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#5B6C8F] text-white text-xs font-semibold px-4 py-1 rounded-full">
-                  Most popular
+            <div>
+              {status !== 'success' ? (
+                <form onSubmit={onSubmit}>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      className="input"
+                      type="email"
+                      required
+                      placeholder="you@yourhome.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      style={{ flex: 1 }}
+                    />
+                    <button type="submit" className="btn btn-lg" disabled={status === 'loading'}>
+                      {status === 'loading' ? 'Joining…' : 'Join'} <LI.Arrow size={14} stroke={1.6} />
+                    </button>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 14,
+                      fontSize: 12,
+                      color:
+                        status === 'error' ? '#F0B5AE' : 'rgba(250,247,241,0.55)',
+                    }}
+                  >
+                    {status === 'error'
+                      ? message
+                      : 'No spam. We send one note per quarter. Unsubscribe anytime.'}
+                  </div>
+                </form>
+              ) : (
+                <div
+                  style={{
+                    padding: 18,
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    borderRadius: 4,
+                    background: 'rgba(255,255,255,0.04)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <span style={{ color: 'var(--paper)' }}>
+                      <LI.Check size={16} stroke={2} />
+                    </span>
+                    <span style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 18 }}>
+                      You&rsquo;re on the list.
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'rgba(250,247,241,0.7)' }}>{message}</div>
                 </div>
               )}
-              <h3 className="font-semibold text-lg mb-1">{plan.name}</h3>
-              <p className="text-sm text-slate-500 mb-4">{plan.description}</p>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold font-playfair">{plan.price}</span>
-                {plan.period && <span className="text-slate-500 text-sm">{plan.period}</span>}
-              </div>
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-sm text-slate-700">
-                    <Check size={16} className="text-[#5B6C8F] flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#hero-email"
-                className={`block text-center text-sm font-semibold px-6 py-3 rounded-xl transition-colors ${
-                  plan.popular
-                    ? 'bg-[#5B6C8F] hover:bg-[#4a5c77] text-white'
-                    : 'bg-[#5B6C8F]/10 hover:bg-[#5B6C8F]/20 text-[#5B6C8F]'
-                }`}
-              >
-                {plan.cta}
-              </a>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Testimonials ─── */}
-      <section className="bg-[#2F3437] text-white">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">What homeowners are saying</h2>
-            <p className="text-white/60 text-sm">Placeholder testimonials — real ones coming soon.</p>
           </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((testimonial) => (
-              <div
-                key={testimonial.name}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className="text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-white/80 leading-relaxed mb-4">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-xs font-semibold text-white/60">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">{testimonial.name}</div>
-                    <div className="text-xs text-white/50">{testimonial.role}</div>
-                  </div>
-                </div>
-                {testimonial.placeholder && (
-                  <div className="mt-3 text-xs text-white/30 italic">Placeholder</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── CTA ─── */}
-      <section className="max-w-6xl mx-auto px-6 py-24 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to take control of your home?</h2>
-        <p className="text-slate-600 max-w-lg mx-auto mb-10">
-          Join the private beta and be the first to experience TheHomeFile.
-        </p>
-        <div className="flex justify-center">
-          <EmailForm
-            email={ctaEmail}
-            setEmail={setCtaEmail}
-            status={ctaStatus}
-            message={ctaMessage}
-            onSubmit={(e) => handleSubmit(e, ctaEmail, setCtaStatus, setCtaMessage, setCtaEmail)}
-          />
-        </div>
-      </section>
-
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-[#C8BFB2]/60 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#5B6C8F] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xs">H</span>
+function Footer() {
+  const product = [
+    { href: '#what', label: 'What we file' },
+    { href: '#how', label: 'How it works' },
+    { href: '#binder', label: 'The Binder' },
+    { href: '#pricing', label: 'Pricing' },
+  ]
+  const company = ['About', 'Journal', 'Press', 'Careers', 'Contact']
+  const legal: { href: string; label: string }[] = [
+    { href: '/privacy', label: 'Privacy' },
+    { href: '/terms', label: 'Terms' },
+    { href: '#', label: 'Security' },
+    { href: '#', label: 'DPA' },
+  ]
+  return (
+    <footer className="footer">
+      <div className="container">
+        <div
+          className="footer-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.6fr 1fr 1fr 1fr',
+            gap: 40,
+            marginBottom: 56,
+          }}
+        >
+          <div>
+            <Wordmark size={24} />
+            <p
+              style={{
+                marginTop: 16,
+                fontSize: 13,
+                color: 'var(--ink-3)',
+                lineHeight: 1.55,
+                maxWidth: 320,
+              }}
+            >
+              A complete archive of your home. Appliances, rooms, receipts, warranties, and people. Like
+              CARFAX, but for the place you live.
+            </p>
+            <div style={{ marginTop: 20, display: 'flex', gap: 8 }}>
+              <span className="tag">Made in Brooklyn</span>
+              <span className="tag">Est. 2026</span>
             </div>
-            <span className="font-playfair text-sm font-bold text-[#2F3437]">TheHomeFile</span>
           </div>
-
-          {/* Links */}
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-slate-500 hover:text-[#5B6C8F] transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="text-xs text-slate-500 hover:text-[#5B6C8F] transition-colors">
-              Terms of Service
-            </Link>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>
+              PRODUCT
+            </div>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                fontSize: 13.5,
+              }}
+            >
+              {product.map((x) => (
+                <li key={x.href}>
+                  <a href={x.href}>{x.label}</a>
+                </li>
+              ))}
+            </ul>
           </div>
-
-          {/* Copyright */}
-          <p className="text-xs text-slate-400">&copy; 2026 TheHomeFile. All rights reserved.</p>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>
+              COMPANY
+            </div>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                fontSize: 13.5,
+              }}
+            >
+              {company.map((x) => (
+                <li key={x}>
+                  <a href="#">{x}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>
+              LEGAL
+            </div>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                fontSize: 13.5,
+              }}
+            >
+              {legal.map((x) => (
+                <li key={x.label}>
+                  {x.href.startsWith('/') ? (
+                    <Link href={x.href}>{x.label}</Link>
+                  ) : (
+                    <a href={x.href}>{x.label}</a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </footer>
+
+        <div
+          style={{
+            borderTop: '1px solid var(--rule)',
+            paddingTop: 24,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--mono)',
+              fontSize: 11,
+              color: 'var(--ink-3)',
+              letterSpacing: '0.1em',
+            }}
+          >
+            © 2026 THEHOMEFILE, INC. · ALL RIGHTS RESERVED
+          </div>
+          <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+            <a href="#">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+export default function LandingPage({ isLoggedIn }: { isLoggedIn: boolean }) {
+  return (
+    <div className="landing-root">
+      <Nav isLoggedIn={isLoggedIn} />
+      <Hero />
+      <Marquee />
+      <Ledger />
+      <Manifesto />
+      <WhatWeFile />
+      <HowItWorks />
+      <ReceiptDemo />
+      <AISection />
+      <UseCases />
+      <PullQuote />
+      <Binder />
+      <Pricing />
+      <Waitlist />
+      <Footer />
     </div>
   )
 }
